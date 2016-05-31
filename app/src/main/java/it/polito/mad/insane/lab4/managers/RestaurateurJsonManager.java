@@ -1,4 +1,4 @@
-package it.polito.mad.insane.lab4;
+package it.polito.mad.insane.lab4.managers;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -23,6 +23,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.data.RestaurateurProfile;
+import it.polito.mad.insane.lab4.data.Review;
+import it.polito.mad.insane.lab4.data.User;
 
 /**
  * Created by carlocaramia on 08/04/16.

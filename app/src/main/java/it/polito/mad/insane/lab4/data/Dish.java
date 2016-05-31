@@ -1,4 +1,4 @@
-package it.polito.mad.insane.lab4;
+package it.polito.mad.insane.lab4.data;
 
 import java.io.Serializable;
 
