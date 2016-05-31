@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.MakeReservationActivity"
+    >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.RestaurantProfile$PlaceholderFragment">
+
+        <TextView
+            android:id="@+id/show_reservation_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_cart"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:background="@color/colorAccent"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/MenuRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

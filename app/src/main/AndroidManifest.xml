@@ -52,7 +52,25 @@
         </activity>
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".activities.MakeReservationActivity"
+            android:label="@string/title_activity_make_reservation"
+            android:parentActivityName=".activities.RestaurantProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
+        </activity>
+        <activity
+            android:name=".activities.DisplayReservationActivity"
+            android:label="@string/title_activity_display_reservation"
+            android:parentActivityName=".activities.MyReservationsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.MyReservationsActivity" />
+        </activity>
     </application>
 
 </manifest>

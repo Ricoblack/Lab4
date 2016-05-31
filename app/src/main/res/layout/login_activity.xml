@@ -63,6 +63,30 @@
 
             </android.support.design.widget.TextInputLayout>
 
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/user_login"
+                    android:id="@+id/user_login_radiobutton"
+                    android:layout_gravity="center_horizontal"
+                    android:checked="true"/>
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/restaurateur_login"
+                    android:id="@+id/restaurateur_login_radiobutton"
+                    android:layout_gravity="center_horizontal"/>
+
+            </RadioGroup>
+
+
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"

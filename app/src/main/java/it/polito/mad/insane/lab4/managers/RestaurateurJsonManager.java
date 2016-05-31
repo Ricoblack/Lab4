@@ -36,7 +36,8 @@ import it.polito.mad.insane.lab4.data.User;
  * Created by carlocaramia on 08/04/16.
  */
 // Singleton Class
-public class RestaurateurJsonManager {
+public class RestaurateurJsonManager
+{
 
     private static RestaurateurJsonManager instance = null;
 

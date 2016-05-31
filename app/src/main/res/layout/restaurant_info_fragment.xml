@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+            android:id="@+id/restaurantGeneralInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal"
+            card_view:cardCornerRadius="2dp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/general_info"
+                    android:textSize="16sp"
+                    android:drawablePadding="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_room_black_24dp"
+                    android:drawableLeft="@drawable/ic_room_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/restaurantName"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"/>
+
+                <TextView
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/address"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/editAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/university"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"/>
+
+                <TextView
+                    android:id="@+id/university"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+            android:id="@+id/restaurantFoodInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal"
+            card_view:cardCornerRadius="2dp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food_and_ambience"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_restaurant_black_24dp"
+                    android:drawableLeft="@drawable/ic_room_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Cuisine"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"/>
+
+                <TextView
+                    android:id="@+id/cuisineType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/shortDescription"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"/>
+
+                <TextView
+                    android:id="@+id/editDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+            android:id="@+id/restaurantTimeTables"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal"
+            card_view:cardCornerRadius="2dp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timetables_edit"
+                    android:drawablePadding="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_access_time_black_24dp"
+                    android:drawableLeft="@drawable/ic_access_time_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/openingHour"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/openingHour_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/openingHour"
+                        android:layout_weight="0.2"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:background="@color/colorAccent"
+                        android:textColor="@color/white"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/closingHour"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/closingHour_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/closingHour"
+                        android:layout_weight="0.2"
+                        android:textSize="16sp"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:background="@color/colorAccent"
+                        android:textColor="@color/white"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timetables_info"
+                    android:textSize="14sp"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:id="@+id/editTimeNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+            </LinearLayout>
+
+
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+            android:id="@+id/restaurantExtraInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal"
+            card_view:cardCornerRadius="2dp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/extra_info"
+                    android:drawablePadding="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_access_time_black_24dp"
+                    android:drawableLeft="@drawable/ic_loupe_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payment"
+                    android:textSize="14sp"
+                    android:paddingTop="10dp"/>
+
+                <TextView
+                    android:id="@+id/editPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/services"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/editServices"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

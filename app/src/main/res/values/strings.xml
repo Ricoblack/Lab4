@@ -142,4 +142,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="restaurateur_login">I am a restaurateur</string>
+    <string name="user_login">I am a user</string>
 </resources>
