@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "208515405120",
+    "firebase_url": "https://lab4-insane.firebaseio.com",
+    "project_id": "lab4-insane",
+    "storage_bucket": "lab4-insane.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208515405120:android:09b093d8b17bcca7",
+        "android_client_info": {
+          "package_name": "it.polito.mad.insane.lab4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208515405120-vcr6pdu2bbpdotj304vt3r58rcipf8ah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMqM-5pRyY6bjudE8HVYuhzCYh6VMbt4o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

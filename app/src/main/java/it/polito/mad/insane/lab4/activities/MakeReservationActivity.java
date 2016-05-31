@@ -60,86 +60,7 @@ public class MakeReservationActivity extends AppCompatActivity {
         restaurantId = bundle.getString("ID");
 
         manager = RestaurateurJsonManager.getInstance(this);
-        List<Dish> dishes = manager.getRestaurant(restaurantId).getDishes();
 
-        setTitle(manager.getRestaurant(restaurantId).getProfile().getRestaurantName());
-
-        final List<Dish> dishesToDisplay = new ArrayList<>();
-        final ArrayList<Integer> quantitiesToDisplay = new ArrayList<>();
-        totalPrice = 0;
-        for(int i=0; i < dishes.size(); i++){
-            if(quantities[i] != 0){
-                dishesToDisplay.add(dishes.get(i));
-                quantitiesToDisplay.add(quantities[i]);
-                totalPrice += dishes.get(i).getPrice() * quantities[i];
-            }
-        }
-        TextView tv = (TextView) findViewById(R.id.reservation_total_price);
-        DecimalFormat df = new DecimalFormat("0.00");
-        if (tv != null) {
-            tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
-        }
-
-//        tv = (TextView) findViewById(R.id.reservation_restaurant_name);
-//        if (tv != null) {
-//            tv.setText(manager.getRestaurant(restaurantId).getProfile().getRestaurantName());
-//        }
-
-        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_cardview, dishesToDisplay, quantitiesToDisplay,0);
-
-        ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
-        if (mylist != null) {
-            mylist.setAdapter(adapter);
-        }
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Button hour= (Button) findViewById(R.id.reservation_hour);
-                    Button date=(Button) findViewById(R.id.reservation_date);
-
-                    if(hour.getText().toString().toLowerCase().equals("select") || date.getText().toString().toLowerCase().equals("select")){
-                        Toast.makeText(MakeReservationActivity.this, getString(R.string.specify_date_time), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if(reservationDate == null){
-                        Toast.makeText(MakeReservationActivity.this, getString(R.string.specify_date_time), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    //Verifico che i costraint per la prenotazione siano rispettati: in orario di lavoro e tra almeno un ora
-                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId)==false){
-                        Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MakeReservationActivity.this);
-                    builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title))
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    saveReservation(dishesToDisplay,quantitiesToDisplay);
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                }
-                            });
-
-                    Dialog dialog = builder.create();
-                    dialog.show();
-                }
-            });
-        }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Fix Portrait Mode
-        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
-                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
-        {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
     }
 
     @Override
@@ -170,35 +91,7 @@ public class MakeReservationActivity extends AppCompatActivity {
 
     private void saveReservation(List<Dish> dishesToDisplay, List<Integer> quantitiesToDisplay) {
 
-        //T-ODO far fare al manager la creazione della booking del db, così ce lo troviamo pronto per l'online
-        Booking b = new Booking();
-        b.setDate_time(reservationDate);
-        b.setDishes(dishesToDisplay);
-        b.setQuantities(quantitiesToDisplay);
 
-        b.setID(String.valueOf(manager.getNextReservationID()));
-        b.setRestaurantID(restaurantId);
-        b.setTotalPrice(totalPrice);
-        EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
-        if(et != null){
-            additionalNotes = et.getText().toString();
-            b.setNote(additionalNotes);
-        }
-
-        // decrease the available quantity for the reserved dishes
-        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
-            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailability_qty();
-//            int newQuantity = quantity - quantities[i];
-            manager.getRestaurant(restaurantId).getDishes().get(i).setAvailability_qty(quantity - quantities[i]);
-            manager.saveDbApp();
-        }
-
-        manager.getBookings().add(b);
-        manager.saveDbApp();
-
-        finish(); // finish() the current activity
-        Intent intent = new Intent(MakeReservationActivity.this, MyReservationsActivity.class);
-        startActivity(intent); // start the new activity
     }
 
     @Override

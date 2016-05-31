@@ -11,21 +11,26 @@ import java.util.List;
 public class Booking implements Serializable,  Comparable<Booking>
 {
 
-    private String ID;
+
     private Calendar date_time;
     /** N.B. "dishes" and "quantities" have a 1v1 matching! don't reorder/modify individually! **/
     private List<Dish> dishes = new ArrayList<>();
     private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
-    private String note;
-    private String restaurantID;
+    private java.lang.String note;
+    private java.lang.String restaurantID;
     private double totalPrice;
 
 
-    public String getID() {
+    //campi del db
+    private java.lang.String ID;
+    private List<String> dishesIdList;
+    private String userId;
+
+    public java.lang.String getID() {
         return ID;
     }
 
-    public void setID(String ID) {
+    public void setID(java.lang.String ID) {
         this.ID = ID;
     }
 
@@ -46,11 +51,11 @@ public class Booking implements Serializable,  Comparable<Booking>
         this.date_time = date_time;
     }
 
-    public String getNote() {
+    public java.lang.String getNote() {
         return note;
     }
 
-    public void setNote(String note) {
+    public void setNote(java.lang.String note) {
         this.note = note;
     }
 
@@ -59,11 +64,11 @@ public class Booking implements Serializable,  Comparable<Booking>
         return this.getDate_time().compareTo(another.getDate_time());
     }
 
-    public String getRestaurantID() {
+    public java.lang.String getRestaurantID() {
         return restaurantID;
     }
 
-    public void setRestaurantID(String restaurantID) {
+    public void setRestaurantID(java.lang.String restaurantID) {
         this.restaurantID = restaurantID;
     }
 
@@ -91,5 +96,22 @@ public class Booking implements Serializable,  Comparable<Booking>
             result += a;
 
         return result;
+    }
+
+    public List<java.lang.String> getDishesIdList() {
+        return dishesIdList;
+    }
+
+    public void setDishesIdList(List<String> dishesIdList) {
+        this.dishesIdList = dishesIdList;
+    }
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

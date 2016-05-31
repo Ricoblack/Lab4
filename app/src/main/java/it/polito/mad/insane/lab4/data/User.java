@@ -7,49 +7,67 @@ import java.util.List;
  */
 public class User {
 
+    //campi del db
     private String userId;
     private String userName;
     private String userSurname;
-    private List<String> reviewIds;
-    private List<Booking> bookingIds;
+    private List<String> reviewsIdList;
+    private List<String> bookingsIdList;
+    private List<String> favouritesIdList;
 
-    public String getUserId() {
+    public User(String userId,String userName,String userSurname,List<String> reviewsIdList,List<String> bookingsIdList,List<String>favouritesIdList){
+        this.userId=userId;
+        this.userName=userName;
+        this.reviewsIdList=reviewsIdList;
+        this.bookingsIdList=bookingsIdList;
+        this.favouritesIdList=favouritesIdList;
+
+    }
+    public java.lang.String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(java.lang.String userId) {
         this.userId = userId;
     }
 
-    public String getUserName() {
+    public java.lang.String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public void setUserName(java.lang.String userName) {
         this.userName = userName;
     }
 
-    public String getUserSurname() {
+    public java.lang.String getUserSurname() {
         return userSurname;
     }
 
-    public void setUserSurname(String userSurname) {
+    public void setUserSurname(java.lang.String userSurname) {
         this.userSurname = userSurname;
     }
 
-    public List<String> getReviewIds() {
-        return reviewIds;
+    public List<java.lang.String> getReviewsIdList() {
+        return reviewsIdList;
     }
 
-    public void setReviewIds(List<String> reviewIds) {
-        this.reviewIds = reviewIds;
+    public void setReviewsIdList(List<java.lang.String> reviewsIdList) {
+        this.reviewsIdList = reviewsIdList;
     }
 
-    public List<Booking> getBookingIds() {
-        return bookingIds;
+    public List<String> getBookingsIdList() {
+        return bookingsIdList;
     }
 
-    public void setBookingIds(List<Booking> bookingIds) {
-        this.bookingIds = bookingIds;
+    public void setBookingsIdList(List<String> bookingsIdList) {
+        this.bookingsIdList = bookingsIdList;
+    }
+
+    public List<java.lang.String> getFavouritesIdList() {
+        return favouritesIdList;
+    }
+
+    public void setFavouritesIdList(List<java.lang.String> favouritesIdList) {
+        this.favouritesIdList = favouritesIdList;
     }
 }

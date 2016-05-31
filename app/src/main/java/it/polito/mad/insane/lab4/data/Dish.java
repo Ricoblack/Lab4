@@ -6,7 +6,11 @@ import java.io.Serializable;
  * Created by carlocaramia on 08/04/16.
  */
 public class Dish implements Serializable /*, Parcelable*/{
+
+    //campi del db
     private String ID;
+
+
     private String name;
     private String description;
     private String photoPath;

@@ -4,17 +4,26 @@ import android.location.Location;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by carlocaramia on 28/04/16.
  */
 public class Restaurant {
 
-    private static final int N_SCORES = 3;
-    private RestaurateurProfile profile;
-    private List<Review> reviews;
-    private List<Dish> dishes;
+    //campi del db
+    private List<String> bookingsIdList;
+    private List<String> reviewsIdList;
+    private Map<String,Dish> dishMap;
     private String restaurantID;
+    private RestaurateurProfile profile;
+
+
+    private static final int N_SCORES = 3;
+
+    //private List<Review> reviews;
+    private List<Dish> dishes;
+
     private double[] totalScores = new double[N_SCORES];
     private double[] avgScores = new double[N_SCORES];
     private double avgFinalScore;
@@ -22,16 +31,20 @@ public class Restaurant {
 
     public Restaurant(){}
 
-    public Restaurant(String restaurantID, RestaurateurProfile profile, List<Review> reviews, List<Dish> dishes, Location location) {
+    public Restaurant(String restaurantID, RestaurateurProfile profile, List<String> reviewsIdList,List<String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
         this.profile = profile;
-        this.reviews = reviews;
-        this.dishes = dishes;
+        this.reviewsIdList = reviewsIdList;
+        this.bookingsIdList=bookingsIdList;
+        //this.dishes = (List<Dish>) dishMap.values();
         this.restaurantID = restaurantID;
         this.location=location;
+
+        this.dishMap=dishMap;
 
         // calcolo a priori punteggio del ristorante. quando avremo il server sarebbe conveniente farlo sul server per ridurre
         // la quantita' di calcoli sul client. in questo caso ogni activity fa una semplice get invece di calcolare ogni volta il punteggio
 
+        /*
         Arrays.fill(totalScores, 0);
         for(Review r : this.reviews){
             for(int i = 0; i < N_SCORES; i++){
@@ -43,7 +56,7 @@ public class Restaurant {
             avgFinalScore += avgScores[i];
         }
         avgFinalScore = avgFinalScore/N_SCORES;
-
+        */
     }
 
     public RestaurateurProfile getProfile() {
@@ -54,13 +67,7 @@ public class Restaurant {
         this.profile = profile;
     }
 
-    public List<Review> getReviews() {
-        return reviews;
-    }
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
 
     public List<Dish> getDishes() {
         return dishes;
@@ -94,5 +101,29 @@ public class Restaurant {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public Map<String, Dish> getDishMap() {
+        return dishMap;
+    }
+
+    public void setDishMap(Map<String, Dish> dishMap) {
+        this.dishMap = dishMap;
+    }
+
+    public List<String> getReviewsIdList() {
+        return reviewsIdList;
+    }
+
+    public void setReviewsIdList(List<String> reviewsIdList) {
+        this.reviewsIdList = reviewsIdList;
+    }
+
+    public List<String> getBookingsIdList() {
+        return bookingsIdList;
+    }
+
+    public void setBookingsIdList(List<String> bookingsIdList) {
+        this.bookingsIdList = bookingsIdList;
     }
 }

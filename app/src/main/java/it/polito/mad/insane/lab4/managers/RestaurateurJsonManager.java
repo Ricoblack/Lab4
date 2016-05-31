@@ -3,7 +3,11 @@ package it.polito.mad.insane.lab4.managers;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.location.Location;
+import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -13,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,6 +26,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +48,7 @@ public class RestaurateurJsonManager
     private static RestaurateurJsonManager instance = null;
 
     private static DbApp dbApp;
+    private static DbAppReset dbAppReset;
     private Context myContext;
     private Location location;  //setto il polito come location dove cercare i ristoranti
 
@@ -62,7 +69,7 @@ public class RestaurateurJsonManager
 
     private RestaurateurJsonManager(Context myContext)
     {
-        RestaurateurJsonManager.dbApp = new DbApp();
+        RestaurateurJsonManager.dbAppReset = new DbAppReset();
         this.myContext = myContext;
 
         //set fake location
@@ -70,31 +77,31 @@ public class RestaurateurJsonManager
         location.setLatitude(45.064480);
         location.setLongitude(7.660290);
 
-        //Se l'app è aperta per la prima volta non c'è un json di reset, qui lo creo e lo riempio con dati random
+        //Se l'app è aperta per la prima volta non c'è un json di reset, qui lo creo e lo riempio con dati random per il reset
         //Altrimenti recupero il json salvato
 
         if(getDbApp()==null)
         {
-            dbApp.fillDbApp();
+            dbAppReset.fillDbAppReset();
             saveDbApp();
         }
         else
         {
             //recupero json
-            this.dbApp = getDbApp();
+            this.dbAppReset = getDbApp();
         }
 
-        //TODO: creare connessione al db remoto
+
     }
 
     public String getJsonString()
     {
         //ritorna la stringa del Json
 
-        if(dbApp == null) return "";
+        if(dbAppReset == null) return "";
 
         Gson gson = new Gson();
-        String json = gson.toJson(dbApp);
+        String json = gson.toJson(dbAppReset);
 
         return json;
     }
@@ -110,7 +117,7 @@ public class RestaurateurJsonManager
         File directory = cw.getDir("jsonDir", Context.MODE_PRIVATE);
 
         // Create jsonDir
-        File mypath = new File(directory,"dbapp.json");
+        File mypath = new File(directory,"dbappreset.json");
 
         BufferedWriter bufferedWriter=null;
 
@@ -139,7 +146,7 @@ public class RestaurateurJsonManager
         return 0; //tutto ok
     }
 
-    public DbApp getDbApp()
+    public DbAppReset getDbApp()
     {
         Gson gson = new Gson();
 
@@ -160,68 +167,23 @@ public class RestaurateurJsonManager
         }
 
         //convert the json string back to object
-        DbApp obj = gson.fromJson(bufferedReader, DbApp.class);
+        DbAppReset obj = gson.fromJson(bufferedReader, DbAppReset.class);
 
-        this.dbApp = obj;
+        this.dbAppReset = obj;
         return obj;
     }
 
-    public List<Restaurant> getRestaurants(){
-        return this.getDbApp().getRestaurants();
-    }
-    public List<Booking> getBookings() { return this.getDbApp().getBookings(); }
+    public void resetDbApp(){
+        //contact firebase server and reset all db
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/");
 
-    public Restaurant getRestaurant(String restaurantID){
-        for(Restaurant r : this.getDbApp().getRestaurants())
-            if(r.getRestaurantID().equals(restaurantID))
-                return r;
-        return null;
-    }
-
-    public List<Restaurant> getFilteredRestaurants(String hint) {
-        ArrayList<Restaurant> restaurants=new ArrayList<Restaurant>();
-
-        //find restaurants whose name includes 'hint' string
-        for (Restaurant r : this.getRestaurants()){
-
-            if(r.getProfile().getRestaurantName().toLowerCase().contains(hint.toLowerCase())){
-                restaurants.add(r);
+        myRef.setValue(dbAppReset, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Toast.makeText(myContext,"its done O.O",Toast.LENGTH_LONG).show();
             }
-        }
-
-        return restaurants;
-    }
-
-    public List<Restaurant> getAdvancedFilteredRestaurants(String distanceValue, String priceValue, String typeValue, String timeValue) {
-        ArrayList<Restaurant> restaurants=new ArrayList<Restaurant>();
-
-        //finds restaurant whose values respect filtering
-        for(Restaurant r : this.getRestaurants()){
-
-            if(distanceValue.equals("")==false){
-                //check if respects distance contraint
-
-                if(checkIfRespectsDistanceConstraint(r,distanceValue)==false) continue;
-            }
-
-            if(priceValue.equals("")==false){
-                if(checkIfRespectsPriceConstraint(r,priceValue)==false) continue;
-            }
-
-            if(typeValue.equals("")==false){
-                if(checkIfRespectsTypeConstraint(r,typeValue)==false) continue;
-            }
-
-            if(timeValue.equals("")==false){
-                if(checkIfRespectsTimeConstraint(r,timeValue)==false) continue;
-
-            }
-
-            restaurants.add(r);
-        }
-
-        return restaurants;
-
+        });
     }
 
     private boolean checkIfRespectsDistanceConstraint(Restaurant r, String distanceValue) {
@@ -306,49 +268,6 @@ public class RestaurateurJsonManager
         return this.location;
     }
 
-    /**
-     * delete the reservation with ID given as parameter
-     * @param id
-     * @return the object removed
-     */
-    public void deleteReservation(String id) {
-        //delete reservation with ID=id and save db again
-        //ArrayList<Booking> bookings= (ArrayList<Booking>) dbApp.getBookings();
-        for(int i=0;i<dbApp.getBookings().size();i++)
-        {
-            Booking b = dbApp.getBookings().get(i);
-            if(b.getID().equals(id))
-            {
-                for(int j=0; j<b.getDishes().size(); j++) { //prendo i piatti della prenotazione
-                    for (Dish d : getRestaurant(b.getRestaurantID()).getDishes()) { //prendo i piatti di tutto il menu' del ristorante
-                        if (b.getDishes().get(j).getID().equals(d.getID())) { //se sono uguali...
-                            int quantity = d.getAvailability_qty();
-                            d.setAvailability_qty(quantity + b.getQuantities().get(j)); //... aggiorno la quantita' nel menu'
-                        }
-                    }
-                }
-                dbApp.getBookings().remove(i);
-                this.saveDbApp();
-                return;
-            }
-        }
-        return;
-    }
-
-    public boolean reservationRespectsTimeContraints(Calendar reservationDate, String restaurantId) {
-//        //controllo se la prenotazione è minimo tra un ora e nell'orario di apertura
-        Calendar cal = Calendar.getInstance(); // creates calendar
-        cal.setTime(new Date()); // sets calendar time/date
-        cal.add(Calendar.MINUTE, 1); //add one minute
-
-        RestaurateurProfile profile=getRestaurant(restaurantId).getProfile();
-
-        if(reservationDate.after(cal) && timeIsAfter(reservationDate.getTime(),profile.getOpeningHour())&&
-                timeIsBefore(reservationDate.getTime(),profile.getClosingHour()) ) return true;
-        return false;
-
-
-    }
     private boolean timeIsBefore(Date d1, Date d2) {
         DateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
         return f.format(d1).compareTo(f.format(d2)) < 0;
@@ -418,7 +337,7 @@ public class RestaurateurJsonManager
 
         public void fillDbApp()
         {
-
+        /*
             Date dClose = new Date();  //Debug date to test if time constraints on reservations work
             dClose.setHours(23);  //tutti i ristoranti sono aperti dalle 7.05 fino alle 23.55
             dClose.setMinutes(55);
@@ -500,7 +419,7 @@ public class RestaurateurJsonManager
             //CARICAMENTO DATI BOOKINGS
             this.bookings=new ArrayList<Booking>();
 
-            /*
+
 
             Booking newBooking = new Booking();
             newBooking.setID("1");
@@ -527,7 +446,7 @@ public class RestaurateurJsonManager
             newBooking2.setRestaurantID("001");
             bookings.add(newBooking2);
 
-            Booking newBooking3 = new Booking();
+            String newBooking3 = new String();
             newBooking3.setID("3");
             ArrayList<Dish> elenco3=new ArrayList<Dish>();
             elenco3.add(dishes1.get(3));
@@ -538,7 +457,7 @@ public class RestaurateurJsonManager
             newBooking3.setRestaurantID("001");
             bookings.add(newBooking3);
 
-            Booking newBooking4 = new Booking();
+            String newBooking4 = new String();
             newBooking4.setID("4");
             ArrayList<Dish> elenco4=new ArrayList<Dish>();
             elenco4.add(dishes2.get(2));
@@ -550,7 +469,7 @@ public class RestaurateurJsonManager
             newBooking4.setRestaurantID("002");
             bookings.add(newBooking4);
 
-            Booking newBooking5 = new Booking();
+            String newBooking5 = new String();
             newBooking5.setID("5");
             ArrayList<Dish> elenco5=new ArrayList<Dish>();
             elenco5.add(dishes2.get(0));
@@ -565,7 +484,7 @@ public class RestaurateurJsonManager
             bookings.add(newBooking5);
 
 
-            Booking newBooking6 = new Booking();
+            String newBooking6 = new String();
             newBooking6.setID("6");
             ArrayList<Dish> elenco6=new ArrayList<Dish>();
             elenco6.add(dishes2.get(3));
@@ -577,7 +496,7 @@ public class RestaurateurJsonManager
             newBooking6.setNote("Se arrivo tardi tenete il piatto al caldo, grazie");
             bookings.add(newBooking6);
 
-            Booking newBooking7 = new Booking();
+            String newBooking7 = new String();
             newBooking7.setID("7");
             ArrayList<Dish> elenco7=new ArrayList<Dish>();
             elenco7.add(dishes2.get(0));
@@ -590,7 +509,7 @@ public class RestaurateurJsonManager
             newBooking7.setRestaurantID("002");
             bookings.add(newBooking7);
 
-            Booking newBooking8 = new Booking();
+            String newBooking8 = new String();
             newBooking8.setID("8");
             ArrayList<Dish> elenco8=new ArrayList<Dish>();
             elenco8.add(dishes3.get(3));
@@ -604,7 +523,7 @@ public class RestaurateurJsonManager
             newBooking8.setRestaurantID("003");
             bookings.add(newBooking8);
 
-            Booking newBooking9 = new Booking();
+            String newBooking9 = new String();
             newBooking9.setID("9");
             ArrayList<Dish> elenco9=new ArrayList<Dish>();
             elenco9.add(dishes3.get(1));
@@ -618,7 +537,7 @@ public class RestaurateurJsonManager
             newBooking9.setRestaurantID("003");
             bookings.add(newBooking9);
 
-            Booking newBooking10 = new Booking();
+            String newBooking10 = new String();
             newBooking10.setID("10");
             ArrayList<Dish> elenco10=new ArrayList<Dish>();
             elenco10.add(dishes1.get(3));
@@ -631,7 +550,7 @@ public class RestaurateurJsonManager
             newBooking10.setDate_time(calendar);
             newBooking10.setRestaurantID("003");
             bookings.add(newBooking10);
-            */
+
 
             //CARICAMENTO REVIEWS
 
@@ -643,7 +562,7 @@ public class RestaurateurJsonManager
             Review rev1=new Review();
             rev1.setRestaurantID("001");
             rev1.setDate(new Date());
-            rev1.setUserID(1);
+            rev1.setUserID("0001");
             rev1.setScores(new double[]{8.0,10.0,7.0});
             rev1.setTitle("Splendido locale per studenti");
             rev1.setText("Il cibo è ottimo e la presenza del wifi garantisce il possibile studio anche a pranzo, i prezzi sono ottimi," +
@@ -651,9 +570,9 @@ public class RestaurateurJsonManager
             reviews1.add(rev1);
 
             Review rev2=new Review();
-            rev2.setRestaurantID("001");
+            rev2.setRestaurantID("002");
             rev2.setDate(new Date());
-            rev2.setUserID(2);
+            rev2.setUserID("0002");
             rev2.setScores(new double[]{8.0,10.0,7.0});
             rev2.setTitle("Ottimo locale");
             rev2.setText("Servizio rapido");
@@ -737,7 +656,7 @@ public class RestaurateurJsonManager
             this.restaurants.add(restaurant3);
             this.restaurants.add(restaurant4);
             this.restaurants.add(restaurant5);
-
+        */
         }
 
 
@@ -750,12 +669,13 @@ public class RestaurateurJsonManager
 
 
     //New instance of DbApp class, used for debugging and for remotely resetting the online Db
-    private class DbAppNew
+    private class DbAppReset
     {
         private Map<String,Restaurant> restaurants;
         private Map<String,Booking> bookings;
         private Map<String,User> users;
         private Map<String,Review> reviews;
+
 
 
         public Map<String, Restaurant> getRestaurants() {
@@ -788,6 +708,134 @@ public class RestaurateurJsonManager
 
         public void setReviews(Map<String, Review> reviews) {
             this.reviews = reviews;
+        }
+
+        public void fillDbAppReset(){
+
+            //CARICAMENTO DATI ORARI
+            Date dClose = new Date();  //Debug date to test if time constraints on reservations work
+            dClose.setHours(23);  //tutti i ristoranti sono aperti dalle 7.05 fino alle 23.55
+            dClose.setMinutes(55);
+
+            Date dStart=new Date();
+            dStart.setHours(7);
+            dStart.setMinutes(5);
+
+            //CARICMENTO DATI LOCATIONS
+            Location loc1 = new Location("001");
+            loc1.setLatitude(45.064136);
+            loc1.setLongitude(7.659370);
+
+            Location loc2 = new Location("002");
+            loc2.setLatitude(45.064605);
+            loc2.setLongitude(7.668833);
+
+            Location loc3 = new Location("003");
+            loc3.setLatitude(45.064151);
+            loc3.setLongitude(7.673167);
+
+            Location loc4 = new Location("004");
+            loc4.setLatitude(45.0595401);
+            loc4.setLongitude(7.6771335);
+
+            Location loc5 = new Location("005");
+            loc5.setLatitude(45.0608443);
+            loc5.setLongitude(7.6803656);
+
+            //CARICAMENTO DATI PROFILES
+            RestaurateurProfile profile =new RestaurateurProfile("Pizza-Pazza","Corso Duca Degli Abruzzi, 10","PoliTo","Pizza","Venite a provare la pizza più gustosa di Torino",dStart,dClose,"Chiusi la domenica","Bancomat","Wifi-free");
+            RestaurateurProfile profile2=new RestaurateurProfile("Just Pasta", "Via Roma, 55", "UniTo","Pasta","Pasta per tutti i gusti",dStart,dClose,"Aperti tutta la settimana","Bancomat,carta","Privo di barriere architettoniche");
+            RestaurateurProfile profile3=new RestaurateurProfile("Pub la locanda", "Via Lagrange, 17", "UniTo","Ethnic", "L'isola felice dello studente universitario",dStart,dClose,"Giropizza il sabato sera","Bancomat","Wifi-free");
+            RestaurateurProfile profile4=new RestaurateurProfile("Mangiaquì restaurant", "Via Saluzzo, 17", "PoliTo","Ethnic", "L'isola del miglior ovolollo studentesco",new Date(),new Date(),"Cicchetto di ben venuto il sabato sera","Bancomat","Wifi-free");
+            RestaurateurProfile profile5=new RestaurateurProfile("Origami restaurant", "Piazza Vittorio Veneto, 18F", "UniTo","Ethnic", "Il miglior giapponese di Torino",dStart,dClose,"All you can eat a pranzo","Bancomat","Wifi-free");
+
+            //CARICAMENTO DATI DISHES
+            Dish dish1 = new Dish("0","Margherita", "La classica delle classiche", null, 5.50, 5, false);
+            Dish dish2 = new Dish("1","Marinara", "Occhio all'aglio!", null, 2.50, 200, false);
+            Dish dish3 = new Dish("2","Tonno", "Il gusto in una parola", null, 3.50, 300, false);
+            Dish dish4 = new Dish("3","Politecnico", "Solo per veri ingegneri", null, 4.50, 104, false);
+            Dish dish5 = new Dish("4","30L", "Il nome dice tutto: imperdibile", null, 5.55, 150, false);
+            Dish dish6 = new Dish("5","Hilary", "Dedicata ad una vecchia amica", null, 5.55, 150, false);
+
+            //CARICAMENTO DATI BOOKINGS
+            Booking newBooking = new Booking();
+            newBooking.setID("1");
+            List<String> elenco1=new ArrayList<String>();
+            elenco1.add("1");
+            elenco1.add("0");
+            newBooking.setDishesIdList(elenco1);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 15);
+            newBooking.setDate_time(calendar);
+            newBooking.setNote("Il cibo deve essere ben cotto");
+            newBooking.setRestaurantID("001");
+            newBooking.setUserId("0001");
+
+            //CARICAMENTO DATI REVIEWS
+            Review rev1=new Review();
+            rev1.setReviewId("1234");
+            rev1.setRestaurantID("001");
+            rev1.setDate(new Date());
+            rev1.setUserID("0001");
+            rev1.setScores(new double[]{8.0,10.0,7.0});
+            rev1.setTitle("Splendido locale per studenti");
+            rev1.setText("Il cibo è ottimo e la presenza del wifi garantisce il possibile studio anche a pranzo, i prezzi sono ottimi," +
+                    " e inoltre aggiungiamo qualche riga per vedere se funziona la TextView espandibile!!!");
+
+
+            Review rev2=new Review();
+            rev2.setReviewId("5678");
+            rev2.setRestaurantID("002");
+            rev2.setDate(new Date());
+            rev2.setUserID("0002");
+            rev2.setScores(new double[]{8.0,10.0,7.0});
+            rev2.setTitle("Ottimo locale");
+            rev2.setText("Servizio rapido");
+
+
+            //CARICAMENTO DATI USERS
+            List<String> rev1Ids=new ArrayList<String>();
+            rev1Ids.add("1234");
+            rev1Ids.add("5678");
+            List<String> booking1Ids=new ArrayList<String>();
+            booking1Ids.add("1");
+            User u1=new User("0001","Pinco","Pallino",rev1Ids,booking1Ids,null);
+
+            //CARICAMENTO DATI RESTAURANTS //String restaurantID, RestaurateurProfile profile, List<String> reviewsIdList,List<String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
+            List<String> rev1List=new ArrayList<String>();
+            rev1List.add("1234");
+            List<String> book1List=new ArrayList<String>();
+            book1List.add("1");
+            HashMap<String,Dish> dish1Map=new HashMap<>();
+            dish1Map.put("0",dish1);
+            dish1Map.put("1",dish2);
+            Restaurant restaurant1=new Restaurant("001", profile, rev1List,book1List,dish1Map,loc1);
+
+            List<String> rev2List=new ArrayList<>();
+            rev2List.add("5678");
+            List<String> book2List=new ArrayList<>();
+            HashMap<String,Dish> dish2Map=new HashMap<>();
+            dish2Map.put("2",dish3);
+            dish2Map.put("3",dish4);
+            Restaurant restaurant2=new Restaurant("002",profile2,rev2List,book2List,dish2Map,loc2);
+
+            //CARICAMENTO DATI PRECEDENTI NEL DBNEW
+            this.restaurants=new HashMap<String,Restaurant>();
+            this.bookings=new HashMap<String,Booking>();
+            this.users=new HashMap<String,User>();
+            this.reviews=new HashMap<String,Review>();
+
+            restaurants.put("001",restaurant1);
+            restaurants.put("002",restaurant2);
+
+            bookings.put("1",newBooking);
+
+            users.put("0001",u1);
+
+            reviews.put("1234",rev1);
+            reviews.put("5678",rev2);
+
+
         }
 
     }

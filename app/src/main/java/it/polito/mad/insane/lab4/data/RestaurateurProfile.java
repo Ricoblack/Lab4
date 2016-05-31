@@ -17,6 +17,7 @@ public class RestaurateurProfile {
     private String timeInfo;
     private String paymentMethod;
     private String additionalServices;
+    private String imagePath;
 
 
 
@@ -119,5 +120,13 @@ public class RestaurateurProfile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

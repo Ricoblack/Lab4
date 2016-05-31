@@ -7,8 +7,12 @@ import java.util.Date;
  * Created by Renato on 28/04/2016.
  */
 public class Review implements Serializable{
-    private int userID;
+
+    //campi del db
+    private String reviewId;
+    private String userID;
     private Date date;
+
     private double[] scores;
     private double finalScore;
     private String title;
@@ -17,11 +21,11 @@ public class Review implements Serializable{
     private String restaurantID;
 
 
-    public int getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 
@@ -85,4 +89,11 @@ public class Review implements Serializable{
         this.restaurantID = restaurantID;
     }
 
+    public String getReviewId() {
+        return reviewId;
+    }
+
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
+    }
 }

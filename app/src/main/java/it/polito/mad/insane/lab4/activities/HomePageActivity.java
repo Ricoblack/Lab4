@@ -48,31 +48,10 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        manager.resetDbApp();
+
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
-        if(sv != null){
-            sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String newText) {
-                    if (newText.equals("")) setUpRestaurantsRecycler(manager.getRestaurants());
-                    else {
-                        listaFiltrata = manager.getFilteredRestaurants(newText);
-                        setUpRestaurantsRecycler(listaFiltrata);
-                    }
-                    return true;
-                }
 
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    if (newText.equals("")) setUpRestaurantsRecycler(manager.getRestaurants());
-                    else {
-                        listaFiltrata = manager.getFilteredRestaurants(newText);
-                        setUpRestaurantsRecycler(listaFiltrata);
-                    }
-
-                    return true;
-                }
-            });
-        }
 
         if(sv != null) {
             sv.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +88,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             editor.apply();
         }
         // set up clean Recycler
-        setUpRestaurantsRecycler(manager.getRestaurants());
+        //setUpRestaurantsRecycler(manager.getRestaurants());
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -155,21 +134,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     {
         super.onResume();
         this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-        if(this.mPrefs != null)
-        {
-            //If coming from filter activity...
-            listaFiltrata = manager.getAdvancedFilteredRestaurants(this.mPrefs.getString("distanceValue",""),this.mPrefs
-                    .getString("priceValue",""),this.mPrefs.getString("typeValue",""),this.mPrefs.getString("timeValue",""));
 
-            setUpRestaurantsRecycler(listaFiltrata);
-
-
-        }else
-        {
-            //No filtering needed
-            setUpRestaurantsRecycler(manager.getRestaurants());
-        }
-        setUpSpinner();
 
     }
 

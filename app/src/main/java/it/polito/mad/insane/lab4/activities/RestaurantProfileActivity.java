@@ -89,7 +89,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         manager = RestaurateurJsonManager.getInstance(this);
         if(getIntent().getStringExtra("ID") != null) {
             restaurantId = getIntent().getStringExtra("ID");
-            setTitle(manager.getRestaurant(restaurantId).getProfile().getRestaurantName());
+            //setTitle(manager.getRestaurant(restaurantId).getProfile().getRestaurantName());
         }
 
 //        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.scrollView);
@@ -347,10 +347,10 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             // take the list of dishes form manager
             manager = RestaurateurJsonManager.getInstance(getActivity());
-            Restaurant restaurant = manager.getRestaurant(restaurantId);
+           // Restaurant restaurant = manager.getRestaurant(restaurantId);
 
             // set up dishesRecyclerView
-            final RecyclerView rv = setupDishesRecyclerView(rootView, restaurant.getDishes());
+            //final RecyclerView rv = setupDishesRecyclerView(rootView, restaurant.getDishes());
             TextView tv = (TextView) rootView.findViewById((R.id.show_reservation_button));
             if(tv != null) {
                 if(dishesAdapter != null)
@@ -387,10 +387,11 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
-            Restaurant restaurant = manager.getRestaurant(restaurantId);
+            //Restaurant restaurant = manager.getRestaurant(restaurantId);
 
-            setupReviewsRecyclerView(rootView, restaurant.getReviews());
+            //setupReviewsRecyclerView(rootView, restaurant.getReviews());
 
+            /*
             TextView tv = (TextView) rootView.findViewById(R.id.restaurant_final_score);
             DecimalFormat df = new DecimalFormat("0.0");
             tv.setText(df.format(restaurant.getAvgFinalScore()));
@@ -409,7 +410,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             tv = (TextView) rootView.findViewById(R.id.score_3);
             df = new DecimalFormat("0.0");
             tv.setText(df.format(restaurant.getAvgScores()[2]));
-
+    */
             return rootView;
         }
 
@@ -542,6 +543,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
         private void loadProfileData(View rootView) {
             manager = RestaurateurJsonManager.getInstance(getActivity());
+
+            /*
             RestaurateurProfile profile = manager.getRestaurant(restaurantId).getProfile();
 
             TextView tv;
@@ -605,6 +608,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 int minute = cal.get(Calendar.MINUTE);
                 tv.setText(String.format("%s:%s", pad(hourOfDay), pad(minute)));
             }
+            */
         }
 
         private String pad(int c) {
