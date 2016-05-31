@@ -28,7 +28,7 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
     private LayoutInflater mInflater;
     private RestaurateurJsonManager manager;
 
-    //construttore
+    //costruttore
     public RestaurantsRecyclerAdapter(Context context, List<Restaurant> data) {
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
@@ -94,7 +94,6 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 
         public RestaurantsViewHolder(View itemView) {
 
-
             super(itemView);
             this.cardView = itemView;
             this.title = (TextView) itemView.findViewById(R.id.restaurant_title);
@@ -125,7 +124,5 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
             float distance = current.getLocation().distanceTo(manager.getLocation());
             this.distance.setText(String.format("%.0f",distance)+"m");
         }
-
-
     }
 }
