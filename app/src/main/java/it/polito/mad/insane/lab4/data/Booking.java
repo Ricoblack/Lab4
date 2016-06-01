@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by miche on 06/04/2016.
@@ -23,7 +24,7 @@ public class Booking implements Serializable,  Comparable<Booking>
 
     //campi del db
     private java.lang.String ID;
-    private List<String> dishesIdList;
+    private Map<String, String> dishesIdList;
     private String userId;
 
     public java.lang.String getID() {
@@ -98,11 +99,11 @@ public class Booking implements Serializable,  Comparable<Booking>
         return result;
     }
 
-    public List<java.lang.String> getDishesIdList() {
+    public Map<String, String> getDishesIdList() {
         return dishesIdList;
     }
 
-    public void setDishesIdList(List<String> dishesIdList) {
+    public void setDishesIdList(Map<String, String> dishesIdList) {
         this.dishesIdList = dishesIdList;
     }
 

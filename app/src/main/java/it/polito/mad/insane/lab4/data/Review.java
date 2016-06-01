@@ -6,14 +6,14 @@ import java.util.Date;
 /**
  * Created by Renato on 28/04/2016.
  */
-public class Review implements Serializable{
+public class Review {
 
     //campi del db
     private String reviewId;
     private String userID;
     private Date date;
 
-    private double[] scores;
+    //private double[] scores;
     private double finalScore;
     private String title;
     private String text;
@@ -37,10 +37,12 @@ public class Review implements Serializable{
         this.date = date;
     }
 
+    /*
     public double[] getScores() {
         return scores;
     }
-
+    */
+    /*
     public void setScores(double[] scores) {
         this.scores = scores;
         double sum = 0;
@@ -48,7 +50,7 @@ public class Review implements Serializable{
             sum += d;
         this.finalScore = sum/scores.length;
     }
-
+    */
     public double getFinalScore() {
         return finalScore;
     }

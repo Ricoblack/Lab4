@@ -1,6 +1,7 @@
 package it.polito.mad.insane.lab4.data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by carlocaramia on 25/05/16.
@@ -11,11 +12,11 @@ public class User {
     private String userId;
     private String userName;
     private String userSurname;
-    private List<String> reviewsIdList;
-    private List<String> bookingsIdList;
-    private List<String> favouritesIdList;
+    private Map<String,String> reviewsIdList;
+    private Map<String,String> bookingsIdList;
+    private Map<String,String> favouritesIdList;
 
-    public User(String userId,String userName,String userSurname,List<String> reviewsIdList,List<String> bookingsIdList,List<String>favouritesIdList){
+    public User(String userId, String userName, String userSurname, Map<String, String> reviewsIdList, Map<String, String> bookingsIdList, Map<String, String> favouritesIdList){
         this.userId=userId;
         this.userName=userName;
         this.reviewsIdList=reviewsIdList;
@@ -47,27 +48,27 @@ public class User {
         this.userSurname = userSurname;
     }
 
-    public List<java.lang.String> getReviewsIdList() {
+    public Map<String, String> getReviewsIdList() {
         return reviewsIdList;
     }
 
-    public void setReviewsIdList(List<java.lang.String> reviewsIdList) {
+    public void setReviewsIdList(Map<String, String> reviewsIdList) {
         this.reviewsIdList = reviewsIdList;
     }
 
-    public List<String> getBookingsIdList() {
+    public Map<String, String> getBookingsIdList() {
         return bookingsIdList;
     }
 
-    public void setBookingsIdList(List<String> bookingsIdList) {
+    public void setBookingsIdList(Map<String, String> bookingsIdList) {
         this.bookingsIdList = bookingsIdList;
     }
 
-    public List<java.lang.String> getFavouritesIdList() {
+    public Map<String, String> getFavouritesIdList() {
         return favouritesIdList;
     }
 
-    public void setFavouritesIdList(List<java.lang.String> favouritesIdList) {
+    public void setFavouritesIdList(Map<String, String> favouritesIdList) {
         this.favouritesIdList = favouritesIdList;
     }
 }

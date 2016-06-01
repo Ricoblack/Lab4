@@ -12,8 +12,8 @@ import java.util.Map;
 public class Restaurant {
 
     //campi del db
-    private List<String> bookingsIdList;
-    private List<String> reviewsIdList;
+    private Map<String,String> bookingsIdList;
+    private Map<String,String> reviewsIdList;
     private Map<String,Dish> dishMap;
     private String restaurantID;
     private RestaurateurProfile profile;
@@ -22,16 +22,16 @@ public class Restaurant {
     private static final int N_SCORES = 3;
 
     //private List<Review> reviews;
-    private List<Dish> dishes;
+    //private List<Dish> dishes;
 
-    private double[] totalScores = new double[N_SCORES];
-    private double[] avgScores = new double[N_SCORES];
+    //private double[] totalScores = new double[N_SCORES];
+    //private double[] avgScores = new double[N_SCORES];
     private double avgFinalScore;
     private Location location;
 
     public Restaurant(){}
 
-    public Restaurant(String restaurantID, RestaurateurProfile profile, List<String> reviewsIdList,List<String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
+    public Restaurant(String restaurantID, RestaurateurProfile profile, Map<String,String> reviewsIdList,Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
         this.profile = profile;
         this.reviewsIdList = reviewsIdList;
         this.bookingsIdList=bookingsIdList;
@@ -69,13 +69,7 @@ public class Restaurant {
 
 
 
-    public List<Dish> getDishes() {
-        return dishes;
-    }
 
-    public void setDishes(List<Dish> dishes) {
-        this.dishes = dishes;
-    }
 
     public String getRestaurantID() {
         return restaurantID;
@@ -85,14 +79,16 @@ public class Restaurant {
         this.restaurantID = restaurantID;
     }
 
+    /*
     public double[] getAvgScores(){
         return this.avgScores;
     }
-    public double getAvgFinalScore(){
-        return this.avgFinalScore;
-    }
     public double[] getTotalScores (){
         return this.totalScores;
+    }
+    */
+    public double getAvgFinalScore(){
+        return this.avgFinalScore;
     }
 
     public Location getLocation() {
@@ -111,19 +107,19 @@ public class Restaurant {
         this.dishMap = dishMap;
     }
 
-    public List<String> getReviewsIdList() {
+    public Map<String, String> getReviewsIdList() {
         return reviewsIdList;
     }
 
-    public void setReviewsIdList(List<String> reviewsIdList) {
+    public void setReviewsIdList(Map<String, String> reviewsIdList) {
         this.reviewsIdList = reviewsIdList;
     }
 
-    public List<String> getBookingsIdList() {
+    public Map<String, String> getBookingsIdList() {
         return bookingsIdList;
     }
 
-    public void setBookingsIdList(List<String> bookingsIdList) {
+    public void setBookingsIdList(Map<String, String> bookingsIdList) {
         this.bookingsIdList = bookingsIdList;
     }
 }
