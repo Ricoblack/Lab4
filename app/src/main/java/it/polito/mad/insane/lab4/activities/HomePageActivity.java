@@ -25,14 +25,23 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.HomeSpinnerAdapter;
 import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.data.Review;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class HomePageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -48,7 +57,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        manager.resetDbApp();
+        //manager.resetDbApp();
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
 
@@ -87,8 +96,28 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             editor.clear();
             editor.apply();
         }
+
         // set up clean Recycler
-        //setUpRestaurantsRecycler(manager.getRestaurants());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/restaurants");
+
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,Restaurant> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+                setUpRestaurantsRecycler(new ArrayList<Restaurant>(r.values()));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||

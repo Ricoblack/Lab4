@@ -3,7 +3,7 @@ package it.polito.mad.insane.lab4.managers;
 import android.location.Location;
 
 
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -149,26 +149,26 @@ public class DbAppReset
             rev1Ids.put("1234","1234");
             rev1Ids.put("1234","5678");
             Map<String,String> booking1Ids=new HashMap<>();
-            booking1Ids.put("1","1");
+            booking1Ids.put("book1","1");
             User u1=new User("0001","Pinco","Pallino",rev1Ids,booking1Ids,null);
 
             //CARICAMENTO DATI RESTAURANTS
             Map<String,String> rev1List=new HashMap<>();
             rev1List.put("1234","1234");
             Map<String,String> book1List=new HashMap<>();
-            book1List.put("1","1");
+            book1List.put("book1","1");
             HashMap<String,Dish> dish1Map=new HashMap<>();
-            dish1Map.put("0",dish1);
-            dish1Map.put("1",dish2);
-            Restaurant restaurant1=new Restaurant("001", profile, rev1List,book1List,dish1Map,loc1);
+            dish1Map.put("dish1",dish1);
+            dish1Map.put("dish2",dish2);
+            Restaurant restaurant1=new Restaurant("001", profile, rev1List,book1List,dish1Map,null);
 
             Map<String,String> rev2List=new HashMap<>();
             rev2List.put("5678","5678");
             Map<String,String> book2List=new HashMap<>();
             HashMap<String,Dish> dish2Map=new HashMap<>();
-            dish2Map.put("2",dish3);
-            dish2Map.put("3",dish4);
-            Restaurant restaurant2=new Restaurant("002",profile2,rev2List,book2List,dish2Map,loc2);
+            dish2Map.put("dish2",dish3);
+            dish2Map.put("dish3",dish4);
+            Restaurant restaurant2=new Restaurant("002",profile2,rev2List,book2List,dish2Map,null);
 
 
         //CARICAMENTO DATI PRECEDENTI NEL DBNEW
@@ -177,10 +177,10 @@ public class DbAppReset
         this.users=new HashMap<String,User>();
         this.reviews=new HashMap<String,Review>();
 
-        restaurants.put("001",restaurant1);
-        restaurants.put("002",restaurant2);
+        restaurants.put("rest1",restaurant1);
+        restaurants.put("rest2",restaurant2);
 
-        bookings.put("1",newBooking);
+        bookings.put("book1",newBooking);
 
         users.put("0001",u1);
 

@@ -40,6 +40,9 @@ public class Dish implements Serializable /*, Parcelable*/{
         this.isSelected = selected;
     }
 
+    public Dish() {
+
+    }
 
     public String getID()
     {

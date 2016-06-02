@@ -121,7 +121,8 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
             DecimalFormat df = new DecimalFormat("0.0");
             this.avgFinalScore.setText(df.format(current.getAvgFinalScore()));
             //this.numReview.setText(Integer.toString(current.getReviews().size())+" ");
-            float distance = current.getLocation().distanceTo(manager.getLocation());
+            float distance=3;
+            //float distance = current.getLocation().distanceTo(manager.getLocation());
             this.distance.setText(String.format("%.0f",distance)+"m");
         }
     }
