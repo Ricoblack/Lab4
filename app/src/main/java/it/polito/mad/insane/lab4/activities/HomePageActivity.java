@@ -57,7 +57,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        manager.resetDbApp();
+        //manager.resetDbApp();
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
 
@@ -105,13 +105,13 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,Restaurant> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
+                HashMap<String,Restaurant> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
-                setUpRestaurantsRecycler(new ArrayList<Restaurant>(r.values()));
+                setUpRestaurantsRecycler(new ArrayList<>(r.values()));
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
