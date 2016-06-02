@@ -9,11 +9,11 @@ import java.util.Map;
 /**
  * Created by miche on 06/04/2016.
  */
-public class Booking implements Serializable,  Comparable<Booking>
+public class Booking implements Serializable
 {
 
 
-    private Calendar date_time;
+    //private Calendar date_time;
     /** N.B. "dishes" and "quantities" have a 1v1 matching! don't reorder/modify individually! **/
     private List<Dish> dishes = new ArrayList<>();
     private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
@@ -44,6 +44,7 @@ public class Booking implements Serializable,  Comparable<Booking>
         this.dishes = dishes;
     }
 
+    /*
     public Calendar getDate_time() {
         return date_time;
     }
@@ -51,7 +52,7 @@ public class Booking implements Serializable,  Comparable<Booking>
     public void setDate_time(Calendar date_time) {
         this.date_time = date_time;
     }
-
+    */
     public java.lang.String getNote() {
         return note;
     }
@@ -60,10 +61,6 @@ public class Booking implements Serializable,  Comparable<Booking>
         this.note = note;
     }
 
-    @Override
-    public int compareTo(Booking another) {
-        return this.getDate_time().compareTo(another.getDate_time());
-    }
 
     public java.lang.String getRestaurantID() {
         return restaurantID;

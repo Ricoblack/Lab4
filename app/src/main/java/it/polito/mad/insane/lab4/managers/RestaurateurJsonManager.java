@@ -179,7 +179,7 @@ public class RestaurateurJsonManager
         myRef.setValue(dbAppReset, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                Toast.makeText(myContext,"its done O.O",Toast.LENGTH_LONG).show();
+                Toast.makeText(myContext,"DB RESETTATO",Toast.LENGTH_LONG).show();
             }
         });
     }

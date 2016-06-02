@@ -26,10 +26,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
@@ -341,12 +350,36 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
         private View menuLayout(LayoutInflater inflater, ViewGroup container)
         {
-            View rootView = inflater.inflate(R.layout.restaurant_menu_fragment, container, false);
+            final View rootView = inflater.inflate(R.layout.restaurant_menu_fragment, container, false);
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
 //            tv.setVisibility(View.VISIBLE);
 
-            // take the list of dishes form manager
+            // take the list of dishes from manager
             manager = RestaurateurJsonManager.getInstance(getActivity());
+
+            // set up clean Recycler
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
+
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String,Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
+                        @Override
+                        protected Object clone() throws CloneNotSupportedException {
+                            return super.clone();
+                        }
+                    });
+                    setupDishesRecyclerView(rootView, new ArrayList<>(r.values()));
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+
+                }
+            });
+
            // Restaurant restaurant = manager.getRestaurant(restaurantId);
 
             // set up dishesRecyclerView
@@ -380,37 +413,70 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         }
 
         private View reviewsLayout(LayoutInflater inflater, ViewGroup container) {
-            View rootView = inflater.inflate(R.layout.restaurant_reviews_fragment, container, false);
+            final View rootView = inflater.inflate(R.layout.restaurant_reviews_fragment, container, false);
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
 //            tv.setVisibility(View.GONE);
 
-
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
-            //Restaurant restaurant = manager.getRestaurant(restaurantId);
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference(MessageFormat.format("/restaurants/{0}", restaurantId));
 
-            //setupReviewsRecyclerView(rootView, restaurant.getReviews());
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
 
-            /*
-            TextView tv = (TextView) rootView.findViewById(R.id.restaurant_final_score);
-            DecimalFormat df = new DecimalFormat("0.0");
-            tv.setText(df.format(restaurant.getAvgFinalScore()));
+                    TextView tv = (TextView) rootView.findViewById(R.id.restaurant_final_score);
+                    DecimalFormat df = new DecimalFormat("0.0");
+                    tv.setText(df.format(restaurant.getAvgFinalScore()));
 
-            tv = (TextView) rootView.findViewById(R.id.reviews_number);
-            tv.setText(String.format(getResources().getString(R.string.reviewsFormat), restaurant.getReviews().size()));
+                    tv = (TextView) rootView.findViewById(R.id.reviews_number);
+                    tv.setText(String.format(getResources().getString(R.string.reviewsFormat), restaurant.getReviewsIdList().size()));
 
-            tv = (TextView) rootView.findViewById(R.id.score_1);
-            df = new DecimalFormat("0.0");
-            tv.setText(df.format(restaurant.getAvgScores()[0]));
+                    //TODO inserire i vari score nel DB, ora c'e' solo il finalScore
+//                    tv = (TextView) rootView.findViewById(R.id.score_1);
+//                    df = new DecimalFormat("0.0");
+//                    tv.setText(df.format(restaurant.getAvgScores()[0]));
+//
+//                    tv = (TextView) rootView.findViewById(R.id.score_2);
+//                    df = new DecimalFormat("0.0");
+//                    tv.setText(df.format(restaurant.getAvgScores()[1]));
+//
+//                    tv = (TextView) rootView.findViewById(R.id.score_3);
+//                    df = new DecimalFormat("0.0");
+//                    tv.setText(df.format(restaurant.getAvgScores()[2]));
 
-            tv = (TextView) rootView.findViewById(R.id.score_2);
-            df = new DecimalFormat("0.0");
-            tv.setText(df.format(restaurant.getAvgScores()[1]));
+                    final ArrayList<String> reviewsIdList = new ArrayList<>(restaurant.getReviewsIdList().values());
+                    DatabaseReference myRef2 = database.getReference("/reviews");
 
-            tv = (TextView) rootView.findViewById(R.id.score_3);
-            df = new DecimalFormat("0.0");
-            tv.setText(df.format(restaurant.getAvgScores()[2]));
-    */
+                    myRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap<String, Review> data = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Review>>() {
+                                @Override
+                                protected Object clone() throws CloneNotSupportedException {
+                                    return super.clone();
+                                }
+                            });
+                            ArrayList<Review> reviews = new ArrayList<>();
+                            for (String id : reviewsIdList)
+                                reviews.add(data.get(id));
+                            setupReviewsRecyclerView(rootView, reviews);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
             return rootView;
         }
 
@@ -541,74 +607,86 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             }
         }
 
-        private void loadProfileData(View rootView) {
+        private void loadProfileData(final View rootView) {
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
-            /*
-            RestaurateurProfile profile = manager.getRestaurant(restaurantId).getProfile();
+            // set up clean Recycler
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/profile");
 
-            TextView tv;
 
-            tv = (TextView) rootView.findViewById(R.id.editName);
-            if (tv != null) {
-                if(profile.getRestaurantName() != null)
-                    tv.setText(profile.getRestaurantName());
-            }
-            tv = (TextView) rootView.findViewById(R.id.editAddress);
-            if (tv != null) {
-                if(profile.getAddress() != null)
-                    tv.setText(profile.getAddress());
-            }
-            tv = (TextView) rootView.findViewById(R.id.editDescription);
-            if (tv != null) {
-                if(profile.getDescription() != null)
-                    tv.setText(profile.getDescription());
-            }
-            tv = (TextView) rootView.findViewById(R.id.editTimeNotes);
-            if (tv != null) {
-                if(profile.getTimeInfo() != null)
-                    tv.setText(profile.getTimeInfo());
-            }
-            tv = (TextView) rootView.findViewById(R.id.editPayment);
-            if (tv != null) {
-                if(profile.getPaymentMethod() != null)
-                    tv.setText(profile.getPaymentMethod());
-            }
-            tv = (TextView) rootView.findViewById(R.id.editServices);
-            if (tv != null) {
-                if(profile.getAdditionalServices() != null)
-                    tv.setText(profile.getAdditionalServices());
-            }
-            tv = (TextView) rootView.findViewById(R.id.university);
-            if (tv != null) {
-                if(profile.getNearbyUniversity() != null)
-                    tv.setText(profile.getNearbyUniversity());
-            }
-            tv = (TextView) rootView.findViewById(R.id.cuisineType);
-            if (tv != null) {
-                if(profile.getCuisineType() != null)
-                    tv.setText(profile.getCuisineType());
-            }
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    RestaurateurProfile profile = dataSnapshot.getValue(RestaurateurProfile.class);
+                    TextView tv;
 
-            tv = (TextView) rootView.findViewById(R.id.openingHour_title);
-            if(tv != null){
-                Date date = profile.getOpeningHour();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
-                int minute = cal.get(Calendar.MINUTE);
-                tv.setText(String.format("%s:%s", pad(hourOfDay), pad(minute)));
-            }
-            tv = (TextView) rootView.findViewById(R.id.closingHour_title);
-            if(tv != null){
-                Date date = profile.getClosingHour();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
-                int minute = cal.get(Calendar.MINUTE);
-                tv.setText(String.format("%s:%s", pad(hourOfDay), pad(minute)));
-            }
-            */
+                    tv = (TextView) rootView.findViewById(R.id.editName);
+                    if (tv != null) {
+                        if(profile.getRestaurantName() != null)
+                            tv.setText(profile.getRestaurantName());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.editAddress);
+                    if (tv != null) {
+                        if(profile.getAddress() != null)
+                            tv.setText(profile.getAddress());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.editDescription);
+                    if (tv != null) {
+                        if(profile.getDescription() != null)
+                            tv.setText(profile.getDescription());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.editTimeNotes);
+                    if (tv != null) {
+                        if(profile.getTimeInfo() != null)
+                            tv.setText(profile.getTimeInfo());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.editPayment);
+                    if (tv != null) {
+                        if(profile.getPaymentMethod() != null)
+                            tv.setText(profile.getPaymentMethod());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.editServices);
+                    if (tv != null) {
+                        if(profile.getAdditionalServices() != null)
+                            tv.setText(profile.getAdditionalServices());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.university);
+                    if (tv != null) {
+                        if(profile.getNearbyUniversity() != null)
+                            tv.setText(profile.getNearbyUniversity());
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.cuisineType);
+                    if (tv != null) {
+                        if(profile.getCuisineType() != null)
+                            tv.setText(profile.getCuisineType());
+                    }
+
+                    tv = (TextView) rootView.findViewById(R.id.openingHour_title);
+                    if(tv != null){
+                        Date date = profile.getOpeningHour();
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(date);
+                        int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
+                        int minute = cal.get(Calendar.MINUTE);
+                        tv.setText(String.format("%s:%s", pad(hourOfDay), pad(minute)));
+                    }
+                    tv = (TextView) rootView.findViewById(R.id.closingHour_title);
+                    if(tv != null){
+                        Date date = profile.getClosingHour();
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(date);
+                        int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
+                        int minute = cal.get(Calendar.MINUTE);
+                        tv.setText(String.format("%s:%s", pad(hourOfDay), pad(minute)));
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
 
         private String pad(int c) {

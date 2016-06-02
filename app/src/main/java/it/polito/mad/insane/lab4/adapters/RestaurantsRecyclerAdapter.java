@@ -106,7 +106,6 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 
             // set the onClickListener to the View
             this.cardView.setOnClickListener(cardViewListener);
-
         }
 
         public void setData(Restaurant current, int position) {
