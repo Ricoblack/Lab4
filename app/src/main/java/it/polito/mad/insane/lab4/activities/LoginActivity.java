@@ -123,7 +123,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
                         Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
                     } else {
-                        //TODO far partire l'app ristoratore quando verrà risolto il problema delle date e dell'ora (versione beta)
                         Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
                         startActivity(intent);
