@@ -167,8 +167,10 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
         {
             this.bookingID.setText(current.getID());
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            String date = dateFormat.format(current.getDate_time().getTime());
-            this.bookingTime.setText(date);
+            //TODO scommentare una volta gestiti i calendar sul DB
+//            String date = dateFormat.format(current.getDate_time().getTime());
+            //TODO scommentare una volta gestiti i calendar sul DB
+//            this.bookingTime.setText(date);
             this.bookingDishNum.setText(Integer.toString(current.getDishes().size()));
 
             this.position = position;

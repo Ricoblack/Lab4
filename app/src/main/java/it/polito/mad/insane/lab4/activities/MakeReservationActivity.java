@@ -47,7 +47,6 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static int[] quantities;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +59,6 @@ public class MakeReservationActivity extends AppCompatActivity {
         restaurantId = bundle.getString("ID");
 
         manager = RestaurateurJsonManager.getInstance(this);
-
     }
 
     @Override
@@ -163,9 +161,6 @@ public class MakeReservationActivity extends AppCompatActivity {
         else
             return "0" + String.valueOf(c);
     }
-
-
-
 
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 

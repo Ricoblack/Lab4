@@ -3,7 +3,7 @@ package it.polito.mad.insane.lab4.managers;
 import android.location.Location;
 
 
-
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -115,7 +115,9 @@ public class DbAppReset
         elenco1.put("dish1","1");
         newBooking.setDishesIdList(elenco1);
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
+        //calendar.set(Calendar.HOUR_OF_DAY, 15);
+        SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyy HH:mm");
+        newBooking.setDateTime(parser.format(calendar.getTime()));
         //newBooking.setDate_time(calendar);
         newBooking.setNote("Il cibo deve essere ben cotto");
         newBooking.setRestaurantID("001");
@@ -156,7 +158,9 @@ public class DbAppReset
             Map<String,String> rev1List=new HashMap<>();
             rev1List.put("1234","1234");
             Map<String,String> book1List=new HashMap<>();
-            book1List.put("book1","1");
+            //TODO qui c'era scritto ("book1", "1") ma in realta' l'id della prima prenotazione e' appunto book1, quindi l'ho modificato
+            //TODO giusto Charles? (Renato)
+            book1List.put("book1","book1");
             HashMap<String,Dish> dish1Map=new HashMap<>();
             dish1Map.put("dish1",dish1);
             dish1Map.put("dish2",dish2);

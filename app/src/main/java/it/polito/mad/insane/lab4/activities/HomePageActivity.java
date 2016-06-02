@@ -41,7 +41,6 @@ import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.HomeSpinnerAdapter;
 import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Restaurant;
-import it.polito.mad.insane.lab4.data.Review;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class HomePageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -57,7 +56,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //manager.resetDbApp();
+        manager.resetDbApp();
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
 

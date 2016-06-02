@@ -5,8 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -36,6 +34,7 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,25 +44,23 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
 import it.polito.mad.insane.lab4.adapters.BookingsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyMenu;
 import it.polito.mad.insane.lab4.data.EditProfile;
-import it.polito.mad.insane.lab4.data.Restaurant;
 
 public class HomeRestaurateur extends AppCompatActivity {
 
-    //TODO per ora non è collegata alla app principale a causa del problema delle date e dell'ora (Federico)
+    //FIXME quando avvii l'activity non viene visualizzato nulla (Renato)
     //private static RestaurateurJsonManager manager = null;
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
     private static int globalHour = -1;
     //TODO ricordare che questo ID non dovrà essere fisso
     private String restaurantID = "rest1";
-    private ArrayList<Booking> bookings = null;
-    private  ArrayList<Booking> totalList = null;
-
+    private static ArrayList<Booking> bookings = new ArrayList<>();
+    private static ArrayList<String> listIdBookings = new ArrayList<>();
+//    private  ArrayList<Booking> totalList = new ArrayList<>();
 
     // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
 
@@ -150,6 +147,7 @@ public class HomeRestaurateur extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
+
         //adapter.notifyDataSetChanged();
         TextView tv = (TextView) findViewById(R.id.home_title_day);
         if(tv != null)
@@ -352,34 +350,19 @@ public class HomeRestaurateur extends AppCompatActivity {
         for(int i=0; i<24; i++)
             hours[i] = 0;
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/"+ restaurantID +"/bookingsIdList");
-
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
-                    @Override
-                    protected Object clone() throws CloneNotSupportedException {
-                        return super.clone();
-                    }
-                });
-                ArrayList<String> listIDBookings = new ArrayList<String>(r.values());
-                bookings = getBookings(listIDBookings);
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
         //List<Booking> bookings = null;
 
         // aggiungo all'i-esimo posto (che corrisponde all'i-esima ora) il numero di piatti prenotati
-        for(Booking b : bookings)
-            hours[b.getDate_time().get(Calendar.HOUR_OF_DAY)] += b.getDishes().size();
+        for(Booking b : bookings) {
+            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Calendar cal = Calendar.getInstance();
+            try {
+                cal.setTime(parser.parse(b.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            hours[cal.get(Calendar.HOUR_OF_DAY)] += b.getDishes().size();
+        }
 
         //creo un vettore di DataPoint per riempire il grafico. quest'oggetto contiene un item per ogni ora del giorno
         DataPoint[] graphBookings= new DataPoint[24];
@@ -399,29 +382,6 @@ public class HomeRestaurateur extends AppCompatActivity {
 
         editGraph(series); //modifica l'aspetto visivo del grafico
     }
-
-    public ArrayList<Booking> getBookings(List<String> idList){
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final ArrayList<Booking> tmpBooking= null;
-        for(String id: idList) {
-            DatabaseReference myRef = database.getReference("/bookings/"+id);
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Booking r = dataSnapshot.getValue(Booking.class);
-                    tmpBooking.add(r);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-        return tmpBooking;
-    }
-
 
     public void setDate(int year, int month, int day)
     {
@@ -458,56 +418,48 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private List<Booking> getBookingsOfDay(int year,int month,int day)
     {
-        ArrayList<Booking> bookingList= new ArrayList<Booking>();
+        updateBookings();
+        ArrayList<Booking> dayBookings= new ArrayList<>();
 
-        //FIXME prelevare dati da firebase
-        //ArrayList<Booking> totalList= (ArrayList<Booking>) HomeRestaurateur.manager.getBookings();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/"+ restaurantID +"/bookingsIdList");
-
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
-                    @Override
-                    protected Object clone() throws CloneNotSupportedException {
-                        return super.clone();
-                    }
-                });
-                ArrayList<String> listIDBookings = new ArrayList<String>(r.values());
-                totalList = getBookings(listIDBookings);
+        for(int i=0; i < bookings.size(); i++){
+            Booking booking = bookings.get(i);
+            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Calendar cal = Calendar.getInstance();
+            try {
+                cal.setTime(parser.parse(booking.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        for(int i=0;i<totalList.size();i++){
-            Booking booking=totalList.get(i);
-            Calendar c=booking.getDate_time();
-            if(c.get(Calendar.YEAR)==year && c.get(Calendar.MONTH)==month && c.get(Calendar.DAY_OF_MONTH)==day){
-                bookingList.add(booking);
+            if(cal.get(Calendar.YEAR)==year && cal.get(Calendar.MONTH)==month && cal.get(Calendar.DAY_OF_MONTH)==day){
+                dayBookings.add(booking);
             }
         }
-        Collections.sort(bookingList);
-        return bookingList;
+        Collections.sort(dayBookings);
+        return dayBookings;
     }
 
 
 
     private List<Booking> getBookingsOfHour(int hour)
     {
+        updateBookings();
 
-        ArrayList<Booking> bookingList = new ArrayList<Booking>();
-        ArrayList<Booking> totalList = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR),
+        ArrayList<Booking> hourBookings = new ArrayList<>();
+        ArrayList<Booking> dayBookings = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR),
                 globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
-        for(Booking b : totalList){
-            if (b.getDate_time().get(Calendar.HOUR_OF_DAY) >= hour)
-                bookingList.add(b);
+
+        for(Booking b : dayBookings){
+            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Calendar cal = Calendar.getInstance();
+            try {
+                cal.setTime(parser.parse(b.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (cal.get(Calendar.HOUR_OF_DAY) >= hour)
+                hourBookings.add(b);
         }
-        return bookingList;
+        return hourBookings;
     }
 
 //    private Date convertStringToDate(String dateString){
@@ -541,6 +493,72 @@ public class HomeRestaurateur extends AppCompatActivity {
         if(tv != null)
             tv.setText(R.string.all_hours);
         setUpRecyclerDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH), globalDate.get(Calendar.DAY_OF_MONTH));
+    }
+
+    private void updateBookings(){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+
+                listIdBookings = new ArrayList<>(r.values());
+
+                ArrayList<String> currentIdList = new ArrayList<String>(r.values());
+                if(!currentIdList.equals(listIdBookings)) {
+                    listIdBookings = currentIdList;
+                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
+                    for (int i = 0; i < listIdBookings.size(); i++) {
+                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
+                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Booking r = dataSnapshot.getValue(Booking.class);
+                                bookings.add(r);
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+
+//                METODO ALTERNATIVO: per ora non funziona neanche con questo
+//                DatabaseReference myRef2 = database.getReference("/bookings");
+//
+//                myRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        HashMap<String, Booking> data = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
+//                            @Override
+//                            protected Object clone() throws CloneNotSupportedException {
+//                                return super.clone();
+//                            }
+//                        });
+//                        for (String id : listIdBookings)
+//                            bookings.add(data.get(id));
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

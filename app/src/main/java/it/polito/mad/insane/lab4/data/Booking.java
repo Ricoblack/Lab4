@@ -1,6 +1,8 @@
 package it.polito.mad.insane.lab4.data;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.Map;
 /**
  * Created by miche on 06/04/2016.
  */
-public class Booking implements Serializable
+public class Booking implements Serializable, Comparable<Booking>
 {
 
 
@@ -26,6 +28,7 @@ public class Booking implements Serializable
     private java.lang.String ID;
     private Map<String, String> dishesIdList;
     private String userId;
+    private String dateTime;
 
     public java.lang.String getID() {
         return ID;
@@ -53,6 +56,7 @@ public class Booking implements Serializable
         this.date_time = date_time;
     }
     */
+
     public java.lang.String getNote() {
         return note;
     }
@@ -111,5 +115,36 @@ public class Booking implements Serializable
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+
+
+    @Override
+    public int compareTo(Booking another) {
+        SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(parser.parse(dateTime));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar cal2 = Calendar.getInstance();
+        try {
+            cal.setTime(parser.parse(another.getDateTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return cal.compareTo(cal2);
     }
 }
