@@ -57,7 +57,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //manager.resetDbApp();
+        manager.resetDbApp();
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
 

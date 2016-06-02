@@ -110,13 +110,13 @@ public class DbAppReset
 
         //CARICAMENTO DATI BOOKINGS
         Booking newBooking = new Booking();
-        newBooking.setID("1");
+        newBooking.setID("book1");
         Map<String,String> elenco1=new HashMap<>();
-        elenco1.put("1","1");
+        elenco1.put("dish1","1");
         newBooking.setDishesIdList(elenco1);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 15);
-        newBooking.setDate_time(calendar);
+        //newBooking.setDate_time(calendar);
         newBooking.setNote("Il cibo deve essere ben cotto");
         newBooking.setRestaurantID("001");
         newBooking.setUserId("0001");
@@ -125,7 +125,7 @@ public class DbAppReset
             //CARICAMENTO DATI REVIEWS
             Review rev1=new Review();
             rev1.setReviewId("1234");
-            rev1.setRestaurantID("001");
+            rev1.setRestaurantID("rest1");
             rev1.setDate(new Date());
             rev1.setUserID("0001");
             //rev1.setScores(new double[]{8.0,10.0,7.0});
@@ -136,7 +136,7 @@ public class DbAppReset
 
             Review rev2=new Review();
             rev2.setReviewId("5678");
-            rev2.setRestaurantID("002");
+            rev2.setRestaurantID("rest2");
             rev2.setDate(new Date());
             rev2.setUserID("0002");
             //rev2.setScores(new double[]{8.0,10.0,7.0});
@@ -160,7 +160,7 @@ public class DbAppReset
             HashMap<String,Dish> dish1Map=new HashMap<>();
             dish1Map.put("dish1",dish1);
             dish1Map.put("dish2",dish2);
-            Restaurant restaurant1=new Restaurant("001", profile, rev1List,book1List,dish1Map,null);
+            Restaurant restaurant1=new Restaurant("rest1", profile, rev1List,book1List,dish1Map,null);
 
             Map<String,String> rev2List=new HashMap<>();
             rev2List.put("5678","5678");
@@ -168,7 +168,7 @@ public class DbAppReset
             HashMap<String,Dish> dish2Map=new HashMap<>();
             dish2Map.put("dish2",dish3);
             dish2Map.put("dish3",dish4);
-            Restaurant restaurant2=new Restaurant("002",profile2,rev2List,book2List,dish2Map,null);
+            Restaurant restaurant2=new Restaurant("rest2",profile2,rev2List,book2List,dish2Map,null);
 
 
         //CARICAMENTO DATI PRECEDENTI NEL DBNEW
