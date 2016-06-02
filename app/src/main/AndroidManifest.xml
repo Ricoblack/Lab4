@@ -71,6 +71,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.MyReservationsActivity" />
         </activity>
+        <activity
+            android:name=".activities.HomeRestaurateur"
+            android:label="@string/title_activity_home_restaurateur"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.ViewBooking"
+            android:label="@string/title_activity_view_booking"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

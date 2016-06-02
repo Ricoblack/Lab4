@@ -27,7 +27,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String typeConsumer = "User";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +88,46 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        //Radio batton gruop
+        RadioButton typeUserRadioButton = (RadioButton) findViewById(R.id.user_login_radiobutton);
 
+        if(typeUserRadioButton != null) {
+            typeUserRadioButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    typeConsumer = "User";
+                }
+            });
+        }
+        RadioButton typeRestaurateurRadioButton = (RadioButton) findViewById(R.id.restaurateur_login_radiobutton);
+
+        if(typeRestaurateurRadioButton != null) {
+            typeRestaurateurRadioButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    typeConsumer = "Rest";
+                }
+            });
+        }
+
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+
+        if(mEmailSignInButton != null) {
+            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO aggiungere controllo id e password
+                    //attemptLogin();
+                    if (typeConsumer.equals("User")) {
+                        //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
+                        Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
+                    } else {
+                        //TODO far partire l'app ristoratore quando verrà risolto il problema delle date e dell'ora
+                        Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }

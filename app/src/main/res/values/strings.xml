@@ -144,4 +144,60 @@
     </string>
     <string name="restaurateur_login">I am a restaurateur</string>
     <string name="user_login">I am a user</string>
+    <string name="title_activity_home_restaurateur">HomeRestaurateur</string>
+    <string name="action_daily_menu">Menu</string>
+    <string name="home_name">Home</string>
+    <string name="title_activity_edit_dish">Edit Dish</string>
+    <string name="title_activity_daily_menu">Daily Menu</string>
+    <string name="action_edit_profile">Edit Profile</string>
+    <string name="title_activity_edit_profile">Edit Profile</string>
+    <string name="timetables">Timetables Notes:</string>
+    <string name="campus">University Campus</string>
+    <string name="edit_cover">Edit</string>
+    <string name="edit_dish_name">Name</string>
+    <string name="edit_dish_description">Description: </string>
+    <string name="edit_dish_availab_qty">Available Quantity:</string>
+    <string name="edit_dish_price">Price:</string>
+    <string name="new_dish">Add Dish</string>
+    <string name="error_input_number">Invalid input number (Price or Quantity)</string>
+    <string name="confirm_save_dish">Dish saved successfully</string>
+    <string name="confirm_add_dish">Dish added successfully</string>
+
+    <string-array name="university_array">
+        <item> <i>Choose a campus... </i> </item>
+        <item>PoliTo</item>
+        <item>UniTo</item>
+    </string-array>
+    <string-array name="cuisine_array">
+        <item> <i>Choose a type... </i></item>
+        <item>Italian</item>
+        <item>Pizza</item>
+        <item>Sandwiches</item>
+        <item>Ethnic</item>
+    </string-array>
+    <string name="title_activity_view_booking">ViewBooking</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="gallery_image">Choose from gallery</string>
+    <string name="error_save_dish">Ops! something goes wrong: dish info not saved</string>
+    <string name="error_some_empty_fill">All field must be filled</string>
+    <string name="error_processing_img">Ops! something goes wrong while process img</string>
+    <string name="confirm_save_dishPhoto">Photo changed</string>
+    <string name="error_rotating_img">Ops. Something goes wrong while rotate the image</string>
+    <string name="error_save_image">Ops! Something goes wrong while saving image</string>
+    <string name="error_create_newDish">Ops. Something goes wrong while create the new dish</string>
+    <string name="dish_info">Dish Info</string>
+    <string name="all_hours">All Hours</string>
+    <string name="confirm_delete_booking">Booking evaded</string>
+    <string name="delete_dish">delete_dish</string>
+    <string name="confirm_delete_dish">Dish deleted</string>
+    <string name="graph_title">Dishes</string>
+    <string name="no_notes_in_bookings">There are no notes in this booking</string>
+    <string name="booking_title">Booking</string>
+    <string name="note">Note:</string>
+    <string name="confirm_profile_updated">Profile data updated</string>
+    <string name="totalDishesNr">Total Dishes</string>
+    <string name="horizontal_axis_label">Hour</string>
+    <string name="dialog_dialog_delete">Are you sure you want to evade this booking?</string>
+    <string name="ok_delete_dialog">OK</string>
+    <string name="cancel_delete_dialog">Cancel</string>
 </resources>
