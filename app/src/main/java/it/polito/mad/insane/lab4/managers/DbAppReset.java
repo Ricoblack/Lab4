@@ -61,8 +61,6 @@ public class DbAppReset
     }
 
     public void fillDbAppReset() throws UnsupportedEncodingException, NoSuchAlgorithmException {
-    public void fillDbAppReset()
-    {
 
 
         //CARICAMENTO DATI ORARI
