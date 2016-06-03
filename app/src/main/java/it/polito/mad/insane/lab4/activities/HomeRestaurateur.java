@@ -1,10 +1,14 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,11 +16,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -100,13 +109,13 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     public void showDatePickerDialog(View v)
     {
-        DialogFragment newFragment = new MakeReservationActivity.DatePickerFragment();
+        DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void showTimePickerDialogHome(View view)
     {
-        DialogFragment openingFragment = new MakeReservationActivity.TimePickerFragment();
+        DialogFragment openingFragment = new TimePickerFragment();
         openingFragment.show(getSupportFragmentManager(), "homeTitleHourPicker");
     }
 
@@ -152,17 +161,17 @@ public class HomeRestaurateur extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.home_title_day);
         if(tv != null)
             tv.setText(String.format("  %s  ", convertDateToString(globalDate.getTime())));
-        setUpRecyclerDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
+        updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
-        tv = (TextView) findViewById(R.id.home_title_hour);
-        if (tv != null){
-            if(globalHour == -1)
-                tv.setText(R.string.all_hours);
-            else {
-                tv.setText(String.format("  %d:00  ", globalHour));
-                setUpRecyclerHour(globalHour);
-            }
-        }
+//        tv = (TextView) findViewById(R.id.home_title_hour);
+//        if (tv != null){
+//            if(globalHour == -1)
+//                tv.setText(R.string.all_hours);
+//            else {
+//                tv.setText(String.format("  %d:00  ", globalHour));
+//                updateBookingsHour(globalHour);
+//            }
+//        }
 
 //        if(getIntent().getIntExtra("flag_delete",0) == 1){
 //            finish();
@@ -244,6 +253,177 @@ public class HomeRestaurateur extends AppCompatActivity {
         RecyclerView.ItemAnimator ia = new DefaultItemAnimator();  // If you don't apply other animations it uses the default one
         rV.setItemAnimator(ia);
     }
+
+
+    private List<Booking> getBookingsOfDay(int year,int month,int day)
+    {
+        //TODO scommentami
+        //updateBookings();
+        ArrayList<Booking> dayBookings= new ArrayList<>();
+
+        for(int i=0; i < bookings.size(); i++){
+            Booking booking = bookings.get(i);
+            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Calendar cal = Calendar.getInstance();
+            try {
+                cal.setTime(parser.parse(booking.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if(cal.get(Calendar.YEAR)==year && cal.get(Calendar.MONTH)==month && cal.get(Calendar.DAY_OF_MONTH)==day){
+                dayBookings.add(booking);
+            }
+        }
+        Collections.sort(dayBookings);
+        return dayBookings;
+    }
+
+
+
+    private List<Booking> getBookingsOfHour(int hour)
+    {
+        //TODO scommentami
+        //updateBookings();
+
+        ArrayList<Booking> hourBookings = new ArrayList<>();
+        ArrayList<Booking> dayBookings = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR),
+                globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
+
+        for(Booking b : dayBookings){
+            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Calendar cal = Calendar.getInstance();
+            try {
+                cal.setTime(parser.parse(b.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (cal.get(Calendar.HOUR_OF_DAY) >= hour)
+                hourBookings.add(b);
+        }
+        return hourBookings;
+    }
+
+    private void updateBookingsHour(final int hour){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+
+                listIdBookings = new ArrayList<>(r.values());
+
+                ArrayList<String> currentIdList = new ArrayList<String>(r.values());
+                if(!currentIdList.equals(listIdBookings)) {
+                    listIdBookings = currentIdList;
+                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
+                    for (int i = 0; i < listIdBookings.size(); i++) {
+                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
+                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Booking r = dataSnapshot.getValue(Booking.class);
+                                bookings.add(r);
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+                //richiamare la stampa visto che la lista è piena
+                setUpRecyclerHour(hour);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateBookingsDay(final int year, final int month, final int day){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+
+                    listIdBookings = new ArrayList<>(r.values());
+
+                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    for (int i = 0; i < listIdBookings.size(); i++) {
+                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
+                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Booking r = dataSnapshot.getValue(Booking.class);
+                                bookings.add(r);
+                                setUpRecyclerDay(year,month,day);
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+//    private Date convertStringToDate(String dateString){
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//        Date convertedDate;
+//        try {
+//            convertedDate = dateFormat.parse(dateString);
+//        } catch (ParseException e) {
+//            return null;
+//        }
+//        return convertedDate;
+//    }
+
+    private String convertDateToString(Date date)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return dateFormat.format(date);
+    }
+
+    private static String pad(int c)
+    {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + String.valueOf(c);
+    }
+
+    public void refresh(View view) {
+        globalHour = -1;
+        TextView tv = (TextView) findViewById(R.id.home_title_hour);
+        if(tv != null)
+            tv.setText(R.string.all_hours);
+        setUpRecyclerDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH), globalDate.get(Calendar.DAY_OF_MONTH));
+    }
+
+
+
 
     private void editGraph(BarGraphSeries<DataPoint> series)
     {
@@ -416,149 +596,71 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     }
 
-    private List<Booking> getBookingsOfDay(int year,int month,int day)
-    {
-        updateBookings();
-        ArrayList<Booking> dayBookings= new ArrayList<>();
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
 
-        for(int i=0; i < bookings.size(); i++){
-            Booking booking = bookings.get(i);
-            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            Calendar cal = Calendar.getInstance();
-            try {
-                cal.setTime(parser.parse(booking.getDateTime()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if(cal.get(Calendar.YEAR)==year && cal.get(Calendar.MONTH)==month && cal.get(Calendar.DAY_OF_MONTH)==day){
-                dayBookings.add(booking);
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            ((HomeRestaurateur)getActivity()).setDate(year,month,day);
+        }
+
+
+    }
+
+    public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity())){
+            };
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+            String picker = this.getTag();
+            switch (picker){
+//                case "openingPicker":
+//                    Button button = (Button) getActivity().findViewById(R.id.openingHour);
+//                    button.setText(new StringBuilder().append(pad(hourOfDay))
+//                            .append(":").append(pad(minute)));
+//                    break;
+//                case "closingPicker":
+//                    button = (Button) getActivity().findViewById(R.id.closingHour);
+//                    button.setText(new StringBuilder().append(pad(hourOfDay))
+//                            .append(":").append(pad(minute)));
+//                    break;
+                case "homeTitleHourPicker":
+                    ((HomeRestaurateur) getActivity()).setTime(hourOfDay);
+                default:
+                    break;
             }
         }
-        Collections.sort(dayBookings);
-        return dayBookings;
-    }
 
-
-
-    private List<Booking> getBookingsOfHour(int hour)
-    {
-        updateBookings();
-
-        ArrayList<Booking> hourBookings = new ArrayList<>();
-        ArrayList<Booking> dayBookings = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR),
-                globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
-
-        for(Booking b : dayBookings){
-            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            Calendar cal = Calendar.getInstance();
-            try {
-                cal.setTime(parser.parse(b.getDateTime()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (cal.get(Calendar.HOUR_OF_DAY) >= hour)
-                hourBookings.add(b);
+        private static String pad(int c) {
+            if (c >= 10)
+                return String.valueOf(c);
+            else
+                return "0" + String.valueOf(c);
         }
-        return hourBookings;
     }
-
-//    private Date convertStringToDate(String dateString){
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-//        Date convertedDate;
-//        try {
-//            convertedDate = dateFormat.parse(dateString);
-//        } catch (ParseException e) {
-//            return null;
-//        }
-//        return convertedDate;
-//    }
-
-    private String convertDateToString(Date date)
-    {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        return dateFormat.format(date);
-    }
-
-    private static String pad(int c)
-    {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + String.valueOf(c);
-    }
-
-    public void refresh(View view) {
-        globalHour = -1;
-        TextView tv = (TextView) findViewById(R.id.home_title_hour);
-        if(tv != null)
-            tv.setText(R.string.all_hours);
-        setUpRecyclerDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH), globalDate.get(Calendar.DAY_OF_MONTH));
-    }
-
-    private void updateBookings(){
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
-                    @Override
-                    protected Object clone() throws CloneNotSupportedException {
-                        return super.clone();
-                    }
-                });
-
-                listIdBookings = new ArrayList<>(r.values());
-
-                ArrayList<String> currentIdList = new ArrayList<String>(r.values());
-                if(!currentIdList.equals(listIdBookings)) {
-                    listIdBookings = currentIdList;
-                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
-                    for (int i = 0; i < listIdBookings.size(); i++) {
-                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
-                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Booking r = dataSnapshot.getValue(Booking.class);
-                                bookings.add(r);
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-                }
-
-//                METODO ALTERNATIVO: per ora non funziona neanche con questo
-//                DatabaseReference myRef2 = database.getReference("/bookings");
-//
-//                myRef2.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        HashMap<String, Booking> data = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
-//                            @Override
-//                            protected Object clone() throws CloneNotSupportedException {
-//                                return super.clone();
-//                            }
-//                        });
-//                        for (String id : listIdBookings)
-//                            bookings.add(data.get(id));
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//                });
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
 }

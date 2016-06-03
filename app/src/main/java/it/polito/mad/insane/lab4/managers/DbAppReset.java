@@ -109,19 +109,75 @@ public class DbAppReset
         Dish dish6 = new Dish("5","Hilary", "Dedicata ad una vecchia amica", null, 5.55, 150, false);
 
         //CARICAMENTO DATI BOOKINGS
-        Booking newBooking = new Booking();
-        newBooking.setID("book1");
+        Booking newBooking1 = new Booking();
+        newBooking1.setID("book1");
         Map<String,String> elenco1=new HashMap<>();
         elenco1.put("dish1","1");
-        newBooking.setDishesIdList(elenco1);
+        newBooking1.setDishesIdList(elenco1);
         Calendar calendar = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 15);
         SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyy HH:mm");
-        newBooking.setDateTime(parser.format(calendar.getTime()));
+        newBooking1.setDateTime(parser.format(calendar.getTime()));
         //newBooking.setDate_time(calendar);
-        newBooking.setNote("Il cibo deve essere ben cotto");
-        newBooking.setRestaurantID("001");
-        newBooking.setUserId("0001");
+        newBooking1.setNote("Il cibo deve essere ben cotto");
+        newBooking1.setRestaurantID("001");
+        newBooking1.setUserId("0001");
+
+        Booking newBooking2 = new Booking();
+        newBooking2.setID("book2");
+        Map<String,String> elenco2=new HashMap<>();
+        elenco2.put("dish1","2");
+        newBooking2.setDishesIdList(elenco2);
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.set(Calendar.DAY_OF_MONTH, 4);
+        SimpleDateFormat parser2 = new SimpleDateFormat("dd/MM/yyy HH:mm");
+        newBooking2.setDateTime(parser2.format(calendar2.getTime()));
+        //newBooking.setDate_time(calendar);
+        newBooking2.setNote("Il cibo deve essere ben cotto");
+        newBooking2.setRestaurantID("001");
+        newBooking2.setUserId("0002");
+
+        Booking newBooking3 = new Booking();
+        newBooking3.setID("book3");
+        Map<String,String> elenco3=new HashMap<>();
+        elenco3.put("dish1","3");
+        newBooking3.setDishesIdList(elenco3);
+        Calendar calendar3 = Calendar.getInstance();
+        //calendar.set(Calendar.HOUR_OF_DAY, 15);
+        SimpleDateFormat parser3 = new SimpleDateFormat("dd/MM/yyy HH:mm");
+        newBooking3.setDateTime(parser3.format(calendar3.getTime()));
+        //newBooking.setDate_time(calendar);
+        newBooking3.setNote("Il cibo deve essere ben cotto");
+        newBooking3.setRestaurantID("001");
+        newBooking3.setUserId("0003");
+
+        Booking newBooking4 = new Booking();
+        newBooking4.setID("book4");
+        Map<String,String> elenco4=new HashMap<>();
+        elenco4.put("dish1","4");
+        newBooking4.setDishesIdList(elenco4);
+        Calendar calendar4 = Calendar.getInstance();
+        //calendar.set(Calendar.HOUR_OF_DAY, 15);
+        SimpleDateFormat parser4 = new SimpleDateFormat("dd/MM/yyy HH:mm");
+        newBooking4.setDateTime(parser4.format(calendar4.getTime()));
+        //newBooking.setDate_time(calendar);
+        newBooking4.setNote("Il cibo deve essere ben cotto");
+        newBooking4.setRestaurantID("001");
+        newBooking4.setUserId("0004");
+
+        Booking newBooking5 = new Booking();
+        newBooking5.setID("book5");
+        Map<String,String> elenco5=new HashMap<>();
+        elenco5.put("dish1","5");
+        newBooking5.setDishesIdList(elenco5);
+        Calendar calendar5 = Calendar.getInstance();
+        //calendar.set(Calendar.HOUR_OF_DAY, 15);
+        SimpleDateFormat parser5 = new SimpleDateFormat("dd/MM/yyy HH:mm");
+        newBooking5.setDateTime(parser5.format(calendar5.getTime()));
+        //newBooking.setDate_time(calendar);
+        newBooking5.setNote("Il cibo deve essere ben cotto");
+        newBooking5.setRestaurantID("001");
+        newBooking5.setUserId("0005");
 
 
             //CARICAMENTO DATI REVIEWS
@@ -161,7 +217,12 @@ public class DbAppReset
             //TODO qui c'era scritto ("book1", "1") ma in realta' l'id della prima prenotazione e' appunto book1, quindi l'ho modificato
             //TODO giusto Charles? (Renato)
             book1List.put("book1","book1");
-            HashMap<String,Dish> dish1Map=new HashMap<>();
+            book1List.put("book2","book2");
+            book1List.put("book3","book3");
+            book1List.put("book4","book4");
+            book1List.put("book5","book5");
+
+        HashMap<String,Dish> dish1Map=new HashMap<>();
             dish1Map.put("dish1",dish1);
             dish1Map.put("dish2",dish2);
             Restaurant restaurant1=new Restaurant("rest1", profile, rev1List,book1List,dish1Map,null);
@@ -184,7 +245,12 @@ public class DbAppReset
         restaurants.put("rest1",restaurant1);
         restaurants.put("rest2",restaurant2);
 
-        bookings.put("book1",newBooking);
+        bookings.put("book1",newBooking1);
+        bookings.put("book2",newBooking2);
+        bookings.put("book3",newBooking3);
+        bookings.put("book4",newBooking4);
+        bookings.put("book5",newBooking5);
+
 
         users.put("0001",u1);
 
