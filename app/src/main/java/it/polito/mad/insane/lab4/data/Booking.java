@@ -21,6 +21,7 @@ public class Booking implements Serializable, Comparable<Booking>
     private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
     private java.lang.String note;
     private java.lang.String restaurantID;
+    private double totalDiscount; // it is the sum of the discounts of each (optional) daily offer in the booking // TODO: gestire questo attributo
     private double totalPrice;
 
 

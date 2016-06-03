@@ -47,6 +47,8 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static int[] quantities;
 
 
+    //TODO: aggiungere il controllo che verifichi se i piatti presenti presenti nel carrello sono legati da qualche offerta (daily offer) e in tal caso applichi lo sconto (Michele)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
@@ -42,8 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.adapters.DailyOfferRecyclerAdapter;
 import it.polito.mad.insane.lab4.adapters.DishesRecyclerAdapter;
 import it.polito.mad.insane.lab4.adapters.ReviewsRecyclerAdapter;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.data.RestaurateurProfile;
@@ -141,7 +144,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
                 switch(position)
                 {
-                    case 0:
+                    case 1: // MENU fragment
                         fab.setVisibility(View.VISIBLE);
                         break;
                     default:
@@ -251,7 +254,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        final int PAGE_COUNT = 3;
+        final int PAGE_COUNT = 4;
 
         public SectionsPagerAdapter(FragmentManager fm)
         {
@@ -276,12 +279,15 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position)
         {
-            switch (position) {
+            switch (position)
+            {
                 case 0:
-                    return getString(R.string.title_tab_menu);
+                    return getString(R.string.title_tab_daily_offer);
                 case 1:
-                    return getString(R.string.title_tab_info);
+                    return getString(R.string.title_tab_menu);
                 case 2:
+                    return getString(R.string.title_tab_info);
+                case 3:
                     return getString(R.string.title_tab_reviews);
                 default:
                     return null;
@@ -326,12 +332,15 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             View rootView = null;
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
                 case 1:
-                    rootView = menuLayout(inflater, container);
+                    rootView = dailyOfferLayout(inflater,container);
                     return rootView;
                 case 2:
-                    rootView = infoLayout(inflater, container);
+                    rootView = menuLayout(inflater, container);
                     return rootView;
                 case 3:
+                    rootView = infoLayout(inflater, container);
+                    return rootView;
+                case 4:
                     rootView = reviewsLayout(inflater, container);
                     return rootView;
                 default:
@@ -339,7 +348,38 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             }
         }
 
+        private View dailyOfferLayout(LayoutInflater inflater, ViewGroup container)
+        {
+            final View rootView = inflater.inflate(R.layout.daily_offer_fragment, container, false);
 
+            // take istance of the manager
+            manager = RestaurateurJsonManager.getInstance(getActivity());
+
+            // take data from Firebase
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/dailyOfferMap");//
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // method invoked when data are availables
+                    HashMap<String,DailyOffer> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
+                        @Override
+                        protected Object clone() throws CloneNotSupportedException {
+                            return super.clone();
+                        }
+                    });
+                    // set up recycler view
+                    if(r!=null)
+                        setupDailyOfferRecyclerView(rootView, new ArrayList<>(r.values()));
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            return rootView;
+        }
         private View infoLayout(LayoutInflater inflater, ViewGroup container) {
             View rootView = inflater.inflate(R.layout.restaurant_info_fragment, container, false);
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
@@ -362,7 +402,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
 
-
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -376,7 +415,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
 
                 }
             });
@@ -421,7 +459,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference(MessageFormat.format("/restaurants/{0}", restaurantId));
+            final DatabaseReference myRef = database.getReference(MessageFormat.format("/restaurants/{0}", restaurantId));
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -499,6 +537,59 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             return rootView;
         }
 
+        private void setupDailyOfferRecyclerView(View rootView, List<DailyOffer> offers)
+        {
+            RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.daily_offers_recycler_view);
+            RecyclerView.Adapter dailyOffersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers);
+
+            if(recyclerView != null)
+            {
+                recyclerView.setAdapter(dailyOffersAdapter);
+                // set Layout Manager
+                if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
+                {
+                    // 10 inches
+                    if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+                    {
+                        // 2 columns
+                        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+                        recyclerView.setLayoutManager(mGridLayoutManager);
+                    }else
+                    {
+                        // 3 columns
+                        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 3);
+                        recyclerView.setLayoutManager(mGridLayoutManager);
+                    }
+
+                } else if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE)
+                {
+                    // 7 inches
+                    if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                    {
+                        // 2 columns
+                        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+                        recyclerView.setLayoutManager(mGridLayoutManager);
+
+                    }else
+                    {
+                        // 1 column
+                        LinearLayoutManager mLinearLayoutManagerVertical = new LinearLayoutManager(getActivity());
+                        mLinearLayoutManagerVertical.setOrientation(LinearLayoutManager.VERTICAL);
+                        recyclerView.setLayoutManager(mLinearLayoutManagerVertical);
+                    }
+                }else {
+                    // small and normal screen
+                    // 1 columns
+                    LinearLayoutManager mLinearLayoutManagerVertical = new LinearLayoutManager(getActivity());
+                    mLinearLayoutManagerVertical.setOrientation(LinearLayoutManager.VERTICAL);
+                    recyclerView.setLayoutManager(mLinearLayoutManagerVertical);
+                }
+
+
+                // set Animator
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+            }
+        }
         private void setupReviewsRecyclerView(View rootView, List<Review> reviews)
         {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.reviews_recycler_view);
@@ -614,18 +705,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             return null;
         }
 
-        public static void editShowButton(int quantity, double price, View rootView) {
-//        if (tv == null)
-            TextView tv = (TextView) rootView.findViewById(R.id.show_reservation_button);
-            if (tv != null) {
-                if(quantity != 0)
-                    tv.setText(String.format("%d "+rootView.getResources().getString(R.string.itemsFormat)+" - %s€", quantity, price));
-                else
-                    tv.setText(R.string.empty_cart);
-
-            }
-        }
-
         private void loadProfileData(final View rootView) {
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
@@ -706,6 +785,18 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 }
             });
 
+        }
+
+        public static void editShowButton(int quantity, double price, View rootView) {
+//        if (tv == null)
+            TextView tv = (TextView) rootView.findViewById(R.id.show_reservation_button);
+            if (tv != null) {
+                if(quantity != 0)
+                    tv.setText(String.format("%d "+rootView.getResources().getString(R.string.itemsFormat)+" - %s€", quantity, price));
+                else
+                    tv.setText(R.string.empty_cart);
+
+            }
         }
 
         private String pad(int c) {

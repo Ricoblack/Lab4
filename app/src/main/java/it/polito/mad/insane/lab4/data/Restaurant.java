@@ -18,6 +18,7 @@ public class Restaurant {
     private Map<String,String> bookingsIdList;
     private Map<String,String> reviewsIdList;
     private Map<String,Dish> dishMap;
+    private Map<String,DailyOffer> dailyOfferMap;
     private String restaurantID;
     private RestaurateurProfile profile;
     private String password;
@@ -127,6 +128,14 @@ public class Restaurant {
 
     public void setBookingsIdList(Map<String, String> bookingsIdList) {
         this.bookingsIdList = bookingsIdList;
+    }
+
+    public Map<String, DailyOffer> getDailyOfferMap() {
+        return dailyOfferMap;
+    }
+
+    public void setDailyOfferMap(Map<String, DailyOffer> dailyOfferMap) {
+        this.dailyOfferMap = dailyOfferMap;
     }
 
     public String getPassword() {
