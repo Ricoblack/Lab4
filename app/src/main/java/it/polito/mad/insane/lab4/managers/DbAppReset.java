@@ -143,10 +143,10 @@ public class DbAppReset
         elenco3.put("dish1","3");
         newBooking3.setDishesIdList(elenco3);
         Calendar calendar3 = Calendar.getInstance();
-        //calendar.set(Calendar.HOUR_OF_DAY, 15);
+        calendar3.set(Calendar.HOUR_OF_DAY, 18);
         SimpleDateFormat parser3 = new SimpleDateFormat("dd/MM/yyy HH:mm");
         newBooking3.setDateTime(parser3.format(calendar3.getTime()));
-        //newBooking.setDate_time(calendar);
+        //newBooking3.setDate_time(calendar3);
         newBooking3.setNote("Il cibo deve essere ben cotto");
         newBooking3.setRestaurantID("001");
         newBooking3.setUserId("0003");

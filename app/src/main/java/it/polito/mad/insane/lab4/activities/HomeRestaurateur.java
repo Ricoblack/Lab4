@@ -60,8 +60,6 @@ import it.polito.mad.insane.lab4.data.EditProfile;
 
 public class HomeRestaurateur extends AppCompatActivity {
 
-    //FIXME quando avvii l'activity non viene visualizzato nulla (Renato)
-    //private static RestaurateurJsonManager manager = null;
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
     private static int globalHour = -1;
@@ -69,7 +67,6 @@ public class HomeRestaurateur extends AppCompatActivity {
     private String restaurantID = "rest1";
     private  ArrayList<Booking> bookings = new ArrayList<>();
     private  ArrayList<String> listIdBookings = new ArrayList<>();
-//    private  ArrayList<Booking> totalList = new ArrayList<>();
 
     // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
 
@@ -83,19 +80,9 @@ public class HomeRestaurateur extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        //HomeRestaurateur.manager = RestaurateurJsonManager.getInstance(this);
         setContentView(R.layout.home_restaurateur_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //caso in cui debba essere cancellata una eccezione faccio il refresh della home
-//        position = getIntent().getIntExtra("pos",-1);
-//        if( position != -1 ){
-//            manager.getBookings().remove(position);
-//            manager.saveDbApp();
-//
-//        }
-        //setUpRecyclerDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -161,21 +148,17 @@ public class HomeRestaurateur extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.home_title_day);
         if(tv != null)
             tv.setText(String.format("  %s  ", convertDateToString(globalDate.getTime())));
-        updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
+            updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
-//        tv = (TextView) findViewById(R.id.home_title_hour);
-//        if (tv != null){
-//            if(globalHour == -1)
-//                tv.setText(R.string.all_hours);
-//            else {
-//                tv.setText(String.format("  %d:00  ", globalHour));
-//                updateBookingsHour(globalHour);
-//            }
-//        }
-
-//        if(getIntent().getIntExtra("flag_delete",0) == 1){
-//            finish();
-//        }
+        tv = (TextView) findViewById(R.id.home_title_hour);
+        if (tv != null){
+            if(globalHour == -1)
+                tv.setText(R.string.all_hours);
+            else {
+                tv.setText(String.format("  %d:00  ", globalHour));
+                updateBookingsHour(globalHour);
+            }
+        }
     }
 
     /** Our Methods **/
@@ -257,8 +240,6 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private List<Booking> getBookingsOfDay(int year,int month,int day)
     {
-        //TODO scommentami
-        //updateBookings();
         ArrayList<Booking> dayBookings= new ArrayList<>();
 
         for(int i=0; i < bookings.size(); i++){
@@ -282,9 +263,6 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private List<Booking> getBookingsOfHour(int hour)
     {
-        //TODO scommentami
-        //updateBookings();
-
         ArrayList<Booking> hourBookings = new ArrayList<>();
         ArrayList<Booking> dayBookings = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR),
                 globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
@@ -304,7 +282,7 @@ public class HomeRestaurateur extends AppCompatActivity {
     }
 
     private void updateBookingsHour(final int hour){
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -319,27 +297,23 @@ public class HomeRestaurateur extends AppCompatActivity {
 
                 listIdBookings = new ArrayList<>(r.values());
 
-                ArrayList<String> currentIdList = new ArrayList<String>(r.values());
-                if(!currentIdList.equals(listIdBookings)) {
-                    listIdBookings = currentIdList;
-                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
-                    for (int i = 0; i < listIdBookings.size(); i++) {
-                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
-                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Booking r = dataSnapshot.getValue(Booking.class);
-                                bookings.add(r);
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                for (int i = 0; i < listIdBookings.size(); i++) {
+                    dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
+                    dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Booking r = dataSnapshot.getValue(Booking.class);
+                            bookings.add(r);
+                            setUpRecyclerHour(hour);
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
-                //richiamare la stampa visto che la lista è piena
-                setUpRecyclerHour(hour);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -384,21 +358,10 @@ public class HomeRestaurateur extends AppCompatActivity {
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
 
-//    private Date convertStringToDate(String dateString){
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-//        Date convertedDate;
-//        try {
-//            convertedDate = dateFormat.parse(dateString);
-//        } catch (ParseException e) {
-//            return null;
-//        }
-//        return convertedDate;
-//    }
 
     private String convertDateToString(Date date)
     {
@@ -421,9 +384,6 @@ public class HomeRestaurateur extends AppCompatActivity {
             tv.setText(R.string.all_hours);
         setUpRecyclerDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH), globalDate.get(Calendar.DAY_OF_MONTH));
     }
-
-
-
 
     private void editGraph(BarGraphSeries<DataPoint> series)
     {
