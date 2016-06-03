@@ -67,8 +67,8 @@ public class HomeRestaurateur extends AppCompatActivity {
     private static int globalHour = -1;
     //TODO ricordare che questo ID non dovrà essere fisso
     private String restaurantID = "rest1";
-    private static ArrayList<Booking> bookings = new ArrayList<>();
-    private static ArrayList<String> listIdBookings = new ArrayList<>();
+    private  ArrayList<Booking> bookings = new ArrayList<>();
+    private  ArrayList<String> listIdBookings = new ArrayList<>();
 //    private  ArrayList<Booking> totalList = new ArrayList<>();
 
     // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
