@@ -1,7 +1,10 @@
 package it.polito.mad.insane.lab4.data;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import it.polito.mad.insane.lab4.managers.Cryptography;
 
 /**
  * Created by carlocaramia on 25/05/16.
@@ -18,9 +21,10 @@ public class User {
     private Map<String,String> favouritesIdList;
 
     public User(String userId, String password, String userName, String userSurname, Map<String, String> reviewsIdList, Map<String,
-            String> bookingsIdList, Map<String, String> favouritesIdList){
+            String> bookingsIdList, Map<String, String> favouritesIdList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        Cryptography cryptography = new Cryptography();
         this.userId=userId;
-        this.password = password;
+        this.password = cryptography.SHA1(password);
         this.userName=userName;
         this.reviewsIdList=reviewsIdList;
         this.bookingsIdList=bookingsIdList;

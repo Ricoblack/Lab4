@@ -17,7 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,7 +90,13 @@ public class RestaurateurJsonManager
             this.dbAppReset = getDbApp();
         }
         */
-        dbAppReset.fillDbAppReset();
+        try {
+            dbAppReset.fillDbAppReset();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
     }
 

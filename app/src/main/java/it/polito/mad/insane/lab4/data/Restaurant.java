@@ -2,9 +2,12 @@ package it.polito.mad.insane.lab4.data;
 
 import android.location.Location;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import it.polito.mad.insane.lab4.managers.Cryptography;
 
 /**
  * Created by carlocaramia on 28/04/16.
@@ -32,14 +35,15 @@ public class Restaurant {
 
     public Restaurant(){}
 
-    public Restaurant(String restaurantID, String password, RestaurateurProfile profile, Map<String,String> reviewsIdList,Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
+    public Restaurant(String restaurantID, String password, RestaurateurProfile profile, Map<String,String> reviewsIdList,Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location)throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        Cryptography cryptography = new Cryptography();
         this.profile = profile;
         this.reviewsIdList = reviewsIdList;
         this.bookingsIdList=bookingsIdList;
         //this.dishes = (List<Dish>) dishMap.values();
         this.restaurantID = restaurantID;
         this.location=location;
-        this.password = password;
+        this.password = cryptography.SHA1(password);
 
         this.dishMap=dishMap;
 

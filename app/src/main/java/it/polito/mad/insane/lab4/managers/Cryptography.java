@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by Federico on 03/06/2016.
  */
 public class Cryptography {
+
     private static String convertToHex(byte[] data) {
         StringBuilder buf = new StringBuilder();
         for (byte b : data) {

@@ -3,6 +3,8 @@ package it.polito.mad.insane.lab4.managers;
 import android.location.Location;
 
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +59,7 @@ public class DbAppReset
         this.reviews = reviews;
     }
 
-    public void fillDbAppReset(){
+    public void fillDbAppReset() throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
 
         //CARICAMENTO DATI ORARI

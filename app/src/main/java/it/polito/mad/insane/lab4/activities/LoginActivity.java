@@ -33,9 +33,21 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.managers.Cryptography;
 import it.polito.mad.insane.lab4.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -50,20 +62,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //     */
 //    private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private EditText mUserView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -74,24 +80,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mUserView = (EditText) findViewById(R.id.user);
 //        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
 
         //Radio batton gruop
         RadioButton typeUserRadioButton = (RadioButton) findViewById(R.id.user_login_radiobutton);
-
         if(typeUserRadioButton != null) {
             typeUserRadioButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -100,8 +95,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             });
         }
-        RadioButton typeRestaurateurRadioButton = (RadioButton) findViewById(R.id.restaurateur_login_radiobutton);
 
+        RadioButton typeRestaurateurRadioButton = (RadioButton) findViewById(R.id.restaurateur_login_radiobutton);
         if(typeRestaurateurRadioButton != null) {
             typeRestaurateurRadioButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -118,18 +113,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onClick(View v) {
                     //TODO aggiungere controllo id e password
-                    //attemptLogin();
-                    if (typeConsumer.equals("User")) {
-                        //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
-                        Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
-                        startActivity(intent);
+                    try {
+                        attemptLogin();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
                     }
+//                    if (typeConsumer.equals("User")) {
+//                        //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
+//                        Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
+//                        Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
+//                        startActivity(intent);
+//                    }
                 }
             });
         }
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
@@ -183,17 +185,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private void attemptLogin() throws NoSuchAlgorithmException, UnsupportedEncodingException{
         if (mAuthTask != null) {
             return;
         }
 
         // Reset errors.
-        mEmailView.setError(null);
+        mUserView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String user =  mUserView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -201,19 +203,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+            //mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.setError("Password non valida");
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+        // Check for a valid user address.
+        if (TextUtils.isEmpty(user)) {
+            //mUserView.setError(getString(R.string.error_field_required));
+            mUserView.setError("E' richiesto un nome utente");
+            focusView =  mUserView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+        } else if (!isUserValid(user)) {
+            //mUserView.setError(getString(R.string.error_invalid_email));
+            mUserView.setError("Nome utente non valido");
+            focusView =  mUserView;
             cancel = true;
         }
 
@@ -225,19 +230,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(user, password);
             mAuthTask.execute((Void) null);
         }
     }
 
-    private boolean isEmailValid(String email) {
+    private boolean isUserValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return true;
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return true;
     }
 
     /**
@@ -302,23 +307,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cursor.moveToNext();
         }
 
-        addEmailsToAutoComplete(emails);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -336,17 +330,63 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mUser;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String user, String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+            Cryptography cryptography = new Cryptography();
+            mUser = user;
+            //mPassword = cryptography.SHA1(password);
             mPassword = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            String[] CREDENTIALS = new String[2];
+            CREDENTIALS[0] = "federico";
+            CREDENTIALS[1] = "vibrati";
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            DatabaseReference myRef = database.getReference("/restaurants/");
+//
+//            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    HashMap<String,Restaurant> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
+//                        @Override
+//                        protected Object clone() throws CloneNotSupportedException {
+//                            return super.clone();
+//                        }
+//                    });
+//                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
+//                }
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
+//
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            DatabaseReference myRef = database.getReference("/restaurants");
+//
+//
+//
+//            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    HashMap<String,Restaurant> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
+//                        @Override
+//                        protected Object clone() throws CloneNotSupportedException {
+//                            return super.clone();
+//                        }
+//                    });
+//                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
+//                }
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
 
             try {
                 // Simulate network access.
@@ -355,14 +395,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
+                String[] pieces = CREDENTIALS;
+                if (pieces[0].equals(mUser)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
-            }
-
             // TODO: register the new account here.
             return true;
         }
@@ -373,6 +410,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                if (typeConsumer.equals("User")) {
+                    //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
+                    //Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
+                } else {
+                    //Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
+                    startActivity(intent);
+                }
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
