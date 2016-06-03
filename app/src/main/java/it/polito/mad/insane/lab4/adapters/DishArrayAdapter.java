@@ -1,7 +1,6 @@
 package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,6 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -80,5 +77,4 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
         private TextView name;
         private TextView totalPrice;
     }
-
 }

@@ -12,12 +12,15 @@ public class User {
     private String userId;
     private String userName;
     private String userSurname;
+    private String password;
     private Map<String,String> reviewsIdList;
     private Map<String,String> bookingsIdList;
     private Map<String,String> favouritesIdList;
 
-    public User(String userId, String userName, String userSurname, Map<String, String> reviewsIdList, Map<String, String> bookingsIdList, Map<String, String> favouritesIdList){
+    public User(String userId, String password, String userName, String userSurname, Map<String, String> reviewsIdList, Map<String,
+            String> bookingsIdList, Map<String, String> favouritesIdList){
         this.userId=userId;
+        this.password = password;
         this.userName=userName;
         this.reviewsIdList=reviewsIdList;
         this.bookingsIdList=bookingsIdList;
@@ -70,5 +73,13 @@ public class User {
 
     public void setFavouritesIdList(Map<String, String> favouritesIdList) {
         this.favouritesIdList = favouritesIdList;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
