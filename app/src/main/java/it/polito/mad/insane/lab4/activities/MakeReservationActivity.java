@@ -3,15 +3,9 @@ package it.polito.mad.insane.lab4.activities;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -25,10 +19,16 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
@@ -55,8 +55,28 @@ public class MakeReservationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Bundle bundle = getIntent().getExtras();
-        quantities = bundle.getIntArray("selectedQuantities");
         restaurantId = bundle.getString("ID");
+        HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
+
+        final List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
+
+        totalPrice = 0;
+        for(Dish d:dishesToDisplay)
+            totalPrice += d.getPrice() * selectedQuantities.get(d);
+
+        TextView tv = (TextView) findViewById(R.id.reservation_total_price);
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (tv != null) {
+            tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
+        }
+
+        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, new ArrayList<>(selectedQuantities.keySet()),
+                selectedQuantities, 0);
+
+        ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
+        if (mylist != null) {
+            mylist.setAdapter(adapter);
+        }
 
         manager = RestaurateurJsonManager.getInstance(this);
     }
@@ -88,7 +108,47 @@ public class MakeReservationActivity extends AppCompatActivity {
     }
 
     private void saveReservation(List<Dish> dishesToDisplay, List<Integer> quantitiesToDisplay) {
+        Booking b = new Booking();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        b.setDateTime(sdf.format(reservationDate.getTime()));
+        b.setDishes(dishesToDisplay);
+        b.setQuantities(quantitiesToDisplay);
 
+        //TODO implementare meccanismo id prenotazioni
+        //FIXME dare un id sensato
+//        b.setID(String.valueOf(manager.getNextReservationID()));
+        b.setID("bookRenato");
+        b.setRestaurantID(restaurantId);
+        b.setTotalPrice(totalPrice);
+        EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
+        if(et != null){
+            additionalNotes = et.getText().toString();
+            b.setNote(additionalNotes);
+        }
+
+//        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
+//            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailability_qty();
+////            int newQuantity = quantity - quantities[i];
+//            manager.getRestaurant(restaurantId).getDishes().get(i).setAvailability_qty(quantity - quantities[i]);
+//            manager.saveDbApp();
+//        }
+//
+//        manager.getBookings().add(b);
+//        manager.saveDbApp();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/bookings");
+
+        myRef.setValue(b, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Toast.makeText(MakeReservationActivity.this, "Prenotazione effettuata", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        finish(); // finish() the current activity
+        Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
+        startActivity(intent); // start the new activity
 
     }
 

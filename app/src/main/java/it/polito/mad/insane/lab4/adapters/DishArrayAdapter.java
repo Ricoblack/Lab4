@@ -9,31 +9,32 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
+import it.polito.mad.insane.lab4.activities.DisplayReservation;
 import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
 import it.polito.mad.insane.lab4.data.Dish;
 
 /**
- * Created by miche on 31/05/2016.
+ * Created by Renato on 03/06/2016.
  */
-public class DishArrayAdapter extends ArrayAdapter<Dish> {
+public class DishArrayAdapter extends ArrayAdapter<Dish>{
+    private int currentActivity;
     private Context context;
     private int layoutResourceId;
-    private ArrayList<Integer> quantities;
-    private List<Dish> data = null;
-    private int currentActivity;
+    private List<Dish> dishes;
+    private HashMap<Dish, Integer> quantitiesMap;
 
-    public DishArrayAdapter(Context context, int layoutResourceId, List<Dish> data, ArrayList<Integer> quantities,int currentA) {
-        super(context, layoutResourceId, data);
-        this.layoutResourceId = layoutResourceId;
+    public DishArrayAdapter(Context context, int resource, List<Dish> dishes, HashMap<Dish, Integer> quantitiesMap,
+                            int currentActivity) {
+        super(context, resource, dishes);
         this.context = context;
-        this.data = data;
-        this.quantities = quantities;
-        this.currentActivity = currentA;
+        this.layoutResourceId = resource;
+        this.dishes = dishes;
+        this.quantitiesMap = quantitiesMap;
+        this.currentActivity = currentActivity;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish> {
             if(currentActivity == 0) {
                 inflater = ((MakeReservationActivity) context).getLayoutInflater();
             }else{
-                inflater = ((DisplayReservationActivity) context).getLayoutInflater();
+                inflater = ((DisplayReservation) context).getLayoutInflater();
             }
             row = inflater.inflate(layoutResourceId, parent, false);
 
@@ -61,11 +62,11 @@ public class DishArrayAdapter extends ArrayAdapter<Dish> {
             holder = (DishHolder) row.getTag();
         }
 
-        Dish dish = data.get(position);
+        Dish dish = dishes.get(position);
         holder.name.setText(dish.getName());
-        holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantities.get(position))));
+        holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(dish))));
         DecimalFormat df = new DecimalFormat("0.00");
-        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(dish.getPrice() * quantities.get(position)))));
+        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(dish.getPrice() * quantitiesMap.get(dish)))));
 
         return row;
     }
@@ -77,4 +78,3 @@ public class DishArrayAdapter extends ArrayAdapter<Dish> {
         private TextView totalPrice;
     }
 }
-

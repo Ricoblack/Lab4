@@ -25,9 +25,6 @@ public class DbAppReset
     private Map<String,User> users;
     private Map<String,Review> reviews;
 
-
-
-
     public Map<String, Restaurant> getRestaurants() {
         return restaurants;
     }
@@ -208,7 +205,7 @@ public class DbAppReset
             rev1Ids.put("1234","5678");
             Map<String,String> booking1Ids=new HashMap<>();
             booking1Ids.put("book1","1");
-            User u1=new User("0001","Pinco","Pallino",rev1Ids,booking1Ids,null);
+            User u1=new User("0001","cacca", "Pinco","Pallino",rev1Ids,booking1Ids,null);
 
             //CARICAMENTO DATI RESTAURANTS
             Map<String,String> rev1List=new HashMap<>();
@@ -256,8 +253,6 @@ public class DbAppReset
 
         reviews.put("1234",rev1);
         reviews.put("5678",rev2);
-
-
     }
 
 

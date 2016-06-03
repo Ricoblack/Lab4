@@ -575,8 +575,6 @@ public class HomeRestaurateur extends AppCompatActivity {
             // Do something with the date chosen by the user
             ((HomeRestaurateur)getActivity()).setDate(year,month,day);
         }
-
-
     }
 
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {

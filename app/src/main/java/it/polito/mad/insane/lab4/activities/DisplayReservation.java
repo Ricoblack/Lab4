@@ -10,7 +10,6 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
@@ -51,12 +50,13 @@ public class DisplayReservation extends AppCompatActivity {
                 pad(calendar.get(Calendar.MONTH) + 1), pad(calendar.get(Calendar.YEAR))));
         */
 
-        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, currentBooking.getDishes(), (ArrayList<Integer>)currentBooking.getQuantities(),1);
-
-        ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
-        if (mylist != null) {
-            mylist.setAdapter(adapter);
-        }
+        //FIXME scommentare e gestire questa riga ora che l'adapter e' cambiato (Renato)
+//        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, currentBooking.getDishes(), (ArrayList<Integer>)currentBooking.getQuantities(),1);
+//
+//        ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
+//        if (mylist != null) {
+//            mylist.setAdapter(adapter);
+//        }
 
         DecimalFormat df = new DecimalFormat("0.00");
         totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()))));

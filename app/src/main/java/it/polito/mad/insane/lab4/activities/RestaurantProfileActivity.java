@@ -117,7 +117,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, getResources().getString(R.string.cart_empty_alert), Toast.LENGTH_SHORT).show();
                 else {
 //                                bundle.putParcelableArrayList("reservationList", (ArrayList<? extends Parcelable>) reservationList);
-                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
+//                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
+                    bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
                     bundle.putString("ID", restaurantId);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -447,6 +448,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 //                    df = new DecimalFormat("0.0");
 //                    tv.setText(df.format(restaurant.getAvgScores()[2]));
 
+
                     final ArrayList<String> reviewsIdList = new ArrayList<>(restaurant.getReviewsIdList().values());
                     DatabaseReference myRef2 = database.getReference("/reviews");
 
@@ -476,6 +478,23 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
                 }
             });
+
+//            Firebase ref = new Firebase("https://docs-examples.firebaseio.com/web/saving-data/fireblog/posts");
+//            // Attach an listener to read the data at our posts reference
+//            ref.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot snapshot) {
+//                    System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
+//                    for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+//                        BlogPost post = postSnapshot.getValue(BlogPost.class);
+//                        System.out.println(post.getAuthor() + " - " + post.getTitle());
+//                    }
+//                }
+//                @Override
+//                public void onCancelled(FirebaseError firebaseError) {
+//                    System.out.println("The read failed: " + firebaseError.getMessage());
+//                }
+//            });
 
             return rootView;
         }

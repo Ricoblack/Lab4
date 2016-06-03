@@ -33,7 +33,7 @@
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
         </activity>
         <activity
-            android:name=".activities.MyReservationsActivity"
+            android:name=".activities.MyReservationsUserActivity"
             android:label="@string/title_activity_my_reservation"
             android:parentActivityName=".activities.HomePageActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -65,18 +65,18 @@
         <activity
             android:name=".activities.DisplayReservationActivity"
             android:label="@string/title_activity_display_reservation"
-            android:parentActivityName=".activities.MyReservationsActivity"
+            android:parentActivityName=".activities.MyReservationsUserActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.polito.mad.insane.lab4.activities.MyReservationsActivity" />
+                android:value=".activities.MyReservationsUserActivity" />
         </activity>
         <activity
             android:name=".activities.HomeRestaurateur"
             android:label="@string/title_activity_home_restaurateur"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.ViewBooking"
+            android:name=".activities.MyReservationsRestaurateurActivity"
             android:label="@string/title_activity_view_booking"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

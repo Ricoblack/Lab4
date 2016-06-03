@@ -32,7 +32,7 @@ import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
-public class MyReservationsActivity extends AppCompatActivity {
+public class MyReservationsUserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
