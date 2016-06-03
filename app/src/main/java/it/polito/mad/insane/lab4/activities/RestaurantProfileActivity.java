@@ -398,14 +398,13 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             // take the list of dishes from manager
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
-            // set up clean Recycler
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String,Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
+                    HashMap<String, Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
                         @Override
                         protected Object clone() throws CloneNotSupportedException {
                             return super.clone();
@@ -423,6 +422,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             // set up dishesRecyclerView
             //final RecyclerView rv = setupDishesRecyclerView(rootView, restaurant.getDishes());
+
             TextView tv = (TextView) rootView.findViewById((R.id.show_reservation_button));
             if(tv != null) {
                 if(dishesAdapter != null)

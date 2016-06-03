@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,18 +17,20 @@ public class Booking implements Serializable, Comparable<Booking>
 
 
     //private Calendar date_time;
-    /** N.B. "dishes" and "quantities" have a 1v1 matching! don't reorder/modify individually! **/
-    private List<Dish> dishes = new ArrayList<>();
-    private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
+//    /** N.B. "dishes" and "quantities" have a 1v1 matching! don't reorder/modify individually! **/
+//    private List<Dish> dishes = new ArrayList<>();
+//    private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
+    private HashMap<String, Integer>  dishes;
     private java.lang.String note;
     private java.lang.String restaurantID;
     private double totalDiscount; // it is the sum of the discounts of each (optional) daily offer in the booking // TODO: gestire questo attributo
     private double totalPrice;
+    private int totalDishesQty;
 
 
     //campi del db
     private java.lang.String ID;
-    private Map<String, String> dishesIdList;
+//    private Map<String, String> dishesIdList;
     private String userId;
     private String dateTime;
 
@@ -39,12 +42,11 @@ public class Booking implements Serializable, Comparable<Booking>
         this.ID = ID;
     }
 
-
-    public List<Dish> getDishes() {
+    public HashMap<String, Integer> getDishes() {
         return dishes;
     }
 
-    public void setDishes(List<Dish> dishes) {
+    public void setDishes(HashMap<String, Integer> dishes) {
         this.dishes = dishes;
     }
 
@@ -83,31 +85,31 @@ public class Booking implements Serializable, Comparable<Booking>
         this.totalPrice = price;
     }
 
-    public List<Integer> getQuantities() {
-        return quantities;
-    }
-
-    public void setQuantities(List<Integer> quantities) {
-        this.quantities = quantities;
-    }
-
-    public int getTotalDishesQty()
-    {
-        int result = 0;
-
-        for(Integer a: this.quantities)
-            result += a;
-
-        return result;
-    }
-
-    public Map<String, String> getDishesIdList() {
-        return dishesIdList;
-    }
-
-    public void setDishesIdList(Map<String, String> dishesIdList) {
-        this.dishesIdList = dishesIdList;
-    }
+//    public List<Integer> getQuantities() {
+//        return quantities;
+//    }
+//
+//    public void setQuantities(List<Integer> quantities) {
+//        this.quantities = quantities;
+//    }
+//
+//    public int getTotalDishesQty()
+//    {
+//        int result = 0;
+//
+//        for(Integer a: this.quantities)
+//            result += a;
+//
+//        return result;
+//    }
+//
+//    public Map<String, String> getDishesIdList() {
+//        return dishesIdList;
+//    }
+//
+//    public void setDishesIdList(Map<String, String> dishesIdList) {
+//        this.dishesIdList = dishesIdList;
+//    }
 
 
     public String getUserId() {
@@ -147,5 +149,13 @@ public class Booking implements Serializable, Comparable<Booking>
         }
 
         return cal.compareTo(cal2);
+    }
+
+    public int getTotalDishesQty() {
+        return totalDishesQty;
+    }
+
+    public void setTotalDishesQty(int totalDishesQty) {
+        this.totalDishesQty = totalDishesQty;
     }
 }

@@ -3,9 +3,13 @@ package it.polito.mad.insane.lab4.activities;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
+import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -19,9 +23,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -58,9 +65,9 @@ public class MakeReservationActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         restaurantId = bundle.getString("ID");
-        HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
+        final HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
 
-        final List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
+        List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
 
         totalPrice = 0;
         for(Dish d:dishesToDisplay)
@@ -78,6 +85,56 @@ public class MakeReservationActivity extends AppCompatActivity {
         ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
         if (mylist != null) {
             mylist.setAdapter(adapter);
+        }
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if (fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Button hour= (Button) findViewById(R.id.reservation_hour);
+                    Button date=(Button) findViewById(R.id.reservation_date);
+
+                    if(hour.getText().toString().toLowerCase().equals("select") || date.getText().toString().toLowerCase().equals("select")){
+                        Toast.makeText(MakeReservationActivity.this, getString(R.string.specify_date_time), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if(reservationDate == null){
+                        Toast.makeText(MakeReservationActivity.this, getString(R.string.specify_date_time), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    //Verifico che i costraint per la prenotazione siano rispettati: in orario di lavoro e tra almeno un ora
+                    //TODO implementare questo metodi sul manager, preferibilmente chi li ha fatti la scorsa volta (Renato)
+//                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId)==false){
+//                        Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MakeReservationActivity.this);
+                    builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title))
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    saveReservation(selectedQuantities);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    Dialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Fix Portrait Mode
+        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+        {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         manager = RestaurateurJsonManager.getInstance(this);
@@ -109,12 +166,21 @@ public class MakeReservationActivity extends AppCompatActivity {
         MakeReservationActivity.totalPrice = 0;
     }
 
-    private void saveReservation(List<Dish> dishesToDisplay, List<Integer> quantitiesToDisplay) {
-        Booking b = new Booking();
+    public void saveReservation(HashMap<Dish, Integer> selectedQuantities) {
+        final Booking b = new Booking();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         b.setDateTime(sdf.format(reservationDate.getTime()));
-        b.setDishes(dishesToDisplay);
-        b.setQuantities(quantitiesToDisplay);
+
+        b.setTotalDishesQty(0);
+        b.setTotalPrice(0);
+        HashMap<String, Integer> map = new HashMap<>();
+        for(Dish d: selectedQuantities.keySet()) {
+            map.put(d.getID(), selectedQuantities.get(d));
+            b.setTotalPrice(b.getTotalPrice() + d.getPrice() * selectedQuantities.get(d));
+            b.setTotalDishesQty(b.getTotalDishesQty() + selectedQuantities.get(d));
+        }
+
+        b.setDishes(map);
 
         //TODO implementare meccanismo id prenotazioni
         //FIXME dare un id sensato
@@ -128,6 +194,7 @@ public class MakeReservationActivity extends AppCompatActivity {
             b.setNote(additionalNotes);
         }
 
+        //TODO implementare meccanismo di decremento quantita' disponibili dei piatti
 //        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
 //            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailability_qty();
 ////            int newQuantity = quantity - quantities[i];
@@ -139,18 +206,36 @@ public class MakeReservationActivity extends AppCompatActivity {
 //        manager.saveDbApp();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/bookings");
+        final DatabaseReference addToBookings = database.getReference("/bookings/" + b.getID());
+        final DatabaseReference addToRestaurant = database.getReference("/restaurants/" + restaurantId +
+                "/bookingsIdList/" + b.getID());
+        //TODO salvare la prenotazione anche nello user
 
-        myRef.setValue(b, new DatabaseReference.CompletionListener() {
+        addToBookings.runTransaction(new Transaction.Handler() {
+
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                Toast.makeText(MakeReservationActivity.this, "Prenotazione effettuata", Toast.LENGTH_LONG).show();
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                addToBookings.setValue(b);
+                addToRestaurant.setValue(b.getID()); //FIXME sta cosa e' legale caro il mio Charles? (Renato)
+//                myRef2.push().setValue(ref);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                if(committed)
+                    Toast.makeText(MakeReservationActivity.this, "Reservation done", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(MakeReservationActivity.this, "Reservation failed", Toast.LENGTH_SHORT).show();
             }
         });
 
-        finish(); // finish() the current activity
-        Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
-        startActivity(intent); // start the new activity
+
+        //TODO scommentare queste righe e gestire la cosa
+//        finish(); // finish() the current activity
+//        Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
+//        startActivity(intent); // start the new activity
 
     }
 

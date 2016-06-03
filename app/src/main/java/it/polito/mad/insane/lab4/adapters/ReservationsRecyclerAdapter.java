@@ -160,7 +160,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             nameRist = "nomeRistProva";
             restaurantName.setText("nomeRistProva");
             ID.setText(current.getID());
-            nItems.setText(MessageFormat.format("{0} "+view.getResources().getString(R.string.dishes), current.getTotalDishesQty()));
+            nItems.setText(MessageFormat.format("{0} " +view.getResources().getString(R.string.dishes), current.getTotalDishesQty()));
             DecimalFormat df = new DecimalFormat("0.00");
             totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(current.getTotalPrice()))));
             /*

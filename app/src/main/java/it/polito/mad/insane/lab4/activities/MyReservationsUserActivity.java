@@ -55,11 +55,10 @@ public class MyReservationsUserActivity extends AppCompatActivity {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("/bookings");
 
-
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String,Booking> bookings=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
+                    HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
                         @Override
                         protected Object clone() throws CloneNotSupportedException {
                             return super.clone();

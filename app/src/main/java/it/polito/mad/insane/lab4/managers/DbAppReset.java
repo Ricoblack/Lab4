@@ -112,9 +112,9 @@ public class DbAppReset
         //CARICAMENTO DATI BOOKINGS
         Booking newBooking1 = new Booking();
         newBooking1.setID("book1");
-        Map<String,String> elenco1=new HashMap<>();
-        elenco1.put("dish1","1");
-        newBooking1.setDishesIdList(elenco1);
+        HashMap<String,Integer> elenco1 = new HashMap<>();
+        elenco1.put("dish1", 1);
+        newBooking1.setDishes(elenco1);
         Calendar calendar = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 15);
         SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyy HH:mm");
@@ -126,9 +126,9 @@ public class DbAppReset
 
         Booking newBooking2 = new Booking();
         newBooking2.setID("book2");
-        Map<String,String> elenco2=new HashMap<>();
-        elenco2.put("dish1","2");
-        newBooking2.setDishesIdList(elenco2);
+        HashMap<String,Integer> elenco2 = new HashMap<>();
+        elenco2.put("dish1", 2);
+        newBooking2.setDishes(elenco2);
         Calendar calendar2 = Calendar.getInstance();
         calendar2.set(Calendar.DAY_OF_MONTH, 4);
         SimpleDateFormat parser2 = new SimpleDateFormat("dd/MM/yyy HH:mm");
@@ -140,9 +140,9 @@ public class DbAppReset
 
         Booking newBooking3 = new Booking();
         newBooking3.setID("book3");
-        Map<String,String> elenco3=new HashMap<>();
-        elenco3.put("dish1","3");
-        newBooking3.setDishesIdList(elenco3);
+        HashMap<String, Integer> elenco3 = new HashMap<>();
+        elenco3.put("dish1", 3);
+        newBooking3.setDishes(elenco3);
         Calendar calendar3 = Calendar.getInstance();
         calendar3.set(Calendar.HOUR_OF_DAY, 18);
         SimpleDateFormat parser3 = new SimpleDateFormat("dd/MM/yyy HH:mm");
@@ -154,9 +154,9 @@ public class DbAppReset
 
         Booking newBooking4 = new Booking();
         newBooking4.setID("book4");
-        Map<String,String> elenco4=new HashMap<>();
-        elenco4.put("dish1","4");
-        newBooking4.setDishesIdList(elenco4);
+        HashMap<String,Integer> elenco4=new HashMap<>();
+        elenco4.put("dish1",4);
+        newBooking4.setDishes(elenco4);
         Calendar calendar4 = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 15);
         SimpleDateFormat parser4 = new SimpleDateFormat("dd/MM/yyy HH:mm");
@@ -168,9 +168,9 @@ public class DbAppReset
 
         Booking newBooking5 = new Booking();
         newBooking5.setID("book5");
-        Map<String,String> elenco5=new HashMap<>();
-        elenco5.put("dish1","5");
-        newBooking5.setDishesIdList(elenco5);
+        HashMap<String,Integer> elenco5=new HashMap<>();
+        elenco5.put("dish1",5);
+        newBooking5.setDishes(elenco5);
         Calendar calendar5 = Calendar.getInstance();
         //calendar.set(Calendar.HOUR_OF_DAY, 15);
         SimpleDateFormat parser5 = new SimpleDateFormat("dd/MM/yyy HH:mm");
