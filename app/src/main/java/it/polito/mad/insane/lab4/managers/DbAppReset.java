@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.data.RestaurateurProfile;
@@ -57,7 +58,8 @@ public class DbAppReset
         this.reviews = reviews;
     }
 
-    public void fillDbAppReset(){
+    public void fillDbAppReset()
+    {
 
 
         //CARICAMENTO DATI ORARI
@@ -104,6 +106,7 @@ public class DbAppReset
         Dish dish4 = new Dish("3","Politecnico", "Solo per veri ingegneri", null, 4.50, 104, false);
         Dish dish5 = new Dish("4","30L", "Il nome dice tutto: imperdibile", null, 5.55, 150, false);
         Dish dish6 = new Dish("5","Hilary", "Dedicata ad una vecchia amica", null, 5.55, 150, false);
+        Dish dish7 = new Dish("6", "Coca-cola", "Bevanda analcolica frizzante", null, 1.50, 200, false);
 
         //CARICAMENTO DATI BOOKINGS
         Booking newBooking1 = new Booking();
@@ -177,26 +180,26 @@ public class DbAppReset
         newBooking5.setUserId("0005");
 
 
-            //CARICAMENTO DATI REVIEWS
-            Review rev1=new Review();
-            rev1.setReviewId("1234");
-            rev1.setRestaurantID("rest1");
-            rev1.setDate(new Date());
-            rev1.setUserID("0001");
-            //rev1.setScores(new double[]{8.0,10.0,7.0});
-            rev1.setTitle("Splendido locale per studenti");
-            rev1.setText("Il cibo è ottimo e la presenza del wifi garantisce il possibile studio anche a pranzo, i prezzi sono ottimi," +
-                    " e inoltre aggiungiamo qualche riga per vedere se funziona la TextView espandibile!!!");
+        //CARICAMENTO DATI REVIEWS
+        Review rev1=new Review();
+        rev1.setReviewId("1234");
+        rev1.setRestaurantID("rest1");
+        rev1.setDate(new Date());
+        rev1.setUserID("0001");
+        //rev1.setScores(new double[]{8.0,10.0,7.0});
+        rev1.setTitle("Splendido locale per studenti");
+        rev1.setText("Il cibo è ottimo e la presenza del wifi garantisce il possibile studio anche a pranzo, i prezzi sono ottimi," +
+                " e inoltre aggiungiamo qualche riga per vedere se funziona la TextView espandibile!!!");
 
 
-            Review rev2=new Review();
-            rev2.setReviewId("5678");
-            rev2.setRestaurantID("rest2");
-            rev2.setDate(new Date());
-            rev2.setUserID("0002");
-            //rev2.setScores(new double[]{8.0,10.0,7.0});
-            rev2.setTitle("Ottimo locale");
-            rev2.setText("Servizio rapido");
+        Review rev2=new Review();
+        rev2.setReviewId("5678");
+        rev2.setRestaurantID("rest2");
+        rev2.setDate(new Date());
+        rev2.setUserID("0002");
+        //rev2.setScores(new double[]{8.0,10.0,7.0});
+        rev2.setTitle("Ottimo locale");
+        rev2.setText("Servizio rapido");
 
 
             //CARICAMENTO DATI USERS
@@ -207,52 +210,95 @@ public class DbAppReset
             booking1Ids.put("book1","1");
             User u1=new User("0001","cacca", "Pinco","Pallino",rev1Ids,booking1Ids,null);
 
-            //CARICAMENTO DATI RESTAURANTS
-            Map<String,String> rev1List=new HashMap<>();
-            rev1List.put("1234","1234");
-            Map<String,String> book1List=new HashMap<>();
-            //TODO qui c'era scritto ("book1", "1") ma in realta' l'id della prima prenotazione e' appunto book1, quindi l'ho modificato
-            //TODO giusto Charles? (Renato)
-            book1List.put("book1","book1");
-            book1List.put("book2","book2");
-            book1List.put("book3","book3");
-            book1List.put("book4","book4");
-            book1List.put("book5","book5");
 
-        HashMap<String,Dish> dish1Map=new HashMap<>();
-            dish1Map.put("dish1",dish1);
-            dish1Map.put("dish2",dish2);
-            Restaurant restaurant1=new Restaurant("rest1", "federicogay", profile, rev1List,book1List,dish1Map,null);
+        //TODO: rendere coerente il DB; nelle daily offer di un ristorante ci devono essere solo piatti che il ristorante effettivamente ha (Michele)
 
-            Map<String,String> rev2List=new HashMap<>();
-            rev2List.put("5678","5678");
-            Map<String,String> book2List=new HashMap<>();
-            HashMap<String,Dish> dish2Map=new HashMap<>();
-            dish2Map.put("dish2",dish3);
-            dish2Map.put("dish3",dish4);
-            Restaurant restaurant2=new Restaurant("rest2", "federicopiglianculo", profile2,rev2List,book2List,dish2Map,null);
+        // CARICAMENTO DATI DAILY OFFERS
+        DailyOffer dailyOffer1 = new DailyOffer();
+        dailyOffer1.setID("dailyoffer1");
+        dailyOffer1.setName("Menù Politecnico");
+        dailyOffer1.setDescription("Assaggia il nostro menu al tonno");
+        dailyOffer1.setPrice(5.50);
+        Map<String,String> listDishes1 = new HashMap<>();
+        listDishes1.put("dish1","2");
+        listDishes1.put("dish2","6");
+        dailyOffer1.setDishes(listDishes1);
 
+        DailyOffer dailyOffer2 = new DailyOffer();
+        dailyOffer2.setID("dailyoffer2");
+        dailyOffer2.setName("Menù Tonno");
+        dailyOffer2.setPrice(8.50);
+        dailyOffer2.setDescription("Risparmia acquistando il nostro intero menù!");
+        Map<String,String> listDishes2 = new HashMap<>();
+        listDishes2.put("dish1","3");
+        listDishes2.put("dish2","6");
+        dailyOffer1.setDishes(listDishes2);
+
+
+        DailyOffer dailyOffer3 = new DailyOffer();
+        dailyOffer3.setID("dailyoffer3");
+        dailyOffer3.setName("Menù Hilary");
+        dailyOffer3.setPrice(5.90);
+        Map<String,String> listDishes3 = new HashMap<>();
+        listDishes3.put("dish1","5");
+        listDishes3.put("dish2","6");
+        dailyOffer1.setDishes(listDishes3);
+
+        HashMap<String,DailyOffer> dailyOfferHashMap = new HashMap<String, DailyOffer>();
+        dailyOfferHashMap.put("offer1",dailyOffer1);
+        dailyOfferHashMap.put("offer2",dailyOffer2);
+        dailyOfferHashMap.put("offer3", dailyOffer3);
+
+
+        //CARICAMENTO DATI RESTAURANTS
+        Map<String,String> rev1List=new HashMap<>();
+        rev1List.put("1234","1234");
+        Map<String,String> book1List=new HashMap<>();
+        //TODO qui c'era scritto ("book1", "1") ma in realta' l'id della prima prenotazione e' appunto book1, quindi l'ho modificato
+        //TODO giusto Charles? (Renato)
+        book1List.put("book1","book1");
+        book1List.put("book2","book2");
+        book1List.put("book3","book3");
+        book1List.put("book4","book4");
+        book1List.put("book5","book5");
+
+        HashMap<String,Dish> dish1Map = new HashMap<>();
+        dish1Map.put("dish1",dish1);
+        dish1Map.put("dish2",dish2);
+        Restaurant restaurant1 = new Restaurant("rest1", "pass1", profile, rev1List,book1List,dish1Map,null);
+        restaurant1.setDailyOfferMap(dailyOfferHashMap);
+
+        Map<String,String> rev2List=new HashMap<>();
+        rev2List.put("5678","5678");
+        Map<String,String> book2List=new HashMap<>();
+        HashMap<String,Dish> dish2Map=new HashMap<>();
+        dish2Map.put("dish2",dish3);
+        dish2Map.put("dish3",dish4);
+        Restaurant restaurant2=new Restaurant("rest2", "pass2", profile2,rev2List,book2List,dish2Map,null);
+        restaurant2.setDailyOfferMap(dailyOfferHashMap);
 
         //CARICAMENTO DATI PRECEDENTI NEL DBNEW
-        this.restaurants=new HashMap<String,Restaurant>();
-        this.bookings=new HashMap<String,Booking>();
-        this.users=new HashMap<String,User>();
-        this.reviews=new HashMap<String,Review>();
-
+        this.restaurants = new HashMap<String,Restaurant>();
         restaurants.put("rest1",restaurant1);
         restaurants.put("rest2",restaurant2);
 
+
+        this.bookings = new HashMap<String,Booking>();
         bookings.put("book1",newBooking1);
         bookings.put("book2",newBooking2);
         bookings.put("book3",newBooking3);
         bookings.put("book4",newBooking4);
         bookings.put("book5",newBooking5);
 
-
+        this.users = new HashMap<String,User>();
         users.put("0001",u1);
 
+        this.reviews = new HashMap<String,Review>();
         reviews.put("1234",rev1);
         reviews.put("5678",rev2);
+
+
+
     }
 
 

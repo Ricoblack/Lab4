@@ -9,8 +9,6 @@ public class Dish implements Serializable /*, Parcelable*/{
 
     //campi del db
     private String ID;
-
-
     private String name;
     private String description;
     private String photoPath;
