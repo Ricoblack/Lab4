@@ -25,9 +25,6 @@ public class DbAppReset
     private Map<String,User> users;
     private Map<String,Review> reviews;
 
-
-
-
     public Map<String, Restaurant> getRestaurants() {
         return restaurants;
     }
@@ -256,8 +253,6 @@ public class DbAppReset
 
         reviews.put("1234",rev1);
         reviews.put("5678",rev2);
-
-
     }
 
 

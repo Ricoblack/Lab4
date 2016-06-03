@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.activities.ViewBooking;
+import it.polito.mad.insane.lab4.activities.MyReservationsRestaurateurActivity;
 import it.polito.mad.insane.lab4.data.Booking;
 
 /**
@@ -79,7 +79,7 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
             public void onClick(View v)
             {
                 //Toast.makeText(v.getContext(),"Cliccato sulla cardView", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(v.getContext(),ViewBooking.class);
+                Intent i = new Intent(v.getContext(),MyReservationsRestaurateurActivity.class);
                 i.putExtra("Booking", BookingViewHolder.this.currentBooking);
                 v.getContext().startActivity(i);
             }

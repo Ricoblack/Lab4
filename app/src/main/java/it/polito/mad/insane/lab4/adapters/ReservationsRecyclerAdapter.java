@@ -121,7 +121,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                                     RestaurateurJsonManager.deleteReservationByID(ReservationsRecyclerAdapter.this.mData, ID.getText().toString());
                                     notifyItemRemoved(position);
                                     notifyItemRangeRemoved(position, getItemCount());
-//                                    Intent i = new Intent(context, MyReservationsActivity.class);
+//                                    Intent i = new Intent(context, MyReservationsUserActivity.class);
 //                                    AppCompatActivity act = (AppCompatActivity) context;
 //                                    act.startActivity(i);
 //                                    act.finish();

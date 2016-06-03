@@ -9,7 +9,7 @@ import android.view.View;
 
 import it.polito.mad.insane.lab4.R;
 
-public class ViewBooking extends AppCompatActivity {
+public class MyReservationsRestaurateurActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

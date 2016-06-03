@@ -56,7 +56,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        manager.resetDbApp();
+        //manager.resetDbApp();
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
 
@@ -179,7 +179,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             startActivity(i);
         }
         if(id == R.id.activity_reservations){
-            Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.MyReservationsActivity.class);
+            Intent i = new Intent(this, MyReservationsUserActivity.class);
             startActivity(i);
         }
         if(id == R.id.activity_login){
