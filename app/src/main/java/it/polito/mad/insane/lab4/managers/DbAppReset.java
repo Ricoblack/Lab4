@@ -222,7 +222,7 @@ public class DbAppReset
         HashMap<String,Dish> dish1Map=new HashMap<>();
             dish1Map.put("dish1",dish1);
             dish1Map.put("dish2",dish2);
-            Restaurant restaurant1=new Restaurant("rest1", profile, rev1List,book1List,dish1Map,null);
+            Restaurant restaurant1=new Restaurant("rest1", "federicogay", profile, rev1List,book1List,dish1Map,null);
 
             Map<String,String> rev2List=new HashMap<>();
             rev2List.put("5678","5678");
@@ -230,7 +230,7 @@ public class DbAppReset
             HashMap<String,Dish> dish2Map=new HashMap<>();
             dish2Map.put("dish2",dish3);
             dish2Map.put("dish3",dish4);
-            Restaurant restaurant2=new Restaurant("rest2",profile2,rev2List,book2List,dish2Map,null);
+            Restaurant restaurant2=new Restaurant("rest2", "federicopiglianculo", profile2,rev2List,book2List,dish2Map,null);
 
 
         //CARICAMENTO DATI PRECEDENTI NEL DBNEW

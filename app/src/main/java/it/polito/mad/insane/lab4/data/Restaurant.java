@@ -17,6 +17,7 @@ public class Restaurant {
     private Map<String,Dish> dishMap;
     private String restaurantID;
     private RestaurateurProfile profile;
+    private String password;
 
 
     private static final int N_SCORES = 3;
@@ -31,13 +32,14 @@ public class Restaurant {
 
     public Restaurant(){}
 
-    public Restaurant(String restaurantID, RestaurateurProfile profile, Map<String,String> reviewsIdList,Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
+    public Restaurant(String restaurantID, String password, RestaurateurProfile profile, Map<String,String> reviewsIdList,Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location) {
         this.profile = profile;
         this.reviewsIdList = reviewsIdList;
         this.bookingsIdList=bookingsIdList;
         //this.dishes = (List<Dish>) dishMap.values();
         this.restaurantID = restaurantID;
         this.location=location;
+        this.password = password;
 
         this.dishMap=dishMap;
 
@@ -121,5 +123,13 @@ public class Restaurant {
 
     public void setBookingsIdList(Map<String, String> bookingsIdList) {
         this.bookingsIdList = bookingsIdList;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
