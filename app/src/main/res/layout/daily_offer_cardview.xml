@@ -113,12 +113,17 @@
 
         </LinearLayout>
 
-        <!--<View-->
-            <!--android:id="@+id/cardView_separator"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/colorPrimary"-->
-            <!--android:visibility="gone"/>-->
+        <View
+            android:id="@+id/cardView_separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"/>
+
+        <ListView
+            android:id="@+id/daily_offer_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
