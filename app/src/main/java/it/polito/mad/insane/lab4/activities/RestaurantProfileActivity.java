@@ -371,7 +371,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         private void setupDailyOfferRecyclerView(View rootView, List<DailyOffer> offers)
         {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.daily_offers_recycler_view);
-            RecyclerView.Adapter dailyOffersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers);
+            RecyclerView.Adapter dailyOffersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, restaurantId);
 
             if(recyclerView != null)
             {

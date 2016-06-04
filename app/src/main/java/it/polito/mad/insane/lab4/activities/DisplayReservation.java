@@ -48,7 +48,7 @@ public class DisplayReservation extends AppCompatActivity {
         */
 
         //FIXME scommentare e gestire questa riga ora che l'adapter e' cambiato (Renato)
-//        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, currentBooking.getDishes(), (ArrayList<Integer>)currentBooking.getQuantities(),1);
+//        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, currentBooking.getDishes(), (ArrayList<Integer>)currentBooking.getQuantities(), 2);
 //
 //        ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
 //        if (mylist != null) {

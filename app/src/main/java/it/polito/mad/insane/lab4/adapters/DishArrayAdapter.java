@@ -16,6 +16,7 @@ import java.util.List;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservation;
 import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
+import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.Dish;
 
 /**
@@ -44,13 +45,19 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
         DishHolder holder;
 
         if (row == null) {
-
             LayoutInflater inflater = null;
-            if(currentActivity == 0) {
-                inflater = ((MakeReservationActivity) context).getLayoutInflater();
-            }else{
-                inflater = ((DisplayReservation) context).getLayoutInflater();
+            switch(currentActivity){
+                case 0:
+                    inflater = ((MakeReservationActivity) context).getLayoutInflater();
+                    break;
+                case 1:
+                    inflater = ((RestaurantProfileActivity) context).getLayoutInflater();
+                    break;
+                case 2:
+                    inflater = ((DisplayReservation) context).getLayoutInflater();
+                    break;
             }
+
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new DishHolder();
@@ -68,6 +75,8 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
         holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(dish))));
         DecimalFormat df = new DecimalFormat("0.00");
         holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(dish.getPrice() * quantitiesMap.get(dish)))));
+        if(currentActivity == 1)
+            holder.totalPrice.setVisibility(View.GONE);
 
         return row;
     }

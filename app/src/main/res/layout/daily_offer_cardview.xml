@@ -113,17 +113,23 @@
 
         </LinearLayout>
 
-        <View
-            android:id="@+id/cardView_separator"
+        <LinearLayout
+            android:id="@+id/daily_offer_popup_layout"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/daily_offer_listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary"/>
+
+            <ListView
+                android:id="@+id/daily_offer_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
