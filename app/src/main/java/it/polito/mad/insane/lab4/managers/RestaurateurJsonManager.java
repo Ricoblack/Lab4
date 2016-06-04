@@ -18,7 +18,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,18 +27,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import it.polito.mad.insane.lab4.data.Booking;
-import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.data.Restaurant;
-import it.polito.mad.insane.lab4.data.RestaurateurProfile;
-import it.polito.mad.insane.lab4.data.Review;
-import it.polito.mad.insane.lab4.data.User;
 
 /**
  * Created by carlocaramia on 08/04/16.
@@ -197,13 +189,14 @@ public class RestaurateurJsonManager
         String subString=distanceValue.substring(0,distanceValue.length()-1);
         float distance=Float.parseFloat(subString);
 
-        if(r.getLocation().distanceTo(this.location)<=distance) return true;
+        //TODO bisogna implementare il funzionamento della geolocalizzazione (Michele)
+//        if(r.getLocation().distanceTo(this.location)<=distance) return true;
 
 
         return false;
     }
 
-    private boolean checkIfRespectsTimeConstraint(Restaurant r, String timeValue) {
+    private boolean checkIfRespectsTimeConstraint(Restaurant r, String timeValue) throws ParseException {
 
         String[] array=timeValue.split("-");
         String startTimeString=array[0];
@@ -224,15 +217,20 @@ public class RestaurateurJsonManager
             e.printStackTrace();
         }
 
-        if(r.getProfile().getOpeningHour().getHours()<=startTimeDate.getHours() &&
-                r.getProfile().getClosingHour().getHours()>=endTimeDate.getHours()) return true;
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(sdf.parse(r.getInfo().getOpeningHour()));
+
+        //TODO trasformare le date in calendar ed eliminare i dati deprecated (Renato)
+        if(sdf.parse(r.getInfo().getOpeningHour()).getHours()<=startTimeDate.getHours() &&
+                sdf.parse(r.getInfo().getOpeningHour()).getHours()>=endTimeDate.getHours()) return true;
 
         return false;
     }
 
     private boolean checkIfRespectsTypeConstraint(Restaurant r, String typeValue) {
 
-        if(r.getProfile().getCuisineType().toLowerCase().equals(typeValue.toLowerCase())) return true;
+        if(r.getInfo().getCuisineType().toLowerCase().equals(typeValue.toLowerCase())) return true;
         return false;
     }
 
@@ -253,13 +251,14 @@ public class RestaurateurJsonManager
     public List<Restaurant> getOrderedRestaurants(String orderBy, List<Restaurant> listaFiltrata) {
         List<Restaurant> lista = listaFiltrata;
 
+        //TODO bisogna implementare il funzionamento della geolocalizzazione (Michele)
         if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.distance).toLowerCase())){
-            Collections.sort(lista, new Comparator<Restaurant>() {
-                @Override
-                public int compare(Restaurant lhs, Restaurant rhs) {
-                    return (int)(location.distanceTo(lhs.getLocation())-location.distanceTo(rhs.getLocation()));
-                }
-            });
+//            Collections.sort(lista, new Comparator<Restaurant>() {
+//                @Override
+//                public int compare(Restaurant lhs, Restaurant rhs) {
+//                    return (int)(location.distanceTo(lhs.getLocation())-location.distanceTo(rhs.getLocation()));
+//                }
+//            });
         }
         else if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.score).toLowerCase())){
             Collections.sort(lista, new Comparator<Restaurant>() {
@@ -285,20 +284,21 @@ public class RestaurateurJsonManager
         return f.format(d1).compareTo(f.format(d2)) >= 0;
     }
 
-    public static void deleteReservationByID(List<Booking> mData, String id)
-    {
-        ArrayList<Booking> bookings= (ArrayList<Booking>) mData;
-        for(int i=0; i<bookings.size();i++)
-        {
-            Booking b = bookings.get(i);
-            if(b.getID().equals(id))
-            {
-                bookings.remove(i);
-                return;
-            }
-        }
-        return;
-    }
+    //TODO: da scommentare successivamente (Renato)
+//    public static void deleteReservationByID(List<Booking> mData, String id)
+//    {
+//        ArrayList<Booking> bookings= (ArrayList<Booking>) mData;
+//        for(int i=0; i<bookings.size();i++)
+//        {
+//            Booking b = bookings.get(i);
+//            if(b.getID().equals(id))
+//            {
+//                bookings.remove(i);
+//                return;
+//            }
+//        }
+//        return;
+//    }
 
     /**
      * Created by carlocaramia on 09/04/16.
@@ -355,11 +355,11 @@ public class RestaurateurJsonManager
             dStart.setMinutes(5);
 
             //CARICAMENTO DATI RISTORANTI
-            RestaurateurProfile profile =new RestaurateurProfile("Pizza-Pazza","Corso Duca Degli Abruzzi, 10","PoliTo","Pizza","Venite a provare la pizza più gustosa di Torino",dStart,dClose,"Chiusi la domenica","Bancomat","Wifi-free");
-            RestaurateurProfile profile2=new RestaurateurProfile("Just Pasta", "Via Roma, 55", "UniTo","Pasta","Pasta per tutti i gusti",dStart,dClose,"Aperti tutta la settimana","Bancomat,carta","Privo di barriere architettoniche");
-            RestaurateurProfile profile3=new RestaurateurProfile("Pub la locanda", "Via Lagrange, 17", "UniTo","Ethnic", "L'isola felice dello studente universitario",dStart,dClose,"Giropizza il sabato sera","Bancomat","Wifi-free");
-            RestaurateurProfile profile4=new RestaurateurProfile("Mangiaquì restaurant", "Via Saluzzo, 17", "PoliTo","Ethnic", "L'isola del miglior ovolollo studentesco",new Date(),new Date(),"Cicchetto di ben venuto il sabato sera","Bancomat","Wifi-free");
-            RestaurateurProfile profile5=new RestaurateurProfile("Origami restaurant", "Piazza Vittorio Veneto, 18F", "UniTo","Ethnic", "Il miglior giapponese di Torino",dStart,dClose,"All you can eat a pranzo","Bancomat","Wifi-free");
+            RestaurantInfo profile =new RestaurantInfo("Pizza-Pazza","Corso Duca Degli Abruzzi, 10","PoliTo","Pizza","Venite a provare la pizza più gustosa di Torino",dStart,dClose,"Chiusi la domenica","Bancomat","Wifi-free");
+            RestaurantInfo profile2=new RestaurantInfo("Just Pasta", "Via Roma, 55", "UniTo","Pasta","Pasta per tutti i gusti",dStart,dClose,"Aperti tutta la settimana","Bancomat,carta","Privo di barriere architettoniche");
+            RestaurantInfo profile3=new RestaurantInfo("Pub la locanda", "Via Lagrange, 17", "UniTo","Ethnic", "L'isola felice dello studente universitario",dStart,dClose,"Giropizza il sabato sera","Bancomat","Wifi-free");
+            RestaurantInfo profile4=new RestaurantInfo("Mangiaquì restaurant", "Via Saluzzo, 17", "PoliTo","Ethnic", "L'isola del miglior ovolollo studentesco",new Date(),new Date(),"Cicchetto di ben venuto il sabato sera","Bancomat","Wifi-free");
+            RestaurantInfo profile5=new RestaurantInfo("Origami restaurant", "Piazza Vittorio Veneto, 18F", "UniTo","Ethnic", "Il miglior giapponese di Torino",dStart,dClose,"All you can eat a pranzo","Bancomat","Wifi-free");
 
             //CARICAMENTO DATI DISHES
             ArrayList<Dish> dishes1=new ArrayList<Dish>();

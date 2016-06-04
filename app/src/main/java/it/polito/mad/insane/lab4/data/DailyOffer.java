@@ -14,14 +14,15 @@ public class DailyOffer
     private String ID;
     private String name;
     private String description;
-    private Map<String, String> dishes = new HashMap<String,String>(); // <dishID,dishID>
+    private Map<String, Integer> dishesIdMap = new HashMap<>(); // <dishID, quantity>
     private double price;
+    private double discount;
 
     public DailyOffer(){}
 
     public DailyOffer(String id, String name, String description, double price)
     {
-        ID = id;
+//        ID = id;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -35,14 +36,6 @@ public class DailyOffer
         this.description = description;
     }
 
-    public String getID() {
-        return ID;
-    }
-
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-
     public String getName() {
         return name;
     }
@@ -51,13 +44,6 @@ public class DailyOffer
         this.name = name;
     }
 
-    public Map<String,String> getDishes() {
-        return dishes;
-    }
-
-    public void setDishes(Map<String,String> dishes) {
-        this.dishes = dishes;
-    }
 
     public double getPrice() {
         return price;
@@ -65,5 +51,29 @@ public class DailyOffer
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Map<String, Integer> getDishesIdMap() {
+        return dishesIdMap;
+    }
+
+    public void setDishesIdMap(Map<String, Integer> dishesIdMap) {
+        this.dishesIdMap = dishesIdMap;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 }

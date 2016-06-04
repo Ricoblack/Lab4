@@ -4,15 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 
 
@@ -29,7 +26,7 @@ public class DisplayReservation extends AppCompatActivity {
 
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_reservation);
+        setContentView(R.layout.display_reservation_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,8 +58,8 @@ public class DisplayReservation extends AppCompatActivity {
         DecimalFormat df = new DecimalFormat("0.00");
         totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()))));
 
-        if(currentBooking.getNote() != null){
-            note.setText(currentBooking.getNote());
+        if(currentBooking.getNotes() != null){
+            note.setText(currentBooking.getNotes());
         }
     }
 

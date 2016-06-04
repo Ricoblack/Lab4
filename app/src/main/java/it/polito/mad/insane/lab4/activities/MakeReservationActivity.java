@@ -7,10 +7,14 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.MenuItem;
@@ -18,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -27,8 +32,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -41,7 +48,9 @@ import java.util.List;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MakeReservationActivity extends AppCompatActivity {
@@ -51,6 +60,7 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static String restaurantId;
     private static String additionalNotes = "";
     private static double totalPrice = 0;
+    private static double totalDiscount;
     private static int[] quantities;
 
 
@@ -66,12 +76,86 @@ public class MakeReservationActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         restaurantId = bundle.getString("ID");
         final HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
-
         List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
 
         totalPrice = 0;
         for(Dish d:dishesToDisplay)
             totalPrice += d.getPrice() * selectedQuantities.get(d);
+
+        // get Daily offers from firebase
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference offersRefs = database.getReference("/restaurants/"+restaurantId+"/dailyOfferMap");
+        offersRefs.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,DailyOffer> dailyOfferHashMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+                // TODO: gestire il caso di offerte sovrapposte e cambiare layout in modo da visualizzare quali offerte sono state applicate (Michele)
+                // TODO: oppure implementare offerte direttamente acquistabili (Michele)
+                if(dailyOfferHashMap!=null)
+                {
+                    totalDiscount = 0;
+
+                    // check if there are some daily offers in  the reservation
+                    ArrayList<DailyOffer> dailyOffers = new ArrayList<DailyOffer>(dailyOfferHashMap.values());
+                    for (DailyOffer tempOffer : dailyOffers)
+                    {
+                        ArrayList<String> idDishesOffer = new ArrayList<String>(tempOffer.getDishesIdMap().keySet());
+                        ArrayList<Dish> dishesReservation = new ArrayList<Dish>(selectedQuantities.keySet());
+                        int numberDishes = tempOffer.getDishesIdMap().size();
+                        int repeater = Integer.MAX_VALUE;
+                        // for each dish in the offer, check if there is in the reservation
+                        for (String tempDishID : idDishesOffer) {
+                            // check in the list of reserved dishes if there is tempDishID
+                            for (Dish dishReservation : dishesReservation) {
+                                if (dishReservation.getID().equals(tempDishID)) {
+                                    // there is the dish. Check the quantity
+                                    int result = selectedQuantities.get(dishReservation) / tempOffer.getDishesIdMap().get(tempDishID);
+                                    if (result > 0) {
+                                        numberDishes--;
+                                        if(result < repeater)
+                                            repeater = result;
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+                        // TODO: aggiustare sia il DB che la classe in modo da salvare lo sconto nella dailyoffer
+                        if (numberDishes == 0) {
+                            totalDiscount += repeater * tempOffer.getDiscount();
+                        }
+
+                    }
+
+                    if(totalDiscount > 0)
+                    {
+                        LinearLayout ll = (LinearLayout) findViewById(R.id.discount_layout);
+                        if (ll != null) {
+                            ll.setVisibility(View.VISIBLE);
+                        }
+
+                        TextView tv = (TextView) findViewById(R.id.discount_value);
+                        if (tv != null) {
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            tv.setText(MessageFormat.format("{0}€", df.format(totalDiscount)));
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
 
         TextView tv = (TextView) findViewById(R.id.reservation_total_price);
         DecimalFormat df = new DecimalFormat("0.00");
@@ -79,8 +163,7 @@ public class MakeReservationActivity extends AppCompatActivity {
             tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
         }
 
-        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, new ArrayList<>(selectedQuantities.keySet()),
-                selectedQuantities, 0);
+        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, selectedQuantities, 0);
 
         ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
         if (mylist != null) {
@@ -180,25 +263,25 @@ public class MakeReservationActivity extends AppCompatActivity {
             b.setTotalDishesQty(b.getTotalDishesQty() + selectedQuantities.get(d));
         }
 
-        b.setDishes(map);
+        b.setDishesIdMap(map);
 
         //TODO implementare meccanismo id prenotazioni
         //FIXME dare un id sensato
 //        b.setID(String.valueOf(manager.getNextReservationID()));
         b.setID("bookRenato");
-        b.setRestaurantID(restaurantId);
+        b.setID(restaurantId);
         b.setTotalPrice(totalPrice);
         EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
         if(et != null){
             additionalNotes = et.getText().toString();
-            b.setNote(additionalNotes);
+            b.setNotes(additionalNotes);
         }
 
         //TODO implementare meccanismo di decremento quantita' disponibili dei piatti
 //        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
-//            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailability_qty();
+//            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailabilityQty();
 ////            int newQuantity = quantity - quantities[i];
-//            manager.getRestaurant(restaurantId).getDishes().get(i).setAvailability_qty(quantity - quantities[i]);
+//            manager.getRestaurant(restaurantId).getDishes().get(i).setAvailabilityQty(quantity - quantities[i]);
 //            manager.saveDbApp();
 //        }
 //

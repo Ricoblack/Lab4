@@ -2,40 +2,23 @@ package it.polito.mad.insane.lab4.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Renato on 28/04/2016.
  */
 public class Review {
 
-    //campi del db
-    private String reviewId;
-    private String userID;
-    private Date date;
-
-    //private double[] scores;
-    private double finalScore;
+    private String ID;
+    private String userId;
+    private String restaurantId;
+    private String dateTime;
     private String title;
     private String text;
-    private String photoPath;
-    private String restaurantID;
+    private Map<String,Double> scoresMap; // <Parameter, score>
+    private double avgFinalScore;
+//    private String photoPath; // TODO: campo da aggiungere nel DB (michele)
 
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     /*
     public double[] getScores() {
@@ -51,13 +34,6 @@ public class Review {
         this.finalScore = sum/scores.length;
     }
     */
-    public double getFinalScore() {
-        return finalScore;
-    }
-
-    public void setFinalScore(double finalScore) {
-        this.finalScore = finalScore;
-    }
 
     public String getTitle() {
         return title;
@@ -75,27 +51,52 @@ public class Review {
         this.text = text;
     }
 
-    public String getPhotoPath() {
-        return photoPath;
+
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getRestaurantID() {
-        return restaurantID;
+    public String getRestaurantId() {
+        return restaurantId;
     }
 
-    public void setRestaurantID(String restaurantID) {
-        this.restaurantID = restaurantID;
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
-    public String getReviewId() {
-        return reviewId;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setReviewId(String reviewId) {
-        this.reviewId = reviewId;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public Map<String, Double> getScoresMap() {
+        return scoresMap;
+    }
+
+    public void setScoresMap(Map<String, Double> scoresMap) {
+        this.scoresMap = scoresMap;
+    }
+
+    public double getAvgFinalScore() {
+        return avgFinalScore;
+    }
+
+    public void setAvgFinalScore(double avgFinalScore) {
+        this.avgFinalScore = avgFinalScore;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 }

@@ -37,7 +37,7 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
     @Override
     public BookingsRecyclerAdapter.BookingViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View view = mInflater.inflate(R.layout.booking_list_item, parent, false);
+        View view = mInflater.inflate(R.layout.booking_cardview, parent, false);
         BookingViewHolder holder = new BookingViewHolder(view,myContext);
         return  holder;
     }
@@ -165,13 +165,14 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
 
         public void setData(Booking current, int position)
         {
-            this.bookingID.setText(current.getID());
+//            this.bookingID.setText(current.getID()); //TODO: nella cardview Inserire l'ID ma non visibile all'utente
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
             //TODO scommentare una volta gestiti i calendar sul DB
 //            String date = dateFormat.format(current.getDate_time().getTime());
             //TODO scommentare una volta gestiti i calendar sul DB
 //            this.bookingTime.setText(date);
-            this.bookingDishNum.setText(Integer.toString(current.getDishes().size()));
+            this.bookingDishNum.setText(Integer.toString(current.getDishesIdMap().size()));
 
             this.position = position;
             this.currentBooking = current;

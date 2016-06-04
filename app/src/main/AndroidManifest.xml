@@ -57,7 +57,8 @@
             android:name=".activities.MakeReservationActivity"
             android:label="@string/title_activity_make_reservation"
             android:parentActivityName=".activities.RestaurantProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />

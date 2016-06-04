@@ -149,7 +149,7 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
             this.dishName.setText(current.getName());
             this.dishDesc.setText(current.getDescription());
             this.dishPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(current.getPrice()))));
-            if(current.getAvailability_qty() == 0) {
+            if(current.getAvailabilityQty() == 0) {
                 this.dishAvailability.setVisibility(View.VISIBLE);
                 this.expandArrow.setVisibility(View.GONE);
                 popupsVisibility[position] = View.GONE;             // mostrare solo quando non e' disponibile
@@ -172,7 +172,7 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
             this.mainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(popupsVisibility[pos] == View.GONE && current.getAvailability_qty() != 0) { // al click se il popup è invisibile
+                    if(popupsVisibility[pos] == View.GONE && current.getAvailabilityQty() != 0) { // al click se il popup è invisibile
                         // e il prodotto e' disponibile lo faccio apparire...
                         selectionLayout.setVisibility(View.VISIBLE);
                         separator.setVisibility(View.VISIBLE);
@@ -231,7 +231,7 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                     else
                         quantitiesMap.put(current, 0);
 
-                    if(quantity < current.getAvailability_qty()) {
+                    if(quantity < current.getAvailabilityQty()) {
 //                        selectedQuantities[pos]++;
                         quantity ++;
                         quantitiesMap.put(current, quantity);

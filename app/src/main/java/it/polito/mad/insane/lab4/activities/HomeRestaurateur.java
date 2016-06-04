@@ -501,7 +501,7 @@ public class HomeRestaurateur extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            hours[cal.get(Calendar.HOUR_OF_DAY)] += b.getDishes().size();
+            hours[cal.get(Calendar.HOUR_OF_DAY)] += b.getDishesIdMap().size();
         }
 
         //creo un vettore di DataPoint per riempire il grafico. quest'oggetto contiene un item per ogni ora del giorno

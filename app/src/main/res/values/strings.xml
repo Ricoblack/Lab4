@@ -200,5 +200,10 @@
     <string name="dialog_dialog_delete">Are you sure you want to evade this booking?</string>
     <string name="ok_delete_dialog">OK</string>
     <string name="cancel_delete_dialog">Cancel</string>
-    <string name="title_tab_daily_offer">OFFERS</string>
+    <string name="title_tab_daily_offer">Offers</string>
+    <string name="first_score">food</string> <!-- NON TRADURRE QUESTA STRINGA -->
+    <string name="second_score">punctuality</string> <!-- NON TRADURRE QUESTA STRINGA -->
+    <string name="third_score">location</string>
+    <string name="discount_summary">DISCOUNT</string>
+    <string name="total_discount">Total Discount</string> <!-- NON TRADURRE QUESTA STRINGA -->
 </resources>

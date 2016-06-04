@@ -19,7 +19,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
@@ -46,7 +45,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
     @Override
     public BookingsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = this.mInflater.inflate(R.layout.reservation_list_item, parent, false);
+        View view = this.mInflater.inflate(R.layout.reservation_cardview, parent, false);
         BookingsViewHolder holder = new BookingsViewHolder(view); // create the holder
         return holder;
     }

@@ -103,8 +103,7 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
 
         public void setData(Review current, int position){
             this.position = position;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            this.date.setText(dateFormat.format(current.getDate()));
+            this.date.setText(current.getDateTime());
             this.expandableText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -141,7 +140,7 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
 //            this.userName.setText(users.getUser(current.getUserID())); /**da implementare**/
 
             DecimalFormat df = new DecimalFormat("0.0");
-            this.score.setText(String.valueOf(df.format(current.getFinalScore())));
+            this.score.setText(String.valueOf(df.format(current.getAvgFinalScore())));
         }
 
 //        public double roundToHalf(double d) {

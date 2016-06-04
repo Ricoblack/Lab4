@@ -13,8 +13,8 @@ public class Dish implements Serializable /*, Parcelable*/{
     private String description;
     private String photoPath;
     private double price;
-    private int availability_qty;
-    private boolean isSelected;
+    private int availabilityQty;
+//    private boolean isSelected;
 
 //    public Dish(Parcel in)
 //    {
@@ -23,34 +23,25 @@ public class Dish implements Serializable /*, Parcelable*/{
 //        this.description= in.readString();
 //        this.photoPath= in.readString();
 //        this.price = in.readDouble();
-//        this.availability_qty = in.readInt();
+//        this.availabilityQty = in.readInt();
 //        this.isSelected = in.readByte() != 0;
 //    }
 
-    public Dish(String ID, String name, String description, String photoPath, double price, int availability_qty, boolean selected)
+    public Dish(String name, String description, String photoPath, double price, int availabilityQty, boolean selected)
     {
-        this.ID = ID;
+//        this.ID = ID;
         this.name = name;
         this.description= description;
         this.photoPath= photoPath;
         this.price = price;
-        this.availability_qty = availability_qty;
-        this.isSelected = selected;
+        this.availabilityQty = availabilityQty;
+//        this.isSelected = selected;
     }
 
     public Dish() {
 
     }
 
-    public String getID()
-    {
-        return ID;
-    }
-
-    public void setID(String ID)
-    {
-        this.ID = ID;
-    }
 
     public String getDescription()
     {
@@ -82,14 +73,14 @@ public class Dish implements Serializable /*, Parcelable*/{
         this.price = price;
     }
 
-    public int getAvailability_qty()
+    public int getAvailabilityQty()
     {
-        return availability_qty;
+        return availabilityQty;
     }
 
-    public void setAvailability_qty(int availability_qty)
+    public void setAvailabilityQty(int availabilityQty)
     {
-        this.availability_qty = availability_qty;
+        this.availabilityQty = availabilityQty;
     }
 
     public String getName()
@@ -102,13 +93,12 @@ public class Dish implements Serializable /*, Parcelable*/{
         this.name = name;
     }
 
-
-    public boolean isSelected() {
-        return isSelected;
+    public String getID() {
+        return ID;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
 //    @Override
@@ -123,7 +113,7 @@ public class Dish implements Serializable /*, Parcelable*/{
 //        dest.writeString(description);
 //        dest.writeString(photoPath);
 //        dest.writeDouble(price);
-//        dest.writeInt(availability_qty);
+//        dest.writeInt(availabilityQty);
 //        dest.writeByte((byte) (isSelected ? 1 : 0));
 ////        readFromParcel:
 ////        myBoolean = in.readByte() != 0;

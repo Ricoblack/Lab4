@@ -1,6 +1,5 @@
 package it.polito.mad.insane.lab4.activities;
 
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -44,24 +43,29 @@ import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
+/** Sistemata dopo aver cambiato il DB **/
 public class HomePageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static RestaurateurJsonManager manager = null;
-    static final String PREF_NAME = "myPref";private SharedPreferences mPrefs = null;
+    static final String PREF_NAME = "myPref";
+    private SharedPreferences mPrefs = null;
     private List<Restaurant> listaFiltrata;
+
+    //TODO: implementare la ricerca con DB(Michele)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
         HomePageActivity.manager = RestaurateurJsonManager.getInstance(this);
+
         setContentView(R.layout.home_page_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        manager.resetDbApp();
+//        manager.resetDbApp();
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
-
-
         if(sv != null) {
             sv.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,7 +75,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             });
         }
 
-        AppCompatButton applyButton=(AppCompatButton) findViewById(R.id.applyOrdering);
+        AppCompatButton applyButton =(AppCompatButton) findViewById(R.id.applyOrdering);
         if(applyButton != null) {
             applyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -86,11 +90,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             });
         }
 
-        //set up ordering spinner
+        // set up ordering spinner
         setUpSpinner();
 
-        //'clear filter
-        this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+        // clear filter
+        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         if (mPrefs!=null) {
             SharedPreferences.Editor editor = this.mPrefs.edit();
             editor.clear();
@@ -99,18 +103,23 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         // set up clean Recycler
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants");
+        DatabaseReference restaurantsRef = database.getReference("/restaurants");
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        restaurantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                // get data form Firebase
                 HashMap<String,Restaurant> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
-                setUpRestaurantsRecycler(new ArrayList<>(r.values()));
+                if(r!=null) {
+                    // set recycler
+                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -162,12 +171,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     {
         super.onResume();
         this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-
-
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -190,11 +198,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
-
-
     private void setUpRestaurantsRecycler(List<Restaurant> restaurants)
     {
-        //TODO nel caso in cui l'app venga utilizzati su cell con schermo piccolo utilizzare il linearLayout, nel caso di schermi grandi(10 pollici non 7) utilizzare griglia a 3
         RecyclerView rV = (RecyclerView) findViewById(R.id.RestaurateurRecyclerView);
         RestaurantsRecyclerAdapter adapter = new RestaurantsRecyclerAdapter(this, restaurants);
         rV.setAdapter(adapter);

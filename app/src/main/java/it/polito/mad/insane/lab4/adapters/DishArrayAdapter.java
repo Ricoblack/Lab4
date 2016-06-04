@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,12 +28,12 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
     private List<Dish> dishes;
     private HashMap<Dish, Integer> quantitiesMap;
 
-    public DishArrayAdapter(Context context, int resource, List<Dish> dishes, HashMap<Dish, Integer> quantitiesMap,
+    public DishArrayAdapter(Context context, int resource, HashMap<Dish, Integer> quantitiesMap,
                             int currentActivity) {
-        super(context, resource, dishes);
+        super(context, resource, new ArrayList<>(quantitiesMap.keySet()));
+        this.dishes = new ArrayList<>(quantitiesMap.keySet());
         this.context = context;
         this.layoutResourceId = resource;
-        this.dishes = dishes;
         this.quantitiesMap = quantitiesMap;
         this.currentActivity = currentActivity;
     }

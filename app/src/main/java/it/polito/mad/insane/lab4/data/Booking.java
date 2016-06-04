@@ -20,35 +20,17 @@ public class Booking implements Serializable, Comparable<Booking>
 //    /** N.B. "dishes" and "quantities" have a 1v1 matching! don't reorder/modify individually! **/
 //    private List<Dish> dishes = new ArrayList<>();
 //    private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
-    private HashMap<String, Integer>  dishes;
-    private java.lang.String note;
-    private java.lang.String restaurantID;
+    private HashMap<String, Integer>  dishesIdMap; // <ID, Qty>
+    private String notes;
     private double totalDiscount; // it is the sum of the discounts of each (optional) daily offer in the booking // TODO: gestire questo attributo
     private double totalPrice;
     private int totalDishesQty;
-
-
-    //campi del db
-    private java.lang.String ID;
-//    private Map<String, String> dishesIdList;
-    private String userId;
     private String dateTime;
+    private String userId;
+    private String restaurantId;
+    private String ID;
+//    private Map<String, String> dishesIdList;
 
-    public java.lang.String getID() {
-        return ID;
-    }
-
-    public void setID(java.lang.String ID) {
-        this.ID = ID;
-    }
-
-    public HashMap<String, Integer> getDishes() {
-        return dishes;
-    }
-
-    public void setDishes(HashMap<String, Integer> dishes) {
-        this.dishes = dishes;
-    }
 
     /*
     public Calendar getDate_time() {
@@ -60,30 +42,6 @@ public class Booking implements Serializable, Comparable<Booking>
     }
     */
 
-    public java.lang.String getNote() {
-        return note;
-    }
-
-    public void setNote(java.lang.String note) {
-        this.note = note;
-    }
-
-
-    public java.lang.String getRestaurantID() {
-        return restaurantID;
-    }
-
-    public void setRestaurantID(java.lang.String restaurantID) {
-        this.restaurantID = restaurantID;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double price){
-        this.totalPrice = price;
-    }
 
 //    public List<Integer> getQuantities() {
 //        return quantities;
@@ -112,22 +70,6 @@ public class Booking implements Serializable, Comparable<Booking>
 //    }
 
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-    }
-
 
 
     @Override
@@ -151,11 +93,76 @@ public class Booking implements Serializable, Comparable<Booking>
         return cal.compareTo(cal2);
     }
 
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public double getTotalDiscount() {
+        return totalDiscount;
+    }
+
+    public void setTotalDiscount(double totalDiscount) {
+        this.totalDiscount = totalDiscount;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     public int getTotalDishesQty() {
         return totalDishesQty;
     }
 
     public void setTotalDishesQty(int totalDishesQty) {
         this.totalDishesQty = totalDishesQty;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String getDateTime() {
+        return this.dateTime;
+    }
+
+    public HashMap<String, Integer> getDishesIdMap() {
+        return dishesIdMap;
+    }
+
+    public void setDishesIdMap(HashMap<String, Integer> dishesIdMap) {
+        this.dishesIdMap = dishesIdMap;
+    }
+
+    public String getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(String restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 }

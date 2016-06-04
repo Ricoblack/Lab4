@@ -5,25 +5,27 @@ import java.util.Date;
 /**
  * Created by carlocaramia on 08/04/16.
  */
-public class RestaurateurProfile {
+public class RestaurantInfo {
 
-    private String restaurantName;
+    private String additionalServices;
     private String address;
-    private String nearbyUniversity;
+    private String closingHour;
     private String cuisineType;
     private String description;
-    private Date openingHour;
-    private Date closingHour;
-    private String timeInfo;
+    private String nearbyUniversity;
+    private String openingHour;
     private String paymentMethod;
-    private String additionalServices;
-    private String imagePath;
+    private String restaurantName;
+    private String timeInfo;
+
+    //TODO aggiungerlo via codice (Renato)
+    //private String imagePath;
 
 
 
-    public RestaurateurProfile(String restaurantName, String address, String nearbyUniversity, String cuisineType,
-                               String description, Date openingHour, Date closingHour, String timeInfo, String paymentMethod,
-                               String additionalServices){
+    public RestaurantInfo(String restaurantName, String address, String nearbyUniversity, String cuisineType,
+                          String description, String openingHour, String closingHour, String timeInfo, String paymentMethod,
+                          String additionalServices){
 
         this.restaurantName = restaurantName;
         this.address=address;
@@ -39,7 +41,7 @@ public class RestaurateurProfile {
         this.description = description;
     }
 
-    public RestaurateurProfile() {}
+    public RestaurantInfo() {}
 
     public String getAddress() {
         return address;
@@ -49,19 +51,19 @@ public class RestaurateurProfile {
         this.address = address;
     }
 
-    public Date getOpeningHour() {
+    public String getOpeningHour() {
         return openingHour;
     }
 
-    public void setOpeningHour(Date openingHour) {
+    public void setOpeningHour(String openingHour) {
         this.openingHour = openingHour;
     }
 
-    public Date getClosingHour() {
+    public String getClosingHour() {
         return closingHour;
     }
 
-    public void setClosingHour(Date closingHour) {
+    public void setClosingHour(String closingHour) {
         this.closingHour = closingHour;
     }
 
@@ -120,13 +122,5 @@ public class RestaurateurProfile {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
     }
 }

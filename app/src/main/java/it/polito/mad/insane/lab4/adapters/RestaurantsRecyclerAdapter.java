@@ -110,13 +110,13 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 
         public void setData(Restaurant current, int position) {
             this.position = position;
-            this.title.setText(current.getProfile().getRestaurantName());
-            this.street.setText(current.getProfile().getAddress());
-            this.IDrestaurant = current.getRestaurantID();
+            this.title.setText(current.getInfo().getRestaurantName());
+            this.street.setText(current.getInfo().getAddress());
+            this.IDrestaurant = current.getID();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 this.img.setImageAlpha(180);//range 0..255
             }
-            this.typeCausine.setText(current.getProfile().getCuisineType());
+            this.typeCausine.setText(current.getInfo().getCuisineType());
             DecimalFormat df = new DecimalFormat("0.0");
             this.avgFinalScore.setText(df.format(current.getAvgFinalScore()));
             //this.numReview.setText(Integer.toString(current.getReviews().size())+" ");
