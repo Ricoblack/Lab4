@@ -67,7 +67,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
 
         HomePageActivity.manager = RestaurateurJsonManager.getInstance(this);
-
         setContentView(R.layout.home_page_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -208,7 +207,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_page_menu, menu);
+
+//        if (loggato)
+//            getMenuInflater().inflate(R.menu.home_user_menu, menu);
+//        else
+            getMenuInflater().inflate(R.menu.home_page_menu, menu);
         return true;
     }
 
