@@ -210,4 +210,6 @@
     <string name="title_activity_location">LocationActivity</string>
     <string name="error_connection">Connection Error</string>
     <string name="error_authentication">Authentication failed</string>
+    <string name="notlocated">Cannot locate device</string>
+    <string name="waitforloading">Wait for restaurant loading and retry</string>
 </resources>

@@ -52,6 +52,7 @@ public class RestaurateurJsonManager
     public Context myContext;
     private Location location;  //setto il polito come location dove cercare i ristoranti
     public SimpleLocation simpleLocation;
+    public List<Restaurant> listaFiltrata;
 
     public static RestaurateurJsonManager getInstance(Context myContext)
     {
@@ -271,7 +272,6 @@ public class RestaurateurJsonManager
                 }
             });
             }
-
         }
         else if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.score).toLowerCase())){
             Collections.sort(lista, new Comparator<Restaurant>() {

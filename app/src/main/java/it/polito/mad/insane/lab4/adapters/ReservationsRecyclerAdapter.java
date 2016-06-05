@@ -126,7 +126,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 //                                    act.finish();
                                     */
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    //TODO: eliminare la reservation da tutti i posti (carlo)
+                                    //FIXME: eliminare la reservation da tutti i posti (carlo)
                                     DatabaseReference myRef = database.getReference("/bookings/"+ID.getText().toString()+"/");
 
                                     myRef.setValue(null, new DatabaseReference.CompletionListener() {

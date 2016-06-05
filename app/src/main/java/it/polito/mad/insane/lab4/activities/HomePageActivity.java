@@ -145,6 +145,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 if(r!=null) {
                     // set recycler
                     listaFiltrata=new ArrayList<Restaurant>(r.values());
+                    manager.listaFiltrata=listaFiltrata;
                     setUpRestaurantsRecycler(listaFiltrata);
                     Firebase.setAndroidContext(myContext);
                     GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
