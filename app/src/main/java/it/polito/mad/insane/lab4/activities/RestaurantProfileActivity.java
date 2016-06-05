@@ -74,6 +74,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     private static FloatingActionButton fab;
     private static RestaurateurJsonManager manager = null;
     private static String restaurantId;
+    private static String restaurantName;
     private static DishesRecyclerAdapter dishesAdapter = null;
 //    private static List<Dish> reservationList = null;
 
@@ -100,9 +101,11 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         manager = RestaurateurJsonManager.getInstance(this);
-        if(getIntent().getStringExtra("ID") != null) {
+        if(getIntent().getStringExtra("ID") != null && getIntent().getStringExtra("Name") != null)
+        {
             restaurantId = getIntent().getStringExtra("ID");
-            //setTitle(manager.getRestaurant(restaurantId).getProfile().getRestaurantName());
+            restaurantName = getIntent().getStringExtra("Name");
+            setTitle(restaurantName);
         }
 
 //        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.scrollView);

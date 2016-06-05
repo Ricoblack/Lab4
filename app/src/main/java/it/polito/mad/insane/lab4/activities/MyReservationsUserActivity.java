@@ -121,12 +121,14 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                 {
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 break;
             case R.id.activity_reservations:
                 if(!getClass().equals(MyReservationsUserActivity.class)) {
                     Intent i = new Intent(this, MyReservationsUserActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 break;
         }

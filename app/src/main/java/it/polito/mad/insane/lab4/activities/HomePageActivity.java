@@ -54,12 +54,14 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
     private static RestaurateurJsonManager manager = null;
     static final String PREF_NAME = "myPref";
+    static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
     private List<Restaurant> listaFiltrata;
     private Context myContext=this;
+    private static String uid ;
 
     //localization
-    SimpleLocation location;
+    private SimpleLocation location;
 
     //TODO: implementare la ricerca con DB(Michele)
     @Override
@@ -73,6 +75,24 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         setSupportActionBar(toolbar);
 
 //        manager.resetDbApp();
+
+        // check login
+        if(uid == null)
+        {
+            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+            if (mPrefs != null) {
+                uid = this.mPrefs.getString("uid", null);
+            }
+        }
+
+        // clear filter
+        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        if (mPrefs!=null) {
+            SharedPreferences.Editor editor = this.mPrefs.edit();
+            editor.clear();
+            editor.apply();
+        }
+
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
         if(sv != null) {
@@ -115,13 +135,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // set up ordering spinner
         setUpSpinner();
 
-        // clear filter
-        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        if (mPrefs!=null) {
-            SharedPreferences.Editor editor = this.mPrefs.edit();
-            editor.clear();
-            editor.apply();
-        }
 
         // set up clean Recycler
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -222,9 +235,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-//        if (loggato)
-//            getMenuInflater().inflate(R.menu.home_user_menu, menu);
-//        else
+        if (uid != null)
+            getMenuInflater().inflate(R.menu.home_user_menu, menu);
+        else
             getMenuInflater().inflate(R.menu.home_page_menu, menu);
         return true;
     }
@@ -241,8 +254,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     protected void onResume()
     {
         super.onResume();
-        this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-
+        // check login
+        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
         // make the device update its location
         location.beginUpdates();
@@ -265,6 +278,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         if(id == R.id.activity_login){
             Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.LoginActivity.class);
             startActivity(i);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -366,7 +380,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
 //        if (id == R.id.nav_camera) {
 //            // Handle the camera action
-//            Toast.makeText(HomePageActivity.this, "Hai cliccato su stocazzo", Toast.LENGTH_SHORT).show();
 //        } else if (id == R.id.nav_gallery) {
 //
 //        } else if (id == R.id.nav_slideshow) {
@@ -374,6 +387,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 //        } else if (id == R.id.nav_manage) {
 //
 //        }
+        // TODO: Inserire il tasto logout nel drawer nel caso di utente loggato
+
+        //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
         switch (id)
         {
             case R.id.home_activity:
@@ -381,12 +397,14 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 {
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 break;
             case R.id.activity_reservations:
                 if(!getClass().equals(MyReservationsUserActivity.class)) {
                     Intent i = new Intent(this, MyReservationsUserActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 break;
         }
