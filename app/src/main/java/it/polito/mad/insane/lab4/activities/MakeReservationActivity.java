@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,6 +62,7 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static String additionalNotes = "";
     private static double totalPrice = 0;
     private static double totalDiscount;
+    private static int totalDishesQty;
     private static int[] quantities;
 
 
@@ -76,11 +78,14 @@ public class MakeReservationActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         restaurantId = bundle.getString("ID");
         final HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
-        List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
 
-        totalPrice = 0;
-        for(Dish d:dishesToDisplay)
-            totalPrice += d.getPrice() * selectedQuantities.get(d);
+        if (selectedQuantities != null) {
+            totalDishesQty = selectedQuantities.size();
+            List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
+            totalPrice = 0;
+            for(Dish d:dishesToDisplay)
+                totalPrice += d.getPrice() * selectedQuantities.get(d);
+        }
 
         // get Daily offers from firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -189,7 +194,8 @@ public class MakeReservationActivity extends AppCompatActivity {
                     }
 
                     //Verifico che i costraint per la prenotazione siano rispettati: in orario di lavoro e tra almeno un ora
-                    //TODO implementare questo metodi sul manager, preferibilmente chi li ha fatti la scorsa volta (Renato)
+                    //TODO implementare questo metodi sul manager, preferibilmente chi li ha fatti la scorsa volta, se non sbaglio
+                    //TODO Carlo e/o Michele (Renato)
 //                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId)==false){
 //                        Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
 //                        return;
@@ -252,31 +258,31 @@ public class MakeReservationActivity extends AppCompatActivity {
 
     public void saveReservation(HashMap<Dish, Integer> selectedQuantities) {
         final Booking b = new Booking();
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         b.setDateTime(sdf.format(reservationDate.getTime()));
 
-        b.setTotalDishesQty(0);
-        b.setTotalPrice(0);
         HashMap<String, Integer> map = new HashMap<>();
         for(Dish d: selectedQuantities.keySet()) {
             map.put(d.getID(), selectedQuantities.get(d));
             b.setTotalPrice(b.getTotalPrice() + d.getPrice() * selectedQuantities.get(d));
             b.setTotalDishesQty(b.getTotalDishesQty() + selectedQuantities.get(d));
         }
-
         b.setDishesIdMap(map);
 
-        //TODO implementare meccanismo id prenotazioni
-        //FIXME dare un id sensato
-//        b.setID(String.valueOf(manager.getNextReservationID()));
-        b.setID("bookRenato");
-        b.setID(restaurantId);
-        b.setTotalPrice(totalPrice);
         EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
         if(et != null){
             additionalNotes = et.getText().toString();
             b.setNotes(additionalNotes);
         }
+        b.setRestaurantId(restaurantId);
+        b.setTotalDiscount(totalDiscount);
+        b.setTotalDishesQty(totalDishesQty);
+        b.setTotalPrice(totalPrice);
+
+        //TODO inserire id dello user che dovremmo avere nelle sharedPref (Renato)
+//        b.setUserId(userId);
+
 
         //TODO implementare meccanismo di decremento quantita' disponibili dei piatti
 //        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
@@ -289,19 +295,30 @@ public class MakeReservationActivity extends AppCompatActivity {
 //        manager.getBookings().add(b);
 //        manager.saveDbApp();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference addToBookings = database.getReference("/bookings/" + b.getID());
-        final DatabaseReference addToRestaurant = database.getReference("/restaurants/" + restaurantId +
-                "/bookingsIdList/" + b.getID());
-        //TODO salvare la prenotazione anche nello user
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference addBookingsRef = database.getReference("/bookings");
 
-        addToBookings.runTransaction(new Transaction.Handler() {
+        //TODO salvare la prenotazione anche nello user
+        //TODO inserire id prenotazione (Renato)
+//        b.setID(String.valueOf(manager.getNextReservationID()));
+
+        addBookingsRef.runTransaction(new Transaction.Handler() {
 
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                addToBookings.setValue(b);
-                addToRestaurant.setValue(b.getID()); //FIXME sta cosa e' legale caro il mio Charles? (Renato)
-//                myRef2.push().setValue(ref);
+                DatabaseReference restaurantRef = database.getReference("/bookings/restaurants/" + restaurantId + "/");
+                DatabaseReference newRef = restaurantRef.push();
+                String key = newRef.getKey();
+                b.setID(key);
+                newRef.setValue(b);
+//
+//                b.setID(generatedId);
+//                restaurantRef.push(b);
+//                addBookingsRef.child("restaurants").child(restaurantId).child(generatedId).setValue(b);
+
+                //TODO inserire prenotazione nella sezione users, scommentare queste righe (Renato)
+//                DatabaseReference userRef = addBookingsRef.child("users").child(userId);
+//                userRef.push().setValue(b);
 
                 return Transaction.success(mutableData);
             }
