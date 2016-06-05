@@ -30,6 +30,10 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,8 +62,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private List<Restaurant> listaFiltrata;
     private Context myContext=this;
 
-    //localization
-    SimpleLocation location;
+
+
 
     //TODO: implementare la ricerca con DB(Michele)
     @Override
@@ -140,7 +144,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 });
                 if(r!=null) {
                     // set recycler
-                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
+                    listaFiltrata=new ArrayList<Restaurant>(r.values());
+                    setUpRestaurantsRecycler(listaFiltrata);
+                    Firebase.setAndroidContext(myContext);
+                    GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
+                    manager.fillRestaurantLocations(geoFire,listaFiltrata);
                 }
             }
             @Override
@@ -173,7 +181,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         startLocalization();
 
-        Toast.makeText(myContext,"lat: "+Double.toString(location.getLatitude()),Toast.LENGTH_SHORT).show();
 
     }
 
@@ -181,16 +188,16 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private void startLocalization()
     {
         // construct a new instance of SimpleLocation
-        location = new SimpleLocation(this);
+        manager.simpleLocation = new SimpleLocation(this);
 
         // if we can't access the location yet
-        if (!location.hasLocationEnabled()) {
+        if (!manager.simpleLocation.hasLocationEnabled()) {
             // ask the user to enable location access
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.askgps)
                     .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            SimpleLocation.openSettings(myContext);
+                            SimpleLocation.openSettings(manager.myContext);
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel_dialog_button), new DialogInterface.OnClickListener() {
@@ -202,6 +209,15 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             Dialog dialog = builder.create();
             dialog.show();
 
+            manager.simpleLocation.setListener(new SimpleLocation.Listener() {
+
+                @Override
+                public void onPositionChanged() {
+                    Toast.makeText(manager.myContext,"Lat: " + manager.simpleLocation.getLatitude() + " long: " + manager.simpleLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            // make the device update its location
+            manager.simpleLocation.beginUpdates();
         }
     }
 
@@ -233,7 +249,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     @Override
     protected void onPause() {
         // stop location updates (saves battery)
-        location.endUpdates();
+        //manager.simpleLocation.endUpdates();
         super.onPause();
     }
 
@@ -243,9 +259,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         super.onResume();
         this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
 
-
-        // make the device update its location
-        location.beginUpdates();
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.activities.DisplayReservation;
+import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
@@ -85,7 +85,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             public void onClick(View v)
             {
                 //Toast.makeText(v.getContext(),"Cliccato sulla cardView", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(v.getContext(),DisplayReservation.class);
+                Intent i = new Intent(v.getContext(),DisplayReservationActivity.class);
                 i.putExtra("Booking", BookingsViewHolder.this.currentBooking);
                 i.putExtra("nameRestaurant", nameRist);
                 v.getContext().startActivity(i);

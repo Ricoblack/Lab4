@@ -330,8 +330,7 @@ public class DbAppReset
 //        Map<String,String> rev1List=new HashMap<>();
 //        rev1List.put("1234","1234");
 //        Map<String,String> book1List=new HashMap<>();
-//        //TODO qui c'era scritto ("book1", "1") ma in realta' l'id della prima prenotazione e' appunto book1, quindi l'ho modificato
-//        //TODO giusto Charles? (Renato)
+//
 //        book1List.put("book1","book1");
 //        book1List.put("book2","book2");
 //        book1List.put("book3","book3");

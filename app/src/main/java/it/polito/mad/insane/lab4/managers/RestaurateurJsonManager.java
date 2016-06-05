@@ -5,6 +5,10 @@ import android.content.ContextWrapper;
 import android.location.Location;
 import android.widget.Toast;
 
+import com.firebase.client.FirebaseError;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.LocationCallback;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,6 +33,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import im.delight.android.location.SimpleLocation;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.data.Restaurant;
@@ -44,8 +49,9 @@ public class RestaurateurJsonManager
 
     //private static DbApp dbApp;
     private DbAppReset dbAppReset;
-    private Context myContext;
+    public Context myContext;
     private Location location;  //setto il polito come location dove cercare i ristoranti
+    public SimpleLocation simpleLocation;
 
     public static RestaurateurJsonManager getInstance(Context myContext)
     {
@@ -253,12 +259,19 @@ public class RestaurateurJsonManager
 
         //TODO bisogna implementare il funzionamento della geolocalizzazione (Michele)
         if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.distance).toLowerCase())){
-//            Collections.sort(lista, new Comparator<Restaurant>() {
-//                @Override
-//                public int compare(Restaurant lhs, Restaurant rhs) {
-//                    return (int)(location.distanceTo(lhs.getLocation())-location.distanceTo(rhs.getLocation()));
-//                }
-//            });
+            if(simpleLocation.getLatitude()==0 || simpleLocation.getLongitude()==0){
+                Toast.makeText(myContext,myContext.getResources().getText(R.string.notlocated),Toast.LENGTH_SHORT).show();
+
+            }
+            else {
+                Collections.sort(lista, new Comparator<Restaurant>() {
+                @Override
+                public int compare(Restaurant lhs, Restaurant rhs) {
+                    return (int)(location.distanceTo(lhs.location)-location.distanceTo(rhs.location));
+                }
+            });
+            }
+
         }
         else if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.score).toLowerCase())){
             Collections.sort(lista, new Comparator<Restaurant>() {
@@ -282,6 +295,30 @@ public class RestaurateurJsonManager
     private boolean timeIsAfter(Date d1, Date d2) {
         DateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
         return f.format(d1).compareTo(f.format(d2)) >= 0;
+    }
+
+    public void fillRestaurantLocations(GeoFire geoFire, List<Restaurant> listaFiltrata) {
+
+        for(final Restaurant r : listaFiltrata){
+            //call geofire retriving every location and write in restaurant list
+            geoFire.getLocation(r.getID(), new LocationCallback() {
+
+                @Override
+                public void onLocationResult(String key, GeoLocation location) {
+                    Location loc=new Location("loc");
+                    loc.setLatitude(location.latitude);
+                    loc.setLongitude(location.longitude);
+                    r.location=loc;
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Toast.makeText(myContext,"Error retriving locations",Toast.LENGTH_SHORT);
+
+                }
+
+            });
+        }
     }
 
     //TODO: da scommentare successivamente (Renato)

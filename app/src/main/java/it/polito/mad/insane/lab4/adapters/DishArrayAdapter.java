@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.activities.DisplayReservation;
+import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
 import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.Dish;
@@ -54,7 +54,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                     inflater = ((RestaurantProfileActivity) context).getLayoutInflater();
                     break;
                 case 2:
-                    inflater = ((DisplayReservation) context).getLayoutInflater();
+                    inflater = ((DisplayReservationActivity) context).getLayoutInflater();
                     break;
             }
 

@@ -2,6 +2,8 @@ package it.polito.mad.insane.lab4.data;
 
 import android.location.Location;
 
+import com.firebase.geofire.GeoLocation;
+
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class Restaurant {
     private RestaurantInfo info;
     private Map<String,Double> avgScores;
     private double avgFinalScore;
+    public Location location=null;
 
 
     public Restaurant(){}
@@ -92,6 +95,8 @@ public class Restaurant {
     public void setID(String ID) {
         this.ID = ID;
     }
+
+
 
 //    public Restaurant(String restaurantID, String password, RestaurantInfo profile, Map<String,String> reviewsIdList, Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location)throws NoSuchAlgorithmException, UnsupportedEncodingException {
 //        Cryptography cryptography = new Cryptography();
