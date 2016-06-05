@@ -53,7 +53,7 @@ public class MyReservationsUserActivity extends AppCompatActivity {
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("/bookings");
+            DatabaseReference myRef = database.getReference("/bookings/users/-KJQAkQrf8Ucme-NflCc");
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
