@@ -53,6 +53,7 @@ public class MyReservationsUserActivity extends AppCompatActivity {
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
+            //TODO: usare lo userid in shared preferences e non uno fisso (carlo)
             DatabaseReference myRef = database.getReference("/bookings/users/-KJQAkQrf8Ucme-NflCc");
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {

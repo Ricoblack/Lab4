@@ -1,5 +1,8 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -10,6 +13,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -37,6 +41,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import im.delight.android.location.SimpleLocation;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.HomeSpinnerAdapter;
 import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
@@ -50,6 +55,10 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     static final String PREF_NAME = "myPref";
     private SharedPreferences mPrefs = null;
     private List<Restaurant> listaFiltrata;
+    private Context myContext=this;
+
+    //localization
+    SimpleLocation location;
 
     //TODO: implementare la ricerca con DB(Michele)
     @Override
@@ -145,7 +154,41 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
+
+
+        //localization
+
+        startLocalization();
+
+
     }
+
+    private void startLocalization() {
+        // construct a new instance of SimpleLocation
+        location = new SimpleLocation(this);
+
+        // if we can't access the location yet
+        if (!location.hasLocationEnabled()) {
+            // ask the user to enable location access
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.askgps)
+                    .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            SimpleLocation.openSettings(myContext);
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.cancel_dialog_button), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+
+            Dialog dialog = builder.create();
+            dialog.show();
+
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -166,11 +209,23 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
+
+    @Override
+    protected void onPause() {
+        // stop location updates (saves battery)
+        location.endUpdates();
+        super.onPause();
+    }
+
     @Override
     protected void onResume()
     {
         super.onResume();
         this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+
+
+        // make the device update its location
+        location.beginUpdates();
     }
 
     @Override

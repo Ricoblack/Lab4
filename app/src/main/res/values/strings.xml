@@ -205,5 +205,6 @@
     <string name="second_score">punctuality</string> <!-- NON TRADURRE QUESTA STRINGA -->
     <string name="third_score">location</string>
     <string name="discount_summary">DISCOUNT</string>
-    <string name="total_discount">Total Discount</string> <!-- NON TRADURRE QUESTA STRINGA -->
+    <string name="total_discount">Total Discount</string>
+    <string name="askgps">Abilita il gps per una migliore esperienza</string> <!-- NON TRADURRE QUESTA STRINGA -->
 </resources>
