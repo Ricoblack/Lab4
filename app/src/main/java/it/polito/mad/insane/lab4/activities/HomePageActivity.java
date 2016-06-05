@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -82,6 +83,19 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 }
             });
         }
+
+        ImageView iv = (ImageView) findViewById(R.id.localize_me);
+        if(iv != null){
+            iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(HomePageActivity.this, LocationActivity.class);
+                    startActivity(i);
+                }
+            });
+
+        }
+
 
         AppCompatButton applyButton =(AppCompatButton) findViewById(R.id.applyOrdering);
         if(applyButton != null) {

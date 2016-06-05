@@ -81,7 +81,16 @@
         <activity
             android:name=".activities.MyReservationsRestaurateurActivity"
             android:label="@string/title_activity_view_booking"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.LocationActivity"
+            android:label="@string/title_activity_location"
+            android:parentActivityName=".activities.HomePageActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
+        </activity>
     </application>
 
 </manifest>

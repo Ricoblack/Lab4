@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,7 +88,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
         private TextView dailyOfferID;
         private TextView dailyOfferPrice;
         private TextView dailyOfferDescription;
-        private LinearLayout popupLayout;
+        private RelativeLayout popupLayout;
         private ImageView expandArrow;
         private ListView dishListView;
 
@@ -99,7 +100,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
             this.dailyOfferPrice = (TextView) itemView.findViewById(R.id.daily_offer_price);
             this.dailyOfferDescription = (TextView) itemView.findViewById(R.id.daily_offer_description);
             this.cardView = itemView;
-            this.popupLayout = (LinearLayout) itemView.findViewById(R.id.daily_offer_popup_layout);
+            this.popupLayout = (RelativeLayout) itemView.findViewById(R.id.daily_offer_popup_layout);
             this.expandArrow = (ImageView) itemView.findViewById(R.id.expand_arrow);
             this.dishListView = (ListView) itemView.findViewById(R.id.daily_offer_listview);
         }
