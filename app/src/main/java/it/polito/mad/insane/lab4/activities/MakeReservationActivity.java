@@ -125,7 +125,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        // TODO: aggiustare sia il DB che la classe in modo da salvare lo sconto nella dailyoffer
+
                         if (numberDishes == 0) {
                             totalDiscount += repeater * tempOffer.getDiscount();
                         }
@@ -145,6 +145,18 @@ public class MakeReservationActivity extends AppCompatActivity {
                             tv.setText(MessageFormat.format("{0}€", df.format(totalDiscount)));
                         }
                     }
+                    TextView tv = (TextView) findViewById(R.id.reservation_total_price);
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    if (tv != null) {
+                        tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
+                    }
+
+                    DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 0);
+
+                    ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
+                    if (mylist != null) {
+                        mylist.setAdapter(adapter);
+                    }
 
                 }
             }
@@ -157,18 +169,7 @@ public class MakeReservationActivity extends AppCompatActivity {
 
 
 
-        TextView tv = (TextView) findViewById(R.id.reservation_total_price);
-        DecimalFormat df = new DecimalFormat("0.00");
-        if (tv != null) {
-            tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
-        }
 
-        DishArrayAdapter adapter = new DishArrayAdapter(this, R.layout.dish_listview_item, selectedQuantities, 0);
-
-        ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
-        if (mylist != null) {
-            mylist.setAdapter(adapter);
-        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {

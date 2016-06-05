@@ -53,7 +53,7 @@ import it.polito.mad.insane.lab4.data.RestaurantInfo;
 import it.polito.mad.insane.lab4.data.Review;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
-/** Sistemata dopo aver cambiato il DB **/
+
 public class RestaurantProfileActivity extends AppCompatActivity {
 
     /**

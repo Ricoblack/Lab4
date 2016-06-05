@@ -48,7 +48,7 @@ import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
-/** Sistemata dopo aver cambiato il DB **/
+
 public class HomePageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static RestaurateurJsonManager manager = null;
@@ -164,7 +164,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
     }
 
-    private void startLocalization() {
+    // TODO: cosa fare se il gps non è attivo? come si fanno a ordinare i risultati dei ristoranti per distanza? (Michele)
+    private void startLocalization()
+    {
         // construct a new instance of SimpleLocation
         location = new SimpleLocation(this);
 
@@ -242,10 +244,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.FilterActivity.class);
             startActivity(i);
         }
-        if(id == R.id.activity_reservations){
-            Intent i = new Intent(this, MyReservationsUserActivity.class);
-            startActivity(i);
-        }
+
         if(id == R.id.activity_login){
             Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.LoginActivity.class);
             startActivity(i);
@@ -348,20 +347,37 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-            Toast.makeText(HomePageActivity.this, "Hai cliccato su stocazzo", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//            Toast.makeText(HomePageActivity.this, "Hai cliccato su stocazzo", Toast.LENGTH_SHORT).show();
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        }
+        switch (id)
+        {
+            case R.id.home_activity:
+                if(!getClass().equals(HomePageActivity.class))
+                {
+                    Intent i = new Intent(this, HomePageActivity.class);
+                    startActivity(i);
+                }
+                break;
+            case R.id.activity_reservations:
+                if(!getClass().equals(MyReservationsUserActivity.class)) {
+                    Intent i = new Intent(this, MyReservationsUserActivity.class);
+                    startActivity(i);
+                }
+                break;
         }
+//        if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -8,12 +8,7 @@
         android:icon="@drawable/ic_tune_white_24dp"
         android:title="@string/filter"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/activity_reservations"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_shopping_cart_white_24dp"
-        android:title="@string/reservation"
-        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/activity_login"
         android:orderInCategory="100"
