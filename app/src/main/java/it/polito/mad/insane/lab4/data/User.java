@@ -38,8 +38,9 @@ public class User
     }
 
     public void setPassword(String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        Cryptography cryptography = new Cryptography();
-        this.password = cryptography.SHA1(password);
+        //Cryptography cryptography = new Cryptography();
+        //this.password = cryptography.SHA1(password);
+        this.password = password;
     }
 
     public String getID() {

@@ -73,6 +73,7 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
         private TextView title;
         private TextView street;
         private String IDrestaurant;
+        private String nameRestaurant;
         private ImageView img;
         private TextView typeCausine;
         private TextView avgFinalScore;
@@ -88,6 +89,7 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
                 //Toast.makeText(v.getContext(),"Cliccato sulla cardView", Toast.LENGTH_LONG).show();
                 Intent i = new Intent(v.getContext(), RestaurantProfileActivity.class);
                 i.putExtra("ID",IDrestaurant);
+                i.putExtra("Name", nameRestaurant);
                 v.getContext().startActivity(i);
             }
         };
@@ -113,6 +115,7 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
             this.title.setText(current.getInfo().getRestaurantName());
             this.street.setText(current.getInfo().getAddress());
             this.IDrestaurant = current.getID();
+            this.nameRestaurant = current.getInfo().getRestaurantName();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 this.img.setImageAlpha(180);//range 0..255
             }

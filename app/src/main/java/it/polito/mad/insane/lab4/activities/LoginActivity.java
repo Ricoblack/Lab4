@@ -4,9 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -19,8 +24,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -47,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.data.User;
 import it.polito.mad.insane.lab4.managers.Cryptography;
 import it.polito.mad.insane.lab4.R;
 
@@ -55,7 +64,8 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener{
+
 
 //    /**
 //     * Id to identity READ_CONTACTS permission request.
@@ -74,9 +84,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private String typeConsumer = "User";
+    private String userId = null;
+
+    // shared prefs
+    static final String PREF_LOGIN = "loginPref";
+    private SharedPreferences mPrefs = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         // Set up the login form.
@@ -87,8 +103,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         //Radio batton gruop
         RadioButton typeUserRadioButton = (RadioButton) findViewById(R.id.user_login_radiobutton);
-        if(typeUserRadioButton != null) {
-            typeUserRadioButton.setOnClickListener(new OnClickListener() {
+        if(typeUserRadioButton != null)
+        {
+            typeUserRadioButton.setOnClickListener(new OnClickListener()
+            {
                 @Override
                 public void onClick(View v) {
                     typeConsumer = "User";
@@ -97,7 +115,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         RadioButton typeRestaurateurRadioButton = (RadioButton) findViewById(R.id.restaurateur_login_radiobutton);
-        if(typeRestaurateurRadioButton != null) {
+        if(typeRestaurateurRadioButton != null)
+        {
             typeRestaurateurRadioButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,11 +127,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 
-        if(mEmailSignInButton != null) {
-            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        if(mEmailSignInButton != null)
+        {
+            mEmailSignInButton.setOnClickListener(new OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
-                    //TODO aggiungere controllo id e password
+                public void onClick(View v)
+                {
                     try {
                         attemptLogin();
                     } catch (NoSuchAlgorithmException e) {
@@ -120,20 +141,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-//                    if (typeConsumer.equals("User")) {
-//                        //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
-//                        Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
-//                        Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
-//                        startActivity(intent);
-//                    }
                 }
             });
         }
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        /**********************DRAWER****************************/
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        /**************************************************/
     }
 
 //    private void populateAutoComplete() {
@@ -143,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //
 //        getLoaderManager().initLoader(0, null, this);
 //    }
-
+//
 //    private boolean mayRequestContacts() {
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 //            return true;
@@ -165,7 +191,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //        }
 //        return false;
 //    }
-
+//
 //    /**
 //     * Callback received when a permissions request has been completed.
 //     */
@@ -178,14 +204,69 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //            }
 //        }
 //    }
+    @Override
+    public void onBackPressed() {
+        /**********************DRAWER***************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+        /*************************************************/
+    }
+    /********************DRAWER*****************************/
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
 
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        }
+      switch (id)
+        {
+            case R.id.home_activity:
+                if(!getClass().equals(HomePageActivity.class))
+                {
+                    Intent i = new Intent(this, HomePageActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+            case R.id.activity_reservations:
+                if(!getClass().equals(MyReservationsUserActivity.class)) {
+                    Intent i = new Intent(this, MyReservationsUserActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+        }
+//        if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    /*************************************************/
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() throws NoSuchAlgorithmException, UnsupportedEncodingException{
+
         if (mAuthTask != null) {
             return;
         }
@@ -203,21 +284,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            //mPasswordView.setError(getString(R.string.error_invalid_password));
-            mPasswordView.setError("Password non valida");
+            mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid user address.
         if (TextUtils.isEmpty(user)) {
-            //mUserView.setError(getString(R.string.error_field_required));
-            mUserView.setError("E' richiesto un nome utente");
+            mUserView.setError(getString(R.string.error_field_required));
             focusView =  mUserView;
             cancel = true;
         } else if (!isUserValid(user)) {
-            //mUserView.setError(getString(R.string.error_invalid_email));
-            mUserView.setError("Nome utente non valido");
+            mUserView.setError(getString(R.string.error_invalid_user));
             focusView =  mUserView;
             cancel = true;
         }
@@ -336,72 +414,118 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         UserLoginTask(String user, String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
             Cryptography cryptography = new Cryptography();
             mUser = user;
-            //mPassword = cryptography.SHA1(password);
-            mPassword = password;
+            mPassword = cryptography.SHA1(password);
+            //mPassword = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            String[] CREDENTIALS = new String[2];
-            CREDENTIALS[0] = "federico";
-            CREDENTIALS[1] = "vibrati";
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            DatabaseReference myRef = database.getReference("/restaurants/");
-//
-//            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    HashMap<String,Restaurant> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
-//                        @Override
-//                        protected Object clone() throws CloneNotSupportedException {
-//                            return super.clone();
-//                        }
-//                    });
-//                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
-//                }
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            DatabaseReference myRef = database.getReference("/restaurants");
-//
-//
-//
-//            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    HashMap<String,Restaurant> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
-//                        @Override
-//                        protected Object clone() throws CloneNotSupportedException {
-//                            return super.clone();
-//                        }
-//                    });
-//                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
-//                }
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
+            // attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+            if(typeConsumer.equals("User"))
+            {
+                // user login
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("/users");
+
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        HashMap<String,User> usersMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, User>>() {
+                            @Override
+                            protected Object clone() throws CloneNotSupportedException {
+                                return super.clone();
+                            }
+                        });
+                        if(usersMap != null)
+                        {
+                            ArrayList<User> usersList = new ArrayList<User>(usersMap.values());
+                            for(User u: usersList)
+                            {
+                                if(u.getUsername().equals(mUser))
+                                    if(u.getPassword().equals(mPassword))
+                                        userId = u.getID();
+                                    else
+                                        break; // wrong psw
+                            }
+                            if(userId == null)
+                                userId = " ";
+                        }
+                        else
+                            userId = " ";
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }else
+            {
+                // restaurateur login
+                // user login
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("/restaurants");
+
+                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                     HashMap<String,Restaurant> restsMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
+                         @Override
+                         protected Object clone() throws CloneNotSupportedException {
+                             return super.clone();
+                         }
+                     });
+                     if(restsMap != null)
+                     {
+                         ArrayList<Restaurant> restsList = new ArrayList<Restaurant>(restsMap.values());
+                         for(Restaurant r: restsList)
+                         {
+                             if(r.getUsername().equals(mUser))
+                                 if(r.getPassword().equals(mPassword))
+                                     userId = r.getID();
+                                 else
+                                     break; // wrong psw
+                         }
+                         if(userId == null)
+                             userId = " ";
+                     }
+                     else
+                         userId = " ";
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
 
-                String[] pieces = CREDENTIALS;
-                if (pieces[0].equals(mUser)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+            int retrieveCount = 3;
+            while(userId == null && retrieveCount!=0) {
+                try {
+                    // Simulate network access.
+                    Thread.sleep(2000);
+                    retrieveCount -- ;
+                } catch (InterruptedException e) {
+                    return false;
                 }
-            // TODO: register the new account here.
-            return true;
+            }
+
+            if(userId == null) {
+//                Toast.makeText(LoginActivity.this, getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+                return false; // Error connection
+            }
+            else if(userId == " ")
+                return false; // Authentication failed
+            else
+                return true; // Authentication succeded
+
+//                String[] pieces = CREDENTIALS;
+//                if (pieces[0].equals(mUser)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            return true;
         }
 
         @Override
@@ -409,19 +533,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                if (typeConsumer.equals("User")) {
-                    //TODO far partire l'activity utente, bisogna pensare come differenziare la cosa dalla app senza log quindi per ora lascio stare (Federico)
-                    //Toast.makeText(v.getContext(), "Sono un utente", Toast.LENGTH_SHORT).show();
-                } else {
-                    //Toast.makeText(v.getContext(), "Sono un ristoratore", Toast.LENGTH_SHORT).show();
+            if (success)
+            {
+                // return true
+                mPrefs = getSharedPreferences(PREF_LOGIN,MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putString("uid",userId);
+                editor.apply();
+
+                if (typeConsumer.equals("User"))
+                {
+                    Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
+                    startActivity(intent);
+                } else
+                {
                     Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
                     startActivity(intent);
                 }
                 finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            } else
+            { // return false
+                if(userId == null)
+                {
+                    Toast.makeText(LoginActivity.this, getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
+//                    mPasswordView.setError(getString(R.string.error_connection));
+//                    mPasswordView.requestFocus();
+                }
+                else if(userId == " "){
+                    Toast.makeText(LoginActivity.this, getString(R.string.error_authentication), Toast.LENGTH_SHORT).show();
+//                    mPasswordView.setError(getString(R.string.error_authentication));
+//                    mPasswordView.requestFocus();
+                }
+
             }
         }
 
