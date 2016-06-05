@@ -160,6 +160,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         startLocalization();
 
+        Toast.makeText(myContext,"lat: "+Double.toString(location.getLatitude()),Toast.LENGTH_SHORT).show();
 
     }
 
