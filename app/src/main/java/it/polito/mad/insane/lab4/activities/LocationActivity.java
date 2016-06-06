@@ -44,6 +44,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+
+    
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
