@@ -151,6 +151,18 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                     finish();
                 }
                 break;
+            case R.id.logout_drawer:
+                this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                if (mPrefs!=null) {
+                    uid = null;
+                    SharedPreferences.Editor editor = this.mPrefs.edit();
+                    editor.clear();
+                    editor.apply();
+                }
+                Intent i = new Intent(this, HomePageActivity.class);
+                startActivity(i);
+                finish();
+                break;
         }
 //        if (id == R.id.nav_share) {
 //

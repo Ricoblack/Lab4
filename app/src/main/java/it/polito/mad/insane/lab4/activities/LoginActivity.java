@@ -245,13 +245,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     finish();
                 }
                 break;
-            case R.id.activity_reservations:
-                if(!getClass().equals(MyReservationsUserActivity.class)) {
-                    Intent i = new Intent(this, MyReservationsUserActivity.class);
-                    startActivity(i);
-                    finish();
-                }
-                break;
         }
 //        if (id == R.id.nav_share) {
 //

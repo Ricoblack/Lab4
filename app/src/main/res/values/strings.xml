@@ -210,4 +210,5 @@
     <string name="title_activity_location">LocationActivity</string>
     <string name="error_connection">Connection Error</string>
     <string name="error_authentication">Authentication failed</string>
+    <string name="logout">Logout</string>
 </resources>

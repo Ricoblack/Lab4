@@ -10,7 +10,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Debug;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -59,7 +63,7 @@ import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyMenu;
 import it.polito.mad.insane.lab4.data.EditProfile;
 
-public class HomeRestaurateur extends AppCompatActivity {
+public class HomeRestaurateur extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
@@ -101,7 +105,80 @@ public class HomeRestaurateur extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
+        /**********************DRAWER****************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            if(mPrefs != null) {
+                title_drawer.setText(mPrefs.getString("rName", null));
+            }
+        navigationView.setNavigationItemSelectedListener(this);
+        /**************************************************/
+
     }
+
+    /********************DRAWER*****************************/
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        }
+        //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
+        switch (id)
+        {
+            case R.id.home_restaurateur_activity:
+                if(!getClass().equals(HomeRestaurateur.class))
+                {
+                    Intent i = new Intent(this, HomeRestaurateur.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+            case R.id.logout_restaurateur_drawer:
+                if(rid == null){
+                    Toast.makeText(HomeRestaurateur.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                }else {
+                    this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                    if (mPrefs != null) {
+                        rid = null;
+                        SharedPreferences.Editor editor = this.mPrefs.edit();
+                        editor.clear();
+                        editor.apply();
+                    }
+                    Intent i = new Intent(this, HomePageActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+        }
+//        if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    /*************************************************/
 
 
     public void showDatePickerDialog(View v)
@@ -116,6 +193,17 @@ public class HomeRestaurateur extends AppCompatActivity {
         openingFragment.show(getSupportFragmentManager(), "homeTitleHourPicker");
     }
 
+    @Override
+    public void onBackPressed() {
+        /**********************DRAWER***************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+        /*************************************************/
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -532,6 +620,8 @@ public class HomeRestaurateur extends AppCompatActivity {
         setUpRecyclerHour(hourOfDay);
 
     }
+
+
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {

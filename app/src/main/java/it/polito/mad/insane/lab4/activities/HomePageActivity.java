@@ -431,8 +431,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 //        } else if (id == R.id.nav_manage) {
 //
 //        }
-        // TODO: Inserire il tasto logout nel drawer nel caso di utente loggato
-
         //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
         switch (id)
         {
@@ -445,11 +443,31 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 }
                 break;
             case R.id.activity_reservations:
-                if(!getClass().equals(MyReservationsUserActivity.class)) {
-                    Intent i = new Intent(this, MyReservationsUserActivity.class);
-                    startActivity(i);
-                    finish();
+                if(uid == null){
+                    Toast.makeText(myContext, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                }else {
+                    if (!getClass().equals(MyReservationsUserActivity.class)) {
+                        Intent i = new Intent(this, MyReservationsUserActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
                 }
+                break;
+            case R.id.logout_drawer:
+                    if(uid == null){
+                        Toast.makeText(myContext, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                    }else {
+                        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                        if (mPrefs != null) {
+                            uid = null;
+                            SharedPreferences.Editor editor = this.mPrefs.edit();
+                            editor.clear();
+                            editor.apply();
+                        }
+                        Intent i = new Intent(this, HomePageActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
                 break;
         }
 //        if (id == R.id.nav_share) {
