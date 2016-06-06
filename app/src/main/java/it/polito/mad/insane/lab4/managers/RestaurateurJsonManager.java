@@ -321,6 +321,15 @@ public class RestaurateurJsonManager
         }
     }
 
+    public Restaurant getRestaurantByName(String title) {
+        for(Restaurant r : this.listaFiltrata){
+            if(r.getInfo().getRestaurantName().toLowerCase().equals(title.toLowerCase())){
+                return r;
+            }
+        }
+        return null;
+    }
+
     //TODO: da scommentare successivamente (Renato)
 //    public static void deleteReservationByID(List<Booking> mData, String id)
 //    {
