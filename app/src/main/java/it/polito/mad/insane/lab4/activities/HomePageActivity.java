@@ -21,13 +21,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -59,6 +62,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private List<Restaurant> listaFiltrata;
     private Context myContext=this;
     private static String uid ;
+    private String rid;
 
     //localization
     private SimpleLocation location;
@@ -69,6 +73,21 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     {
         super.onCreate(savedInstanceState);
 
+        //controllo se l'utente è loggato come ristoratore o come consumer
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if (mPrefs != null) {
+            uid = this.mPrefs.getString("uid", null);
+            if(uid == null){
+                rid = this.mPrefs.getString("rid", null);
+                if(rid != null){
+                    Intent ir = new Intent(HomePageActivity.this, HomeRestaurateur.class);
+                    startActivity(ir);
+                }
+            }
+        }
+
+
+
         HomePageActivity.manager = RestaurateurJsonManager.getInstance(this);
         setContentView(R.layout.home_page_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,14 +95,14 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
 //        manager.resetDbApp();
 
-        // check login
-        if(uid == null)
-        {
-            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
-            if (mPrefs != null) {
-                uid = this.mPrefs.getString("uid", null);
-            }
-        }
+//        // check login
+//        if(uid == null)
+//        {
+//            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+//            if (mPrefs != null) {
+//                uid = this.mPrefs.getString("uid", null);
+//            }
+//        }
 
         // clear filter
         this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -177,7 +196,32 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+//        LinearLayout nav_layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_drawer, null);
+//        TextView title_drawer = (TextView) nav_layout.findViewById(R.id.title_drawer);
+//        title_drawer.setText("FEDERICO");
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        //controllo se l'utente è loggato come ristoratore o come consumer
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if(uid != null){
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            if(mPrefs != null) {
+                title_drawer.setText(mPrefs.getString("uName", null));
+            }
+        }else if(rid != null){
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            if(mPrefs != null) {
+                title_drawer.setText(mPrefs.getString("rName", null));
+            }
+        }else{
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            title_drawer.setText("NO LOG");
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
 

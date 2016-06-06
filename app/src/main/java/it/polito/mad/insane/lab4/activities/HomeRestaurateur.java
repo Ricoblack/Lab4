@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -63,10 +64,10 @@ public class HomeRestaurateur extends AppCompatActivity {
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
     private static int globalHour = -1;
-    //TODO ricordare che questo ID non dovrà essere fisso
-    private String restaurantID = "rest1";
+    static final String PREF_LOGIN = "loginPref";
+    private SharedPreferences mPrefs = null;
+    private static String rid;
     private  ArrayList<Booking> bookings = new ArrayList<>();
-    private  ArrayList<String> listIdBookings = new ArrayList<>();
 
     // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
 
@@ -83,6 +84,15 @@ public class HomeRestaurateur extends AppCompatActivity {
         setContentView(R.layout.home_restaurateur_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // check login
+        if(rid == null)
+        {
+            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+            if (mPrefs != null) {
+                rid = this.mPrefs.getString("rid", null);
+            }
+        }
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -151,6 +161,7 @@ public class HomeRestaurateur extends AppCompatActivity {
             updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         tv = (TextView) findViewById(R.id.home_title_hour);
+        //TODO risolvere bug filtro orario (Federico)
         if (tv != null){
             if(globalHour == -1)
                 tv.setText(R.string.all_hours);
@@ -283,37 +294,20 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private void updateBookingsHour(final int hour){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+        DatabaseReference myRef = database.getReference("/bookings/restaurants/"+rid);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                HashMap<String,Booking> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
 
-                listIdBookings = new ArrayList<>(r.values());
-
-                DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                for (int i = 0; i < listIdBookings.size(); i++) {
-                    dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
-                    dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Booking r = dataSnapshot.getValue(Booking.class);
-                            bookings.add(r);
-                            setUpRecyclerHour(hour);
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
+                bookings = new ArrayList<>(r.values());
+                setUpRecyclerHour(hour);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -324,37 +318,20 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private void updateBookingsDay(final int year, final int month, final int day){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+        DatabaseReference myRef = database.getReference("/bookings/restaurants/"+rid);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                HashMap<String,Booking> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
 
-                    listIdBookings = new ArrayList<>(r.values());
-
-                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    for (int i = 0; i < listIdBookings.size(); i++) {
-                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
-                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Booking r = dataSnapshot.getValue(Booking.class);
-                                bookings.add(r);
-                                setUpRecyclerDay(year,month,day);
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
+                    bookings = new ArrayList<>(r.values());
+                    setUpRecyclerDay(year,month,day);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
