@@ -85,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private String typeConsumer = "User";
     private String userId = null;
+    private String userName = null;
 
     // shared prefs
     static final String PREF_LOGIN = "loginPref";
@@ -158,6 +159,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+        TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+        title_drawer.setText("NO LOG");
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
     }
@@ -237,13 +241,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if(!getClass().equals(HomePageActivity.class))
                 {
                     Intent i = new Intent(this, HomePageActivity.class);
-                    startActivity(i);
-                    finish();
-                }
-                break;
-            case R.id.activity_reservations:
-                if(!getClass().equals(MyReservationsUserActivity.class)) {
-                    Intent i = new Intent(this, MyReservationsUserActivity.class);
                     startActivity(i);
                     finish();
                 }
@@ -444,7 +441,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             {
                                 if(u.getUsername().equals(mUser))
                                     if(u.getPassword().equals(mPassword))
+                                    {
                                         userId = u.getID();
+                                        userName = u.getUsername();
+                                    }
                                     else
                                         break; // wrong psw
                             }
@@ -463,7 +463,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }else
             {
                 // restaurateur login
-                // user login
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference("/restaurants");
 
@@ -483,9 +482,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                          {
                              if(r.getUsername().equals(mUser))
                                  if(r.getPassword().equals(mPassword))
+                                 {
                                      userId = r.getID();
+                                     userName = r.getUsername();
+                                 }
                                  else
                                      break; // wrong psw
+
                          }
                          if(userId == null)
                              userId = " ";
@@ -535,18 +538,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success)
             {
-                // return true
-                mPrefs = getSharedPreferences(PREF_LOGIN,MODE_PRIVATE);
-                SharedPreferences.Editor editor = mPrefs.edit();
-                editor.putString("uid",userId);
-                editor.apply();
+
 
                 if (typeConsumer.equals("User"))
                 {
+                    // return true
+                    mPrefs = getSharedPreferences(PREF_LOGIN,MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mPrefs.edit();
+                    editor.putString("uid",userId);
+                    editor.putString("uName", userName);
+                    editor.apply();
                     Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
                     startActivity(intent);
                 } else
                 {
+                    // return true
+                    mPrefs = getSharedPreferences(PREF_LOGIN,MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mPrefs.edit();
+                    editor.putString("rid",userId);
+                    editor.putString("rName", userName);
+                    editor.apply();
                     Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
                     startActivity(intent);
                 }

@@ -4,12 +4,17 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Debug;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -58,15 +63,15 @@ import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyMenu;
 import it.polito.mad.insane.lab4.data.EditProfile;
 
-public class HomeRestaurateur extends AppCompatActivity {
+public class HomeRestaurateur extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
     private static int globalHour = -1;
-    //TODO ricordare che questo ID non dovrà essere fisso
-    private String restaurantID = "rest1";
+    static final String PREF_LOGIN = "loginPref";
+    private SharedPreferences mPrefs = null;
+    private static String rid;
     private  ArrayList<Booking> bookings = new ArrayList<>();
-    private  ArrayList<String> listIdBookings = new ArrayList<>();
 
     // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
 
@@ -84,6 +89,15 @@ public class HomeRestaurateur extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // check login
+        if(rid == null)
+        {
+            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+            if (mPrefs != null) {
+                rid = this.mPrefs.getString("rid", null);
+            }
+        }
+
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
                 (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
@@ -91,7 +105,80 @@ public class HomeRestaurateur extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
+        /**********************DRAWER****************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            if(mPrefs != null) {
+                title_drawer.setText(mPrefs.getString("rName", null));
+            }
+        navigationView.setNavigationItemSelectedListener(this);
+        /**************************************************/
+
     }
+
+    /********************DRAWER*****************************/
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        }
+        //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
+        switch (id)
+        {
+            case R.id.home_restaurateur_activity:
+                if(!getClass().equals(HomeRestaurateur.class))
+                {
+                    Intent i = new Intent(this, HomeRestaurateur.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+            case R.id.logout_restaurateur_drawer:
+                if(rid == null){
+                    Toast.makeText(HomeRestaurateur.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                }else {
+                    this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                    if (mPrefs != null) {
+                        rid = null;
+                        SharedPreferences.Editor editor = this.mPrefs.edit();
+                        editor.clear();
+                        editor.apply();
+                    }
+                    Intent i = new Intent(this, HomePageActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+        }
+//        if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    /*************************************************/
 
 
     public void showDatePickerDialog(View v)
@@ -106,6 +193,17 @@ public class HomeRestaurateur extends AppCompatActivity {
         openingFragment.show(getSupportFragmentManager(), "homeTitleHourPicker");
     }
 
+    @Override
+    public void onBackPressed() {
+        /**********************DRAWER***************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+        /*************************************************/
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -151,6 +249,7 @@ public class HomeRestaurateur extends AppCompatActivity {
             updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         tv = (TextView) findViewById(R.id.home_title_hour);
+        //TODO risolvere bug filtro orario (Federico)
         if (tv != null){
             if(globalHour == -1)
                 tv.setText(R.string.all_hours);
@@ -283,37 +382,20 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private void updateBookingsHour(final int hour){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+        DatabaseReference myRef = database.getReference("/bookings/restaurants/"+rid);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                HashMap<String,Booking> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
 
-                listIdBookings = new ArrayList<>(r.values());
-
-                DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                for (int i = 0; i < listIdBookings.size(); i++) {
-                    dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
-                    dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Booking r = dataSnapshot.getValue(Booking.class);
-                            bookings.add(r);
-                            setUpRecyclerHour(hour);
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
+                bookings = new ArrayList<>(r.values());
+                setUpRecyclerHour(hour);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -324,37 +406,20 @@ public class HomeRestaurateur extends AppCompatActivity {
 
     private void updateBookingsDay(final int year, final int month, final int day){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/restaurants/" + restaurantID + "/bookingsIdList");
+        DatabaseReference myRef = database.getReference("/bookings/restaurants/"+rid);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,String> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, String>>() {
+                HashMap<String,Booking> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
 
-                    listIdBookings = new ArrayList<>(r.values());
-
-                    DatabaseReference[] dbRefs = new DatabaseReference[listIdBookings.size()];
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    for (int i = 0; i < listIdBookings.size(); i++) {
-                        dbRefs[i] = database.getReference("/bookings/" + listIdBookings.get(i));
-                        dbRefs[i].addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Booking r = dataSnapshot.getValue(Booking.class);
-                                bookings.add(r);
-                                setUpRecyclerDay(year,month,day);
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
+                    bookings = new ArrayList<>(r.values());
+                    setUpRecyclerDay(year,month,day);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -555,6 +620,8 @@ public class HomeRestaurateur extends AppCompatActivity {
         setUpRecyclerHour(hourOfDay);
 
     }
+
+
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {

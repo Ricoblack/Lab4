@@ -1,6 +1,7 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -36,6 +37,11 @@ import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MyReservationsUserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
+    static final String PREF_LOGIN = "loginPref";
+    private static String uid ;
+    private SharedPreferences mPrefs = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +54,11 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         setContentView(R.layout.my_reservations_user_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if (mPrefs != null) {
+            uid = this.mPrefs.getString("uid", null);
+        }
 
         final RecyclerView rv = (RecyclerView) findViewById(R.id.reservation_recycler_view);
         if(rv != null)
@@ -93,6 +104,15 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+        TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+        if(mPrefs != null)
+        {
+            title_drawer.setText(mPrefs.getString("uName", null));
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
     }
@@ -130,6 +150,18 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                     startActivity(i);
                     finish();
                 }
+                break;
+            case R.id.logout_drawer:
+                this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                if (mPrefs!=null) {
+                    uid = null;
+                    SharedPreferences.Editor editor = this.mPrefs.edit();
+                    editor.clear();
+                    editor.apply();
+                }
+                Intent i = new Intent(this, HomePageActivity.class);
+                startActivity(i);
+                finish();
                 break;
         }
 //        if (id == R.id.nav_share) {
