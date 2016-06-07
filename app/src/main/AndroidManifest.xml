@@ -11,10 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
-
     <application
-
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,6 +20,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAMqM-5pRyY6bjudE8HVYuhzCYh6VMbt4o" />
+
         <activity
             android:name=".activities.HomePageActivity"
             android:label="@string/app_name"
@@ -63,7 +61,7 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.MakeReservationActivity"
             android:label="@string/title_activity_make_reservation"
@@ -73,6 +71,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
+        </activity>
+        <activity
+            android:name=".activities.DailyMenu"
+            android:label="@string/title_activity_daily_menu"
+            android:parentActivityName=".activities.HomeRestaurateur"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.HomeRestaurateur" />
         </activity>
         <activity
             android:name=".activities.DisplayReservationActivity"
@@ -99,6 +107,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
+        </activity>
+        <activity
+            android:name=".activities.EditDish"
+            android:label="@string/title_activity_edit_dish"
+            android:parentActivityName=".activities.DailyMenu"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.DailyMenu" />
         </activity>
     </application>
 

@@ -21,13 +21,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -86,14 +84,10 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             }
         }
 
-
-
         HomePageActivity.manager = RestaurateurJsonManager.getInstance(this);
         setContentView(R.layout.home_page_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        manager.resetDbApp();
 
 //        // check login
 //        if(uid == null)
@@ -111,7 +105,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             editor.clear();
             editor.apply();
         }
-
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
         if(sv != null) {
@@ -154,7 +147,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // set up ordering spinner
         setUpSpinner();
 
-
         // set up clean Recycler
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference restaurantsRef = database.getReference("/restaurants");
@@ -172,6 +164,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 });
                 if(r!=null) {
                     // set recycler
+                    findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     setUpRestaurantsRecycler(new ArrayList<>(r.values()));
                 }
             }

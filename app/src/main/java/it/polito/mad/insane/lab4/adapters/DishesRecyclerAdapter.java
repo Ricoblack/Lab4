@@ -5,6 +5,7 @@ package it.polito.mad.insane.lab4.adapters;
  */
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,8 +36,10 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
     private  int reservationQty; // quantita' totale di item presenti nella prenotazione in esame
     private  double reservationPrice; //prezzo totale degli item presenti nella prenotazione in esame
     private HashMap<Dish, Integer> quantitiesMap; //mappa che contiene le quantita' selezionate di ogni piatto del menu'
+    private String ridAdapter;
 
-    public DishesRecyclerAdapter(Context context, List<Dish> data)
+
+    public DishesRecyclerAdapter(Context context, List<Dish> data, String rid)
     {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
@@ -49,6 +52,8 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
         quantitiesMap = new HashMap<>();
         reservationQty = 0;
         reservationPrice = 0;
+        ridAdapter = rid;
+
     }
 
     /**
@@ -60,8 +65,12 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
     @Override
     public DishesViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
+
         // create the view starting from XML layout file
         View view = this.mInflater.inflate(R.layout.dish_cardview, parent, false);
+        if(ridAdapter != null){
+            view.findViewById(R.id.expand_arrow).setVisibility(View.GONE);
+        }
         DishesViewHolder result =  new DishesViewHolder(view);
         return result;
     }
