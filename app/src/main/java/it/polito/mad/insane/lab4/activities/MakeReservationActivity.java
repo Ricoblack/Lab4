@@ -156,7 +156,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                         tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
                     }
 
-                    DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 0);
+                    DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 3);
 
                     ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
                     if (mylist != null) {

@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -100,12 +101,12 @@ public class DailyMenuActivity extends AppCompatActivity {
             dishFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // open activity EditDishActivity
-                    Toast.makeText(DailyMenuActivity.this,"Hai cliccato su add_dish button",Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DailyMenuActivity.this,"Hai cliccato su add_dish button",Toast.LENGTH_SHORT).show();
                     //TODO inserire edit dish sull'onclick (Federico)
-//                    Intent i = new Intent(view.getContext(),EditDishActivity.class);
-////                    i.putExtra("Adapter",DailyMenuActivity.this.dishesAdapter);
-//                    view.getContext().startActivity(i);
+
+                    // open activity EditDishActivity
+                    Intent i = new Intent(view.getContext(),EditDishActivity.class);
+                    view.getContext().startActivity(i);
 
                 }
             });
@@ -117,10 +118,9 @@ public class DailyMenuActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     // open activity EditOffer
-                    Toast.makeText(DailyMenuActivity.this,"Hai cliccato su add_offer button",Toast.LENGTH_SHORT).show();
-//                    Intent i = new Intent(view.getContext(),EditDishActivity.class);
-////                    i.putExtra("Adapter",DailyMenuActivity.this.dishesAdapter);
-//                    view.getContext().startActivity(i);
+//                    Toast.makeText(DailyMenuActivity.this,"Hai cliccato su add_offer button",Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(view.getContext(),EditOfferActivity.class);
+                    view.getContext().startActivity(i);
 
                 }
             });

@@ -57,7 +57,6 @@ import java.util.List;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.BookingsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
-import it.polito.mad.insane.lab4.data.EditProfile;
 
 public class HomeRestaurateurActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -137,6 +136,12 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
                     finish();
                 }
                 break;
+            case R.id.action_daily_menu:
+                // Start DailyMenuActivity activity
+                Intent invokeDailyMenu = new Intent(HomeRestaurateurActivity.this, DailyMenuActivity.class);
+                startActivity(invokeDailyMenu);
+                break;
+
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
                     Toast.makeText(HomeRestaurateurActivity.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
@@ -153,6 +158,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
                     finish();
                 }
                 break;
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
@@ -204,15 +210,10 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
         switch(id)
         {
-            case R.id.action_daily_menu:
-                // Start DailyMenuActivity activity
-                Intent invokeDailyMenu = new Intent(HomeRestaurateurActivity.this, DailyMenuActivity.class);
-                startActivity(invokeDailyMenu);
-                break;
             case R.id.action_edit_profile:
-                //Start EditProfile activity
-                Intent invokeEditProfile = new Intent(HomeRestaurateurActivity.this, EditProfile.class);
-                startActivity(invokeEditProfile);
+                //Start EditProfileActivity
+//                Intent invokeEditProfile = new Intent(HomeRestaurateurActivity.this, EditProfileActivity.class);
+//                startActivity(invokeEditProfile);
                 break;
         }
         return super.onOptionsItemSelected(item);

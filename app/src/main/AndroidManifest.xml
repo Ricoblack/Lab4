@@ -118,6 +118,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.DailyMenuActivity" />
         </activity>
+        <activity
+            android:name=".activities.EditOfferActivity"
+            android:label="@string/title_activity_edit_offer"
+            android:parentActivityName=".activities.DailyMenuActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.DailyMenuActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -214,4 +214,5 @@
     <string name="waitforloading">Wait for restaurant loading and retry</string>
     <string name="logout">logout</string>
     <string name="localization_permission">Give permission to localization</string>
+    <string name="title_activity_edit_offer">EditOfferActivity</string>
 </resources>

@@ -15,6 +15,7 @@ import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
+import it.polito.mad.insane.lab4.activities.EditOfferActivity;
 import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.Dish;
@@ -56,6 +57,9 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                 case 2:
                     inflater = ((DisplayReservationActivity) context).getLayoutInflater();
                     break;
+                case 3:
+                    inflater = ((EditOfferActivity) context).getLayoutInflater();
+                    break;
             }
 
             row = inflater.inflate(layoutResourceId, parent, false);
@@ -72,7 +76,11 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
 
         Dish dish = dishes.get(position);
         holder.name.setText(dish.getName());
-        holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(dish))));
+        if(currentActivity != 3)
+            holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(dish))));
+        else
+            holder.quantity.setText(String.valueOf(quantitiesMap.get(dish)));
+
         DecimalFormat df = new DecimalFormat("0.00");
         holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(dish.getPrice() * quantitiesMap.get(dish)))));
         if(currentActivity == 1)
