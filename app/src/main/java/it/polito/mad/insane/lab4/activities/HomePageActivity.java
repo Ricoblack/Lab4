@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -49,6 +50,7 @@ import im.delight.android.location.SimpleLocation;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.HomeSpinnerAdapter;
 import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
+import it.polito.mad.insane.lab4.data.DailyOfferSimple;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
@@ -252,6 +254,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         startLocalization();
 
+        //notification listener
+        //fixme ovviamente non funziona
+        Intent mServiceIntent = new Intent(this, DailyOfferSimple.class);
+        startService(mServiceIntent);
+        Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
 
 
     }
