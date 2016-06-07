@@ -255,10 +255,24 @@ public class RestaurateurJsonManager
     }
     */
 
+    public List<Restaurant> getFilteredRestaurants(String hint) {
+        ArrayList<Restaurant> restaurants=new ArrayList<Restaurant>();
+
+        //find restaurants whose name includes 'hint' string
+        for (Restaurant r : listaFiltrata){
+
+            if(r.getInfo().getRestaurantName().toLowerCase().contains(hint.toLowerCase())){
+                restaurants.add(r);
+            }
+        }
+
+        return restaurants;
+    }
+
     public List<Restaurant> getOrderedRestaurants(String orderBy, List<Restaurant> listaFiltrata) {
         List<Restaurant> lista = listaFiltrata;
 
-        //TODO bisogna implementare il funzionamento della geolocalizzazione (Michele)
+
         if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.distance).toLowerCase())){
             if(simpleLocation.getLatitude()==0 || simpleLocation.getLongitude()==0){
                 Toast.makeText(myContext,myContext.getResources().getText(R.string.notlocated),Toast.LENGTH_SHORT).show();

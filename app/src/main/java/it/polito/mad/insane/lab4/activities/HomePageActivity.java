@@ -31,6 +31,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.geofire.GeoFire;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,10 +64,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private static String uid ;
     private String rid;
 
-    //localization
-    private SimpleLocation location;
 
-    //TODO: implementare la ricerca con DB(Michele)
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -113,6 +114,27 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 @Override
                 public void onClick(View v) {
                     sv.setIconified(false);
+                }
+            });
+            sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    if(manager.listaFiltrata==null){
+                        Toast.makeText(myContext,getResources().getText(R.string.waitforloading),Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        //if no just white spaces
+                        setUpRestaurantsRecycler(manager.getFilteredRestaurants(query));
+
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    //if just white spaces
+                    if(newText.equals("")) setUpRestaurantsRecycler(manager.listaFiltrata);
+                    return true;
                 }
             });
         }
@@ -166,7 +188,13 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 if(r!=null) {
                     // set recycler
                     findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
+                    listaFiltrata=new ArrayList<Restaurant>(r.values());
+                    manager.listaFiltrata=listaFiltrata;
+                    setUpRestaurantsRecycler(listaFiltrata);
+                    Firebase.setAndroidContext(myContext);
+                    GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
+                    manager.fillRestaurantLocations(geoFire,listaFiltrata);
+
                 }
             }
             @Override
@@ -224,18 +252,18 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         startLocalization();
 
-        Toast.makeText(myContext,"lat: "+Double.toString(location.getLatitude()),Toast.LENGTH_SHORT).show();
+
 
     }
 
-    // TODO: cosa fare se il gps non è attivo? come si fanno a ordinare i risultati dei ristoranti per distanza? (Michele)
+
     private void startLocalization()
     {
         // construct a new instance of SimpleLocation
-        location = new SimpleLocation(this);
+        manager.simpleLocation = new SimpleLocation(this);
 
         // if we can't access the location yet
-        if (!location.hasLocationEnabled()) {
+        if (!manager.simpleLocation.hasLocationEnabled()) {
             // ask the user to enable location access
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.askgps)
@@ -253,6 +281,15 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             Dialog dialog = builder.create();
             dialog.show();
 
+            manager.simpleLocation.setListener(new SimpleLocation.Listener() {
+
+                @Override
+                public void onPositionChanged() {
+                    Toast.makeText(manager.myContext,"Lat: " + manager.simpleLocation.getLatitude() + " long: " + manager.simpleLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            // make the device update its location
+            manager.simpleLocation.beginUpdates();
         }
     }
 
@@ -284,7 +321,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     @Override
     protected void onPause() {
         // stop location updates (saves battery)
-        location.endUpdates();
+        //manager.simpleLocation.endUpdates();
         super.onPause();
     }
 
@@ -296,7 +333,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
         // make the device update its location
-        location.beginUpdates();
+        manager.simpleLocation.beginUpdates();
     }
 
     @Override
@@ -394,9 +431,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         dSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //if(position==1|| position==2){
-                //  setUpRestaurantsRecycler(manager.getOrderedRestaurants(dSpinner.getSelectedItem().toString()));
-                //}
+                if(position==1|| position==2){
+                  setUpRestaurantsRecycler(manager.getOrderedRestaurants(dSpinner.getSelectedItem().toString(),manager.listaFiltrata));
+                }
             }
 
             @Override
