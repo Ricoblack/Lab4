@@ -1,65 +1,65 @@
 package it.polito.mad.insane.lab4.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
+        import android.animation.Animator;
+        import android.animation.AnimatorListenerAdapter;
+        import android.annotation.TargetApi;
+        import android.content.Intent;
+        import android.content.SharedPreferences;
+        import android.content.pm.PackageManager;
+        import android.support.annotation.NonNull;
+        import android.support.design.widget.NavigationView;
+        import android.support.design.widget.Snackbar;
+        import android.support.v4.view.GravityCompat;
+        import android.support.v4.widget.DrawerLayout;
+        import android.support.v7.app.ActionBarDrawerToggle;
+        import android.support.v7.app.AppCompatActivity;
+        import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
+        import android.content.CursorLoader;
+        import android.content.Loader;
+        import android.database.Cursor;
+        import android.net.Uri;
+        import android.os.AsyncTask;
 
-import android.os.Build;
-import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+        import android.os.Build;
+        import android.os.Bundle;
+        import android.provider.ContactsContract;
+        import android.support.v7.widget.Toolbar;
+        import android.text.TextUtils;
+        import android.util.Log;
+        import android.view.KeyEvent;
+        import android.view.MenuItem;
+        import android.view.View;
+        import android.view.View.OnClickListener;
+        import android.view.inputmethod.EditorInfo;
+        import android.widget.ArrayAdapter;
+        import android.widget.AutoCompleteTextView;
+        import android.widget.Button;
+        import android.widget.EditText;
+        import android.widget.RadioButton;
+        import android.widget.RadioGroup;
+        import android.widget.TextView;
+        import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
+        import com.google.firebase.database.DataSnapshot;
+        import com.google.firebase.database.DatabaseError;
+        import com.google.firebase.database.DatabaseReference;
+        import com.google.firebase.database.FirebaseDatabase;
+        import com.google.firebase.database.GenericTypeIndicator;
+        import com.google.firebase.database.ValueEventListener;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+        import java.io.UnsupportedEncodingException;
+        import java.security.NoSuchAlgorithmException;
+        import java.util.ArrayList;
+        import java.util.HashMap;
+        import java.util.List;
 
-import it.polito.mad.insane.lab4.data.Restaurant;
-import it.polito.mad.insane.lab4.data.User;
-import it.polito.mad.insane.lab4.managers.Cryptography;
-import it.polito.mad.insane.lab4.R;
+        import it.polito.mad.insane.lab4.data.Restaurant;
+        import it.polito.mad.insane.lab4.data.User;
+        import it.polito.mad.insane.lab4.managers.Cryptography;
+        import it.polito.mad.insane.lab4.R;
 
-import static android.Manifest.permission.READ_CONTACTS;
+        import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //     * Id to identity READ_CONTACTS permission request.
 //     */
 //    private static final int REQUEST_READ_CONTACTS = 0;
-
+    //TODO bug quando fallisce l'autenticazione quando per esempio usi le credenziali del ristoratore per accedere lato utente quando poi cambi il radio button il primo tentativo fallisce mentre il secondo va a buon fine (Federico)
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         /**************************************************/
     }
 
-//    private void populateAutoComplete() {
+    //    private void populateAutoComplete() {
 ////        if (!mayRequestContacts()) {
 ////            return;
 ////        }
@@ -235,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //        } else if (id == R.id.nav_manage) {
 //
 //        }
-      switch (id)
+        switch (id)
         {
             case R.id.home_activity:
                 if(!getClass().equals(HomePageActivity.class))
@@ -469,32 +469,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                     HashMap<String,Restaurant> restsMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
-                         @Override
-                         protected Object clone() throws CloneNotSupportedException {
-                             return super.clone();
-                         }
-                     });
-                     if(restsMap != null)
-                     {
-                         ArrayList<Restaurant> restsList = new ArrayList<Restaurant>(restsMap.values());
-                         for(Restaurant r: restsList)
-                         {
-                             if(r.getUsername().equals(mUser))
-                                 if(r.getPassword().equals(mPassword))
-                                 {
-                                     userId = r.getID();
-                                     userName = r.getUsername();
-                                 }
-                                 else
-                                     break; // wrong psw
+                        HashMap<String,Restaurant> restsMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Restaurant>>() {
+                            @Override
+                            protected Object clone() throws CloneNotSupportedException {
+                                return super.clone();
+                            }
+                        });
+                        if(restsMap != null)
+                        {
+                            ArrayList<Restaurant> restsList = new ArrayList<Restaurant>(restsMap.values());
+                            for(Restaurant r: restsList)
+                            {
+                                if(r.getUsername().equals(mUser))
+                                    if(r.getPassword().equals(mPassword))
+                                    {
+                                        userId = r.getID();
+                                        userName = r.getUsername();
+                                    }
+                                    else
+                                        break; // wrong psw
 
-                         }
-                         if(userId == null)
-                             userId = " ";
-                     }
-                     else
-                         userId = " ";
+                            }
+                            if(userId == null)
+                                userId = " ";
+                        }
+                        else
+                            userId = " ";
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {

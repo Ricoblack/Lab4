@@ -21,19 +21,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,12 +57,15 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
     private static RestaurateurJsonManager manager = null;
     static final String PREF_NAME = "myPref";
+    static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
     private List<Restaurant> listaFiltrata;
     private Context myContext=this;
+    private static String uid ;
+    private String rid;
 
-
-
+    //localization
+    private SimpleLocation location;
 
     //TODO: implementare la ricerca con DB(Michele)
     @Override
@@ -71,12 +73,45 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     {
         super.onCreate(savedInstanceState);
 
+        //controllo se l'utente è loggato come ristoratore o come consumer
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if (mPrefs != null) {
+            uid = this.mPrefs.getString("uid", null);
+            if(uid == null){
+                rid = this.mPrefs.getString("rid", null);
+                if(rid != null){
+                    Intent ir = new Intent(HomePageActivity.this, HomeRestaurateur.class);
+                    startActivity(ir);
+                }
+            }
+        }
+
+
+
         HomePageActivity.manager = RestaurateurJsonManager.getInstance(this);
         setContentView(R.layout.home_page_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 //        manager.resetDbApp();
+
+//        // check login
+//        if(uid == null)
+//        {
+//            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+//            if (mPrefs != null) {
+//                uid = this.mPrefs.getString("uid", null);
+//            }
+//        }
+
+        // clear filter
+        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        if (mPrefs!=null) {
+            SharedPreferences.Editor editor = this.mPrefs.edit();
+            editor.clear();
+            editor.apply();
+        }
+
 
         final SearchView sv = (SearchView) findViewById(R.id.searchView);
         if(sv != null) {
@@ -119,13 +154,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // set up ordering spinner
         setUpSpinner();
 
-        // clear filter
-        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        if (mPrefs!=null) {
-            SharedPreferences.Editor editor = this.mPrefs.edit();
-            editor.clear();
-            editor.apply();
-        }
 
         // set up clean Recycler
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -144,12 +172,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 });
                 if(r!=null) {
                     // set recycler
-                    listaFiltrata=new ArrayList<Restaurant>(r.values());
-                    manager.listaFiltrata=listaFiltrata;
-                    setUpRestaurantsRecycler(listaFiltrata);
-                    Firebase.setAndroidContext(myContext);
-                    GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
-                    manager.fillRestaurantLocations(geoFire,listaFiltrata);
+                    setUpRestaurantsRecycler(new ArrayList<>(r.values()));
                 }
             }
             @Override
@@ -173,7 +196,32 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+//        LinearLayout nav_layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_drawer, null);
+//        TextView title_drawer = (TextView) nav_layout.findViewById(R.id.title_drawer);
+//        title_drawer.setText("FEDERICO");
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        //controllo se l'utente è loggato come ristoratore o come consumer
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if(uid != null){
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            if(mPrefs != null) {
+                title_drawer.setText(mPrefs.getString("uName", null));
+            }
+        }else if(rid != null){
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            if(mPrefs != null) {
+                title_drawer.setText(mPrefs.getString("rName", null));
+            }
+        }else{
+            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+            title_drawer.setText("NO LOG");
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
 
@@ -182,6 +230,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         startLocalization();
 
+        Toast.makeText(myContext,"lat: "+Double.toString(location.getLatitude()),Toast.LENGTH_SHORT).show();
 
     }
 
@@ -189,16 +238,16 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private void startLocalization()
     {
         // construct a new instance of SimpleLocation
-        manager.simpleLocation = new SimpleLocation(this);
+        location = new SimpleLocation(this);
 
         // if we can't access the location yet
-        if (!manager.simpleLocation.hasLocationEnabled()) {
+        if (!location.hasLocationEnabled()) {
             // ask the user to enable location access
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.askgps)
                     .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            SimpleLocation.openSettings(manager.myContext);
+                            SimpleLocation.openSettings(myContext);
                         }
                     })
                     .setNegativeButton(getResources().getString(R.string.cancel_dialog_button), new DialogInterface.OnClickListener() {
@@ -210,15 +259,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             Dialog dialog = builder.create();
             dialog.show();
 
-            manager.simpleLocation.setListener(new SimpleLocation.Listener() {
-
-                @Override
-                public void onPositionChanged() {
-                    Toast.makeText(manager.myContext,"Lat: " + manager.simpleLocation.getLatitude() + " long: " + manager.simpleLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            // make the device update its location
-            manager.simpleLocation.beginUpdates();
         }
     }
 
@@ -239,9 +279,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-//        if (loggato)
-//            getMenuInflater().inflate(R.menu.home_user_menu, menu);
-//        else
+        if (uid != null)
+            getMenuInflater().inflate(R.menu.home_user_menu, menu);
+        else
             getMenuInflater().inflate(R.menu.home_page_menu, menu);
         return true;
     }
@@ -250,7 +290,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     @Override
     protected void onPause() {
         // stop location updates (saves battery)
-        //manager.simpleLocation.endUpdates();
+        location.endUpdates();
         super.onPause();
     }
 
@@ -258,8 +298,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     protected void onResume()
     {
         super.onResume();
-        this.mPrefs = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
+        // check login
+        this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
+        // make the device update its location
+        location.beginUpdates();
     }
 
     @Override
@@ -279,6 +322,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         if(id == R.id.activity_login){
             Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.LoginActivity.class);
             startActivity(i);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -380,7 +424,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
 //        if (id == R.id.nav_camera) {
 //            // Handle the camera action
-//            Toast.makeText(HomePageActivity.this, "Hai cliccato su stocazzo", Toast.LENGTH_SHORT).show();
 //        } else if (id == R.id.nav_gallery) {
 //
 //        } else if (id == R.id.nav_slideshow) {
@@ -388,6 +431,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 //        } else if (id == R.id.nav_manage) {
 //
 //        }
+        //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
         switch (id)
         {
             case R.id.home_activity:
@@ -395,12 +439,34 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 {
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 break;
             case R.id.activity_reservations:
-                if(!getClass().equals(MyReservationsUserActivity.class)) {
-                    Intent i = new Intent(this, MyReservationsUserActivity.class);
+                if(uid == null){
+                    Toast.makeText(myContext, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                }else {
+                    if (!getClass().equals(MyReservationsUserActivity.class)) {
+                        Intent i = new Intent(this, MyReservationsUserActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                }
+                break;
+            case R.id.logout_drawer:
+                if(uid == null){
+                    Toast.makeText(myContext, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                }else {
+                    this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                    if (mPrefs != null) {
+                        uid = null;
+                        SharedPreferences.Editor editor = this.mPrefs.edit();
+                        editor.clear();
+                        editor.apply();
+                    }
+                    Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
+                    finish();
                 }
                 break;
         }

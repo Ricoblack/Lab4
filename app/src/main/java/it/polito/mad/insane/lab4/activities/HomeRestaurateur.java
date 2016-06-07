@@ -113,12 +113,12 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
-            View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
-            TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
-            if(mPrefs != null) {
-                title_drawer.setText(mPrefs.getString("rName", null));
-            }
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+        TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+        if(mPrefs != null) {
+            title_drawer.setText(mPrefs.getString("rName", null));
+        }
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
 
@@ -246,7 +246,7 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
         TextView tv = (TextView) findViewById(R.id.home_title_day);
         if(tv != null)
             tv.setText(String.format("  %s  ", convertDateToString(globalDate.getTime())));
-            updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
+        updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         tv = (TextView) findViewById(R.id.home_title_hour);
         //TODO risolvere bug filtro orario (Federico)
@@ -418,8 +418,8 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
                     }
                 });
 
-                    bookings = new ArrayList<>(r.values());
-                    setUpRecyclerDay(year,month,day);
+                bookings = new ArrayList<>(r.values());
+                setUpRecyclerDay(year,month,day);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
