@@ -111,7 +111,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 //        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.scrollView);
 //        scrollView.setFillViewport (true);
 
-        /** Create the adapter that will return a fragment for each of the three primary sections of the activity. **/
 
         // set button
         fab = (FloatingActionButton) findViewById(R.id.fab_cart);
@@ -240,7 +239,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter
+    {
         final int PAGE_COUNT = 4;
 
         public SectionsPagerAdapter(FragmentManager fm)
@@ -253,7 +253,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position); // da qui ho tolto il +1
         }
 
         @Override
@@ -286,7 +286,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment
+    {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -318,16 +319,16 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         {
             View rootView = null;
             switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
+                case 0:
                     rootView = dailyOfferLayout(inflater,container);
                     return rootView;
-                case 2:
+                case 1:
                     rootView = menuLayout(inflater, container);
                     return rootView;
-                case 3:
+                case 2:
                     rootView = infoLayout(inflater, container);
                     return rootView;
-                case 4:
+                case 3:
                     rootView = reviewsLayout(inflater, container);
                     return rootView;
                 default:

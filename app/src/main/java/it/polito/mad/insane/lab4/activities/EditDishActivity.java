@@ -9,7 +9,7 @@ import android.view.View;
 
 import it.polito.mad.insane.lab4.R;
 
-public class EditDish extends AppCompatActivity {
+public class EditDishActivity extends AppCompatActivity {
 
     //TODO questa activity si deve riempire ed aggiustare (Federico)
     @Override

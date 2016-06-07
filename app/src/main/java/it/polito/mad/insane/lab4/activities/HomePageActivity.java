@@ -78,8 +78,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             if(uid == null){
                 rid = this.mPrefs.getString("rid", null);
                 if(rid != null){
-                    Intent ir = new Intent(HomePageActivity.this, HomeRestaurateur.class);
+                    Intent ir = new Intent(HomePageActivity.this, HomeRestaurateurActivity.class);
                     startActivity(ir);
+                    finish();
                 }
             }
         }
@@ -407,6 +408,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         //dSpinner.setSelection(2);
 
     }
+    //FIXME: nel drawer, quando non si è loggati deve comparire il login mentre quando si è loggati compare il logout (Michele)
+
+    // FIXME: nel drawer, il tasto login e logout sarebbe meglio metterli separati dagli altri tasti come stava nel drawer iniziale creato in automatico da android studio (Michele)
 
     /********************DRAWER*****************************/
     @SuppressWarnings("StatementWithEmptyBody")

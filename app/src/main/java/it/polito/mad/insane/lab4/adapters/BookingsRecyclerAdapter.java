@@ -112,7 +112,7 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
 //                            }
 //                        }
 //                        manager.saveDbApp();
-//                        //Intent intent = new Intent(myContext,HomeRestaurateur.class);
+//                        //Intent intent = new Intent(myContext,HomeRestaurateurActivity.class);
 //                        //intent.putExtra("flag_delete",1);
 //                        //myContext.startActivity(intent);
                     }

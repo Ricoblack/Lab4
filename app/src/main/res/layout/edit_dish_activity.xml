@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="it.polito.mad.insane.lab4.activities.EditDish">
+    tools:context=".activities.EditDishActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

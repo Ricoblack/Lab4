@@ -59,7 +59,7 @@ import it.polito.mad.insane.lab4.adapters.BookingsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.EditProfile;
 
-public class HomeRestaurateur extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeRestaurateurActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
@@ -127,20 +127,19 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
         switch (id)
         {
             case R.id.home_restaurateur_activity:
-                if(!getClass().equals(HomeRestaurateur.class))
+                if(!getClass().equals(HomeRestaurateurActivity.class))
                 {
-                    Intent i = new Intent(this, HomeRestaurateur.class);
+                    Intent i = new Intent(this, HomeRestaurateurActivity.class);
                     startActivity(i);
                     finish();
                 }
                 break;
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
-                    Toast.makeText(HomeRestaurateur.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomeRestaurateurActivity.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
                 }else {
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
@@ -206,13 +205,13 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
         switch(id)
         {
             case R.id.action_daily_menu:
-                // Start DailyMenu activity
-                Intent invokeDailyMenu = new Intent(HomeRestaurateur.this, DailyMenu.class);
+                // Start DailyMenuActivity activity
+                Intent invokeDailyMenu = new Intent(HomeRestaurateurActivity.this, DailyMenuActivity.class);
                 startActivity(invokeDailyMenu);
                 break;
             case R.id.action_edit_profile:
                 //Start EditProfile activity
-                Intent invokeEditProfile = new Intent(HomeRestaurateur.this, EditProfile.class);
+                Intent invokeEditProfile = new Intent(HomeRestaurateurActivity.this, EditProfile.class);
                 startActivity(invokeEditProfile);
                 break;
         }
@@ -435,7 +434,7 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
     private void editGraph(BarGraphSeries<DataPoint> series)
     {
         TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = HomeRestaurateur.this.getTheme();
+        Resources.Theme theme = HomeRestaurateurActivity.this.getTheme();
         theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
         final int colorAccent = typedValue.data;
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
@@ -453,7 +452,7 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
             series.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
                 public void onTap(Series series, final DataPointInterface dataPoint) {
-                    Toast.makeText(HomeRestaurateur.this, String.format("h %s:00 %s: %s", String.valueOf(pad((int) dataPoint.getX())),
+                    Toast.makeText(HomeRestaurateurActivity.this, String.format("h %s:00 %s: %s", String.valueOf(pad((int) dataPoint.getX())),
                             " - "+getResources().getString(R.string.totalDishesNr), String.valueOf((int) dataPoint.getY())), Toast.LENGTH_SHORT).show();
 //                    globalHour = (int) dataPoint.getX();
 //                    TextView tv = (TextView) findViewById(R.id.home_title_hour);
@@ -622,7 +621,7 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-            ((HomeRestaurateur)getActivity()).setDate(year,month,day);
+            ((HomeRestaurateurActivity)getActivity()).setDate(year,month,day);
         }
     }
 
@@ -657,7 +656,7 @@ public class HomeRestaurateur extends AppCompatActivity implements NavigationVie
 //                            .append(":").append(pad(minute)));
 //                    break;
                 case "homeTitleHourPicker":
-                    ((HomeRestaurateur) getActivity()).setTime(hourOfDay);
+                    ((HomeRestaurateurActivity) getActivity()).setTime(hourOfDay);
                 default:
                     break;
             }

@@ -5,10 +5,7 @@ package it.polito.mad.insane.lab4.activities;
         import android.annotation.TargetApi;
         import android.content.Intent;
         import android.content.SharedPreferences;
-        import android.content.pm.PackageManager;
-        import android.support.annotation.NonNull;
         import android.support.design.widget.NavigationView;
-        import android.support.design.widget.Snackbar;
         import android.support.v4.view.GravityCompat;
         import android.support.v4.widget.DrawerLayout;
         import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,18 +23,12 @@ package it.polito.mad.insane.lab4.activities;
         import android.provider.ContactsContract;
         import android.support.v7.widget.Toolbar;
         import android.text.TextUtils;
-        import android.util.Log;
-        import android.view.KeyEvent;
         import android.view.MenuItem;
         import android.view.View;
         import android.view.View.OnClickListener;
-        import android.view.inputmethod.EditorInfo;
-        import android.widget.ArrayAdapter;
-        import android.widget.AutoCompleteTextView;
         import android.widget.Button;
         import android.widget.EditText;
         import android.widget.RadioButton;
-        import android.widget.RadioGroup;
         import android.widget.TextView;
         import android.widget.Toast;
 
@@ -58,8 +49,6 @@ package it.polito.mad.insane.lab4.activities;
         import it.polito.mad.insane.lab4.data.User;
         import it.polito.mad.insane.lab4.managers.Cryptography;
         import it.polito.mad.insane.lab4.R;
-
-        import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -558,7 +547,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     editor.putString("rid",userId);
                     editor.putString("rName", userName);
                     editor.apply();
-                    Intent intent = new Intent(LoginActivity.this, HomeRestaurateur.class);
+                    Intent intent = new Intent(LoginActivity.this, HomeRestaurateurActivity.class);
                     startActivity(intent);
                 }
                 finish();

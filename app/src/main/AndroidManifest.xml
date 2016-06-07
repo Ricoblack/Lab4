@@ -73,14 +73,14 @@
                 android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
         </activity>
         <activity
-            android:name=".activities.DailyMenu"
+            android:name=".activities.DailyMenuActivity"
             android:label="@string/title_activity_daily_menu"
-            android:parentActivityName=".activities.HomeRestaurateur"
+            android:parentActivityName=".activities.HomeRestaurateurActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.polito.mad.insane.lab4.activities.HomeRestaurateur" />
+                android:value=".activities.HomeRestaurateurActivity" />
         </activity>
         <activity
             android:name=".activities.DisplayReservationActivity"
@@ -92,7 +92,7 @@
                 android:value=".activities.MyReservationsUserActivity" />
         </activity>
         <activity
-            android:name=".activities.HomeRestaurateur"
+            android:name=".activities.HomeRestaurateurActivity"
             android:label="@string/title_activity_home_restaurateur"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -109,13 +109,13 @@
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
         </activity>
         <activity
-            android:name=".activities.EditDish"
+            android:name=".activities.EditDishActivity"
             android:label="@string/title_activity_edit_dish"
-            android:parentActivityName=".activities.DailyMenu"
+            android:parentActivityName=".activities.DailyMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.polito.mad.insane.lab4.activities.DailyMenu" />
+                android:value=".activities.DailyMenuActivity" />
         </activity>
     </application>
 
