@@ -1,6 +1,5 @@
 package it.polito.mad.insane.lab4.activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -257,7 +256,7 @@ public class EditOfferActivity extends AppCompatActivity
                     // insert simple daily offer in /offers
                     DailyOfferSimple simpleOffer = new DailyOfferSimple();
                     simpleOffer.setID(offer.getID());
-                    simpleOffer.setOfferText(offer.getDescription());
+                    simpleOffer.setDescription(offer.getDescription());
                     simpleOffer.setRestaurantId(rid);
                     simpleOffer.setRestaurantName(rName);
                     DatabaseReference offersRef = database.getReference("/offers/"+key);
@@ -289,7 +288,7 @@ public class EditOfferActivity extends AppCompatActivity
                     // insert simple daily offer in /offers
                     DailyOfferSimple simpleOffer = new DailyOfferSimple();
                     simpleOffer.setID(offer.getID());
-                    simpleOffer.setOfferText(offer.getDescription());
+                    simpleOffer.setDescription(offer.getDescription());
                     simpleOffer.setRestaurantId(rid);
                     simpleOffer.setRestaurantName(rName);
                     DatabaseReference offersRef = database.getReference("/offers/"+offer.getID());

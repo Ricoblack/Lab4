@@ -66,9 +66,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private static String uid ;
     private String rid;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
