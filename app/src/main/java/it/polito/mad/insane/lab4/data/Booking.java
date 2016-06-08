@@ -27,8 +27,11 @@ public class Booking implements Serializable, Comparable<Booking>
     private int totalDishesQty;
     private String dateTime;
     private String userId;
+    private String userName;
     private String restaurantId;
+    private String restaurantName;
     private String ID;
+
 //    private Map<String, String> dishesIdList;
 
 
@@ -164,5 +167,21 @@ public class Booking implements Serializable, Comparable<Booking>
 
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 }

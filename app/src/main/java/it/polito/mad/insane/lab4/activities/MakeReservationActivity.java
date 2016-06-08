@@ -55,6 +55,7 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static Calendar reservationDate = null;
     private static RestaurateurJsonManager manager = null;
     private static String restaurantId;
+    private static String restaurantName;
     private static String additionalNotes = "";
     private static double totalPrice = 0;
     private static double totalDiscount;
@@ -73,6 +74,7 @@ public class MakeReservationActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         restaurantId = bundle.getString("ID");
+        restaurantName = bundle.getString("restName");
         final HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
 
         if (selectedQuantities != null) {
@@ -272,6 +274,7 @@ public class MakeReservationActivity extends AppCompatActivity {
             b.setNotes(additionalNotes);
         }
         b.setRestaurantId(restaurantId);
+        b.setRestaurantName(restaurantName);
         b.setTotalDiscount(totalDiscount);
         b.setTotalDishesQty(totalDishesQty);
         b.setTotalPrice(totalPrice);
@@ -279,6 +282,7 @@ public class MakeReservationActivity extends AppCompatActivity {
         SharedPreferences mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         if (mPrefs != null) {
             b.setUserId(mPrefs.getString("uid", null));
+            b.setUserName(mPrefs.getString("uName",null));
         }
 
         //TODO implementare meccanismo di decremento quantita' disponibili dei piatti

@@ -7,7 +7,7 @@ public class DailyOfferSimple {
 
     private String restaurantId;
     private String restaurantName;
-    private String offerText;
+    private String description;
     private String ID;
 
     public DailyOfferSimple(){}
@@ -20,12 +20,12 @@ public class DailyOfferSimple {
         this.restaurantId = restaurantId;
     }
 
-    public String getOfferText() {
-        return offerText;
+    public String getDescription() {
+        return description;
     }
 
-    public void setOfferText(String offerText) {
-        this.offerText = offerText;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRestaurantName() {
