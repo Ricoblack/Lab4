@@ -136,7 +136,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 //        }
         switch (id)
         {
-            case R.id.home_activity:
+            case R.id.home_drawer_item:
                 if(!getClass().equals(HomePageActivity.class))
                 {
                     Intent i = new Intent(this, HomePageActivity.class);
@@ -144,7 +144,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                     finish();
                 }
                 break;
-            case R.id.activity_reservations:
+            case R.id.reservation_drawer_item:
                 if(!getClass().equals(MyReservationsUserActivity.class)) {
                     Intent i = new Intent(this, MyReservationsUserActivity.class);
                     startActivity(i);

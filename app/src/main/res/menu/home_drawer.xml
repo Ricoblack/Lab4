@@ -2,34 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/home_activity"
+        <item android:id="@+id/home_drawer_item"
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home_name"/>
 
         <item
-            android:id="@+id/activity_reservations"
+            android:id="@+id/reservation_drawer_item"
             android:icon="@drawable/ic_shopping_cart_white_24dp"
             android:title="@string/reservation" />
 
-        <item
-            android:id="@+id/logout_drawer"
-            android:icon="@android:drawable/ic_lock_power_off"
-            android:title="@string/logout"
-            />
-
     </group>
 
-    <!--<item android:title="Communicate">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:id="@+id/nav_share"-->
-                <!--android:icon="@drawable/ic_menu_share"-->
-                <!--android:title="Share" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-        <!--</menu>-->
-    <!--</item>-->
+    <item android:title="Peronal Area">
+        <menu>
+            <item
+                android:id="@+id/logout_drawer"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="@string/logout"
+                />
+        </menu>
+    </item>
 
 </menu>

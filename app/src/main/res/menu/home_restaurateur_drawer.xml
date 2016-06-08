@@ -11,26 +11,19 @@
             android:icon="@drawable/ic_local_dining_black_24dp"
             android:title="@string/action_daily_menu" />
 
-        <item
-            android:id="@+id/logout_restaurateur_drawer"
-            android:icon="@android:drawable/ic_lock_power_off"
-            android:title="@string/logout"
-            />
     </group>
 
 
+    <item android:title="Peronal Area">
+        <menu>
 
-    <!--<item android:title="Communicate">-->
-    <!--<menu>-->
-    <!--<item-->
-    <!--android:id="@+id/nav_share"-->
-    <!--android:icon="@drawable/ic_menu_share"-->
-    <!--android:title="Share" />-->
-    <!--<item-->
-    <!--android:id="@+id/nav_send"-->
-    <!--android:icon="@drawable/ic_menu_send"-->
-    <!--android:title="Send" />-->
-    <!--</menu>-->
-    <!--</item>-->
+            <item
+                android:id="@+id/logout_restaurateur_drawer"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="@string/logout"
+                />
+
+        </menu>
+    </item>
 
 </menu>

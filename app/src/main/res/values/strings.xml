@@ -212,7 +212,8 @@
     <string name="error_authentication">Authentication failed</string>
     <string name="notlocated">Cannot locate device</string>
     <string name="waitforloading">Wait for restaurant loading and retry</string>
-    <string name="logout">logout</string>
+    <string name="logout">LOGOUT</string>
     <string name="localization_permission">Give permission to localization</string>
     <string name="title_activity_edit_offer">EditOfferActivity</string>
+    <string name="noLog">NO LOG</string>
 </resources>

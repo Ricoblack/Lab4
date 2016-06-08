@@ -220,30 +220,48 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-//        LinearLayout nav_layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_drawer, null);
-//        TextView title_drawer = (TextView) nav_layout.findViewById(R.id.title_drawer);
-//        title_drawer.setText("FEDERICO");
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
         //controllo se l'utente è loggato come ristoratore o come consumer
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+
         if(uid != null){
+
+            //user logged
             View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
             TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+
             if(mPrefs != null) {
                 title_drawer.setText(mPrefs.getString("uName", null));
             }
+            Menu menu = navigationView.getMenu();
+            MenuItem log = menu.findItem(R.id.logout_drawer);
+            log.setTitle(getResources().getString(R.string.logout));
+
         }else if(rid != null){
+
+            //restaurateur logged
             View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
             TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
             if(mPrefs != null) {
                 title_drawer.setText(mPrefs.getString("rName", null));
             }
+            Menu menu = navigationView.getMenu();
+            MenuItem log = menu.findItem(R.id.logout_drawer);
+            log.setTitle(getResources().getString(R.string.logout));
+
         }else{
+            //no log
             View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
             TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
-            title_drawer.setText("NO LOG");
+            title_drawer.setText(getResources().getString(R.string.noLog));
+
+            Menu menu = navigationView.getMenu();
+            MenuItem log = menu.findItem(R.id.logout_drawer);
+            log.setTitle(getResources().getString(R.string.login));
+
+            menu.findItem(R.id.reservation_drawer_item).setVisible(false);
+
         }
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -463,19 +481,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        }
         //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
         switch (id)
         {
-            case R.id.home_activity:
+            case R.id.home_drawer_item:
+
                 if(!getClass().equals(HomePageActivity.class))
                 {
                     Intent i = new Intent(this, HomePageActivity.class);
@@ -483,21 +493,26 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     finish();
                 }
                 break;
-            case R.id.activity_reservations:
-                if(uid == null){
-                    Toast.makeText(myContext, "Non sei loggato",Toast.LENGTH_SHORT).show();
-                }else {
-                    if (!getClass().equals(MyReservationsUserActivity.class)) {
+
+            case R.id.reservation_drawer_item:
+
+                 if (!getClass().equals(MyReservationsUserActivity.class)) {
                         Intent i = new Intent(this, MyReservationsUserActivity.class);
                         startActivity(i);
                         finish();
                     }
-                }
                 break;
+
             case R.id.logout_drawer:
                 if(uid == null){
-                    Toast.makeText(myContext, "Non sei loggato",Toast.LENGTH_SHORT).show();
+
+                    //user no logged, insert login
+                    Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.LoginActivity.class);
+                    startActivity(i);
+                    finish();
+
                 }else {
+                    //LOGOUT
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
                         uid = null;
@@ -511,11 +526,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 }
                 break;
         }
-//        if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
