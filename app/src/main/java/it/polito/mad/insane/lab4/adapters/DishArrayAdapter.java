@@ -1,10 +1,12 @@
 package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -12,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
@@ -29,6 +32,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
     private int layoutResourceId;
     private List<Dish> dishes;
     private HashMap<Dish, Integer> quantitiesMap;
+    private Dish currentDish;
 
     public DishArrayAdapter(Context context, int resource, HashMap<Dish, Integer> quantitiesMap,
                             int currentActivity) {
@@ -43,7 +47,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        DishHolder holder;
+        final DishHolder holder;
 
         if (row == null) {
             LayoutInflater inflater = null;
@@ -68,21 +72,50 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
             holder.name = (TextView) row.findViewById(R.id.summary_dish_name);
             holder.quantity = (TextView) row.findViewById(R.id.summary_dish_quantity);
             holder.totalPrice = (TextView) row.findViewById(R.id.summary_dish_total_price);
+            if(currentActivity == 3)
+            {
+                holder.minusButton = (ImageButton) row.findViewById(R.id.dish_minus_button);
+                holder.minusButton.setOnClickListener(new View.OnClickListener() {
+                                                          @Override
+                                                          public void onClick(View v)
+                                                          {
+                                                              int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
+                                                              if(dishQuantity > 0)
+                                                              {
+                                                                  dishQuantity --;
+                                                                  holder.quantity.setText(String.valueOf(dishQuantity));
+                                                                  quantitiesMap.put(currentDish, dishQuantity);
+                                                              }
+
+                                                          }
+                                                      });
+                holder.plusButton = (ImageButton) row.findViewById(R.id.dish_plus_button);
+                holder.plusButton.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v)
+                                                    {
+                                                        int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
+                                                        dishQuantity ++;
+                                                        holder.quantity.setText(String.valueOf(dishQuantity));
+                                                        quantitiesMap.put(currentDish, dishQuantity);
+                                                    }
+                                                });
+            }
 
             row.setTag(holder);
         } else {
             holder = (DishHolder) row.getTag();
         }
 
-        Dish dish = dishes.get(position);
-        holder.name.setText(dish.getName());
-        if(currentActivity != 3)
-            holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(dish))));
+        currentDish = dishes.get(position);
+        holder.name.setText(currentDish.getName());
+        if(currentActivity == 3)
+            holder.quantity.setText(String.valueOf(quantitiesMap.get(currentDish)));
         else
-            holder.quantity.setText(String.valueOf(quantitiesMap.get(dish)));
+            holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(currentDish))));
 
         DecimalFormat df = new DecimalFormat("0.00");
-        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(dish.getPrice() * quantitiesMap.get(dish)))));
+        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentDish.getPrice() * quantitiesMap.get(currentDish)))));
         if(currentActivity == 1)
             holder.totalPrice.setVisibility(View.GONE);
 
@@ -94,5 +127,12 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
         private TextView quantity;
         private TextView name;
         private TextView totalPrice;
+        private ImageButton minusButton;
+        private ImageButton plusButton;
+    }
+
+    public HashMap<Dish,Integer> getQuantitiesMap()
+    {
+        return this.quantitiesMap;
     }
 }
