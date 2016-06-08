@@ -28,10 +28,46 @@
 
     </android.support.design.widget.AppBarLayout>
 
-        <ListView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/offer_checkable_listview" />
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/daily_offer_total_price_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:text="Price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/daily_offer_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text="€"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <TextView
+                android:id="@+id/daily_offer_description"
+                android:text="descrizione"
+                android:inputType="textMultiLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/daily_offer_total_price_layout"/>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/offer_checkable_listview"
+                android:layout_below="@id/daily_offer_description"/>
+        </RelativeLayout>
+
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

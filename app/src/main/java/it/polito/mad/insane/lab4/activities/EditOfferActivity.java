@@ -9,7 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.HttpAuthHandler;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 
 public class EditOfferActivity extends AppCompatActivity
@@ -34,6 +37,10 @@ public class EditOfferActivity extends AppCompatActivity
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
     private static String rid; // restaurant id
+    private DishArrayAdapter dishesArrayAdapter = null;
+    private TextView price;
+    private TextView description;
+
 
 
     /** Standard methods **/
@@ -46,12 +53,20 @@ public class EditOfferActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
+        price = (TextView) findViewById(R.id.daily_offer_price);
+        description = (TextView) findViewById(R.id.daily_offer_description);
+
+        FloatingActionButton saveOffer = (FloatingActionButton) findViewById(R.id.save_edit_offer);
+        if (saveOffer != null) {
+            saveOffer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //TODO: implementa il salvataggio dell'offerta (Michele)
+                    HashMap<Dish,Integer> quantitiesMap = dishesArrayAdapter.getQuantitiesMap();
+                    DailyOffer newOffer = new DailyOffer();
+//                    newOffer.setDescription();
+
+                            //controlla che la lista di piatti nella dailyoffer non sia vuota e nel caso manda un toast di errore
                 }
             });
         }
@@ -83,9 +98,9 @@ public class EditOfferActivity extends AppCompatActivity
                         adapterDishesMap.put(d, 0);
 
                     // set the adapter with this map
-                    DishArrayAdapter adapter = new DishArrayAdapter(EditOfferActivity.this, R.layout.dish_checkable_listview_item, adapterDishesMap, 3);
+                    dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this, R.layout.dish_checkable_listview_item, adapterDishesMap, 3);
                     ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
-                    dishesListView.setAdapter(adapter);
+                    dishesListView.setAdapter(dishesArrayAdapter);
                 }
 
             }
@@ -120,6 +135,20 @@ public class EditOfferActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
 
+
+    }
+
+    /** Our Methods **/
+    /**
+     * Method that check if all the field of the activity are filled
+     * @return
+     */
+    private boolean isEmpty(TextView tv)
+    {
+        if(tv.getText().toString().trim().length() > 0)
+            return  false;
+        else
+            return true;
 
     }
 
