@@ -1,0 +1,126 @@
+<resources>
+    <string-array name="order_array">
+        <item> <i>ORDINA PER</i> </item>
+        <item>DISTANZA</item>
+        <item>PUNTEGGIO</item>
+    </string-array>
+
+
+
+
+    <string-array name="distance_array">
+        <item> <i>DISTANZA</i> </item>
+        <item>100m</item>
+        <item>500m</item>
+        <item>1000m</item>
+        <item>2000m</item>
+    </string-array>
+
+    <string-array name="price_array">
+        <item> <i>PREZZO</i> </item>
+        <item>5€</item>
+        <item>10€</item>
+        <item>20€</item>
+        <item>50€</item>
+    </string-array>
+
+    <string-array name="type_array">
+        <item> <i>TIPO DI CUCINA</i> </item>
+        <item>ETHNIC</item>
+        <item>PIZZA</item>
+        <item>PASTA</item>
+    </string-array>
+
+    <string-array name="time_array">
+        <item> <i>ORARIO</i> </item>
+        <item>10.00-15.00</item>
+        <item>15.00-19.00</item>
+        <item>19.00-23.00</item>
+    </string-array>
+
+
+    <string name="app_name">Lab3</string>
+    <string name="quantity_available">Disponibilità:</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="restaurant_profile">restaurant_profile</string>
+    <string name="title_activity_restaurant_profile">RestaurantProfile</string>
+    <string name="title_activity_my_scrolling">MyScrollingActivity</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="see_more">VEDI DI PIU\'</string>
+    <string name="user_name">Nome Utente</string>
+    <string name="date_sample">dd/MM/yy</string>
+    <string name="see_less">VEDI DI MENO</string>
+    <string name="review_title">\"Lorem ipsum\"</string>
+    <string name="title_tab_menu">Menu</string>
+    <string name="title_tab_reviews">Recensioni</string>
+    <string name="title_tab_info">Info</string>
+    <string name="general_info">Informazioni generali</string>
+    <string name="restaurantName">Nome Risorante</string>
+    <string name="address">Indirizzo</string>
+    <string name="university">Università vicine</string>
+    <string name="food_and_ambience">Cibo e Atmosfera</string>
+    <string name="Cuisine">Tipo di cucina</string>
+    <string name="shortDescription">Breve descrizione</string>
+    <string name="timetables_edit">Orari</string>
+    <string name="openingHour">Orario di apertura</string>
+    <string name="select">Seleziona</string>
+    <string name="closingHour">Orario di chiusura</string>
+    <string name="timetables_info">Info Orari</string>
+    <string name="extra_info">Informazioni aggiuntive</string>
+    <string name="payment">Metodi di pagamento</string>
+    <string name="services">Servizi aggiuntivi</string>
+    <string name="reviews_number">Basato su 144 recensioni</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="show_selected">MOSTRA SELEZIONE</string>
+    <string name="title_activity_make_reservation">Prenota</string>
+    <string name="add_dialog_button">AGGIUNGI</string>
+    <string name="cancel_dialog_button">Annulla</string>
+    <string name="uncheck_dialog_title">Sei sicuro di voler rimuovere questo elemento dal carrello?</string>
+    <string name="ok">OK</string>
+    <string name="remove">Rimuovi</string>
+    <string name="dont_remove">Non rimuovere</string>
+    <string name="select_hour">Seleziona l\'ora della prenotazione</string>
+    <string name="select_date">Seleziona il giorno della prenotazione</string>
+    <string name="empty_cart">Il carrello è vuoto</string>
+    <string name="order_summary">RIEPILOGO ORDINE</string>
+    <string name="total_price">Prezzo totale</string>
+    <string name="reservation_restaurant_name">Nome Ristorante</string>
+    <string name="restaurant_name">Nome Ristorante</string>
+    <string name="alert_title_booking">Sei sicuro di voler confermare la prenotazione?</string>
+    <string name="add_addtional_notes">Aggiungi note aggiuntive...</string>
+    <string name="title_activity_my_reservations">MyReservations</string>
+    <string name="cardView_reservation_restaurant_ID">ID</string>
+    <string name="cardView_reservation_restaurant_ID_title">ID</string>
+    <string name="cardView_reservation_ID_title">ID</string>
+    <string name="cardview_reservation_id">ID Prenotazione</string>
+    <string name="dd_mm_yy">dd/MM/yy</string>
+    <string name="hh_mm">hh/mm</string>
+    <string name="n_dish">N° Piatto</string>
+    <string name="delete_reservation_button">CANCELLA</string>
+    <string name="reset_button">RESETTA</string>
+    <string name="apply_button">APPLICA</string>
+    <string name="specify_date_time">E\' necessario specificare data e ora</string>
+    <string name="respect_time_contraints">Non è possibile prenotare nella data e ora selezionate</string>
+    <string name="title_activity_filter">Filtra</string>
+    <string name="delete_reservation_alert_title">Sei sicuro di voler cancellare la prenotazione?</string>
+    <string name="filter">Filtra</string>
+    <string name="reservation">Prenotazione</string>
+    <string name="no_reservation_available">Non ci sono prenotazioni disponibili</string>
+    <string name="title_activity_display_reservation">Mostra prenotazione</string>
+    <string name="reviews">recensioni</string>
+    <string name="reviews_string">recensioni</string>
+    <string name="itemsFormat"> elementi </string>
+    <string name="reviewsFormat">Basato su %d recensioni</string>
+    <string name="cart_empty_alert">Il carrello deve contenere almeno un piatto</string>
+    <string name="food">Cibo</string>
+    <string name="punctuality">Puntualità</string>
+    <string name="location">Posizione</string>
+    <string name="date">Data :</string>
+    <string name="time">Ora :\u0020\u0020</string>
+    <string name="no_notes">Non ci sono note</string>
+    <string name="dish_not_available">Non disponibile</string>
+    <string name="price">Prezzo</string>
+    <string name="dishes">piatti</string>
+    <string name="distance">DISTANZA</string>
+    <string name="score">PUNTEGGIO</string>
+</resources>

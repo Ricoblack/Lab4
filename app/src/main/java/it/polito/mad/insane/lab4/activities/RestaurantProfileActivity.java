@@ -34,7 +34,6 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,7 +70,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
      */
 
     private ViewPager mViewPager;
-    private static FloatingActionButton fab;
+    private static FloatingActionButton menuFab;
+    private static FloatingActionButton reviewsFab;
     private static RestaurateurJsonManager manager = null;
     private static String restaurantId;
     private static String restaurantName;
@@ -113,8 +113,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
 
         // set button
-        fab = (FloatingActionButton) findViewById(R.id.fab_cart);
-        fab.setOnClickListener(new View.OnClickListener() {
+        menuFab = (FloatingActionButton) findViewById(R.id.fab_cart);
+        menuFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, MakeReservationActivity.class);
@@ -132,6 +132,22 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             }
         });
+
+        reviewsFab = (FloatingActionButton) findViewById(R.id.fab_add_review);
+        reviewsFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, AddReviewActivity.class);
+                Bundle bundle = new Bundle();
+//                                bundle.putParcelableArrayList("reservationList", (ArrayList<? extends Parcelable>) reservationList);
+//                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
+//                bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
+                bundle.putString("ID", restaurantId);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -148,10 +164,14 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 switch(position)
                 {
                     case 1: // MENU fragment
-                        fab.setVisibility(View.VISIBLE);
+                        menuFab.setVisibility(View.VISIBLE);
+                        break;
+                    case 3: //REVIEWS fragment
+                        reviewsFab.setVisibility(View.VISIBLE);
                         break;
                     default:
-                        fab.setVisibility(View.GONE);
+                        menuFab.setVisibility(View.GONE);
+                        reviewsFab.setVisibility(View.GONE);
                         break;
                 }
             }

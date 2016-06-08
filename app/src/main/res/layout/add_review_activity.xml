@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.AddReviewActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal"
+            card_view:cardCornerRadius="2dp"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/give_vote"
+                    android:drawablePadding="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_equalizer_black_24dp"
+                    android:drawableLeft="@drawable/ic_equalizer_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/score_1"
+                        android:textSize="14sp"/>
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/score1_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        />
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/openingHour_title"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/openingHour"-->
+                    <!--android:layout_weight="0.2"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:background="@color/colorAccent"-->
+                    <!--android:textColor="@color/white"/>-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/score_2"
+                        android:textSize="14sp"/>
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/score2_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        />
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/closingHour_title"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/closingHour"-->
+                    <!--android:layout_weight="0.2"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:background="@color/colorAccent"-->
+                    <!--android:textColor="@color/white"/>-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/score_3"
+                        android:textSize="14sp"/>
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/score3_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        />
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/closingHour_title"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/closingHour"-->
+                    <!--android:layout_weight="0.2"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:padding="10dp"-->
+                    <!--android:background="@color/colorAccent"-->
+                    <!--android:textColor="@color/white"/>-->
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/add_review_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/hint_rate"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorPrimaryDark"/>
+
+                <LinearLayout
+                    android:id="@+id/final_score_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:text="@string/final_score"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/add_review_final_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:textColor="@color/colorAccent"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="/10"
+                        android:textColor="@color/colorAccent"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation = "horizontal"
+            card_view:cardCornerRadius="2dp"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/write_review"
+                    android:drawablePadding="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_rate_review_black_24dp"
+                    android:drawableLeft="@drawable/ic_rate_review_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/title_add_review"
+                        android:textSize="16sp"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/add_review_title"
+                        android:drawableLeft="@drawable/ic_mode_edit_black_24dp"
+                        android:drawableStart="@drawable/ic_mode_edit_black_24dp"
+                        android:drawablePadding="5dp"
+                        android:textSize="16sp"
+                        android:hint="@string/add_review_title"
+                        />
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/text_add_review"
+                        android:textSize="16sp"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/add_review_text"
+                        android:drawableLeft="@drawable/ic_mode_edit_black_24dp"
+                        android:drawableStart="@drawable/ic_mode_edit_black_24dp"
+                        android:drawablePadding="5dp"
+                        android:textSize="16sp"
+                        android:hint="@string/add_review_text"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_done_white_24dp" />
+
+</android.support.design.widget.CoordinatorLayout>
