@@ -79,7 +79,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                                                           @Override
                                                           public void onClick(View v)
                                                           {
-                                                              int dishQuantity = Integer.parseInt(String.valueOf(holder.quantity.getText()));
+                                                              int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
                                                               if(dishQuantity > 0)
                                                               {
                                                                   dishQuantity --;
@@ -94,7 +94,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                                                     @Override
                                                     public void onClick(View v)
                                                     {
-                                                        int dishQuantity = Integer.parseInt(String.valueOf(holder.quantity.getText()));
+                                                        int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
                                                         dishQuantity ++;
                                                         holder.quantity.setText(String.valueOf(dishQuantity));
                                                         quantitiesMap.put(currentDish, dishQuantity);

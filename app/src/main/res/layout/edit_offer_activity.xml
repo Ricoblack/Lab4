@@ -32,12 +32,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <EditText
+                android:id="@+id/daily_offer_name"
+                android:text="Nome offerta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
             <LinearLayout
                 android:id="@+id/daily_offer_total_price_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_below="@id/daily_offer_name">
 
                 <TextView
                     android:text="Price"
@@ -54,7 +60,7 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
-            <TextView
+            <EditText
                 android:id="@+id/daily_offer_description"
                 android:text="descrizione"
                 android:inputType="textMultiLine"

@@ -10,8 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,8 +40,9 @@ public class EditOfferActivity extends AppCompatActivity
     private SharedPreferences mPrefs = null;
     private static String rid; // restaurant id
     private DishArrayAdapter dishesArrayAdapter = null;
-    private TextView price;
-    private TextView description;
+    private EditText price;
+    private EditText description;
+    private EditText name;
 
 
 
@@ -53,20 +56,35 @@ public class EditOfferActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        price = (TextView) findViewById(R.id.daily_offer_price);
-        description = (TextView) findViewById(R.id.daily_offer_description);
+        price = (EditText) findViewById(R.id.daily_offer_price);
+        description = (EditText) findViewById(R.id.daily_offer_description);
+        name = (EditText)  findViewById(R.id.daily_offer_name);
 
         FloatingActionButton saveOffer = (FloatingActionButton) findViewById(R.id.save_edit_offer);
         if (saveOffer != null) {
             saveOffer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    boolean allFilled = true;
                     //TODO: implementa il salvataggio dell'offerta (Michele)
                     HashMap<Dish,Integer> quantitiesMap = dishesArrayAdapter.getQuantitiesMap();
                     DailyOffer newOffer = new DailyOffer();
+                    if(!isEmpty(description) && !isEmpty(price) && !isEmpty(name))
+                    {
+                        newOffer.setDescription(description.getText().toString());
+                        newOffer.setPrice(Double.parseDouble(price.getText().toString()));
+                        newOffer.setName(name.getText().toString());
+                    }else
+                        allFilled = false;
 //                    newOffer.setDescription();
 
-                            //controlla che la lista di piatti nella dailyoffer non sia vuota e nel caso manda un toast di errore
+                     if(allFilled)       //controlla che la lista di piatti nella dailyoffer non sia vuota e nel caso manda un toast di errore
+                     {
+                         // salva nel DB
+                     }
+                     else
+                         Toast.makeText(EditOfferActivity.this,R.string.error_input_new_daily_offer, Toast.LENGTH_SHORT).show();
+
                 }
             });
         }
@@ -143,7 +161,7 @@ public class EditOfferActivity extends AppCompatActivity
      * Method that check if all the field of the activity are filled
      * @return
      */
-    private boolean isEmpty(TextView tv)
+    private boolean isEmpty(EditText tv)
     {
         if(tv.getText().toString().trim().length() > 0)
             return  false;
