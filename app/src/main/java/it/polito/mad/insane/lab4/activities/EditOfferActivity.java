@@ -57,7 +57,7 @@ public class EditOfferActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         price = (EditText) findViewById(R.id.daily_offer_price);
-        description = (EditText) findViewById(R.id.daily_offer_description);
+        description = (EditText) findViewById(R.id.daily_offer_description_text);
         name = (EditText)  findViewById(R.id.daily_offer_name);
 
         FloatingActionButton saveOffer = (FloatingActionButton) findViewById(R.id.save_edit_offer);

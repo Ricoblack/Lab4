@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -74,7 +74,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
             holder.totalPrice = (TextView) row.findViewById(R.id.summary_dish_total_price);
             if(currentActivity == 3)
             {
-                holder.minusButton = (ImageButton) row.findViewById(R.id.dish_minus_button);
+                holder.minusButton = (ImageView) row.findViewById(R.id.dish_minus_button);
                 holder.minusButton.setOnClickListener(new View.OnClickListener() {
                                                           @Override
                                                           public void onClick(View v)
@@ -89,7 +89,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
 
                                                           }
                                                       });
-                holder.plusButton = (ImageButton) row.findViewById(R.id.dish_plus_button);
+                holder.plusButton = (ImageView) row.findViewById(R.id.dish_plus_button);
                 holder.plusButton.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View v)
@@ -127,8 +127,8 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
         private TextView quantity;
         private TextView name;
         private TextView totalPrice;
-        private ImageButton minusButton;
-        private ImageButton plusButton;
+        private ImageView minusButton;
+        private ImageView plusButton;
     }
 
     public HashMap<Dish,Integer> getQuantitiesMap()

@@ -154,7 +154,7 @@
     <string name="timetables">Timetables Notes:</string>
     <string name="campus">University Campus</string>
     <string name="edit_cover">Edit</string>
-    <string name="edit_dish_name">Name</string>
+    <string name="edit_dish_name">Dish Name</string>
     <string name="edit_dish_description">Description: </string>
     <string name="edit_dish_availab_qty">Available Quantity:</string>
     <string name="edit_dish_price">Price:</string>
@@ -217,4 +217,6 @@
     <string name="title_activity_edit_offer">EditOfferActivity</string>
     <string name="noLog">NO LOG</string>
     <string name="error_input_new_daily_offer">All field must be filled</string>
+    <string name="name_dailyoffer_edit">Name DailyOffer</string>
+    <string name="description">Description</string>
 </resources>
