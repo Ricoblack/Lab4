@@ -7,14 +7,10 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.IntegerRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.MenuItem;
@@ -28,7 +24,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,7 +46,6 @@ import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
-import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MakeReservationActivity extends AppCompatActivity {
@@ -201,7 +195,7 @@ public class MakeReservationActivity extends AppCompatActivity {
 //                        return;
 //                    }
                     AlertDialog.Builder builder = new AlertDialog.Builder(MakeReservationActivity.this);
-                    builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title))
+                    builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title_booking))
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     saveReservation(selectedQuantities);

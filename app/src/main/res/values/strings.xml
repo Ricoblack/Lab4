@@ -87,7 +87,8 @@
     <string name="total_price">Total Price</string>
     <string name="reservation_restaurant_name">Restaurant name</string>
     <string name="restaurant_name">Restaurant name</string>
-    <string name="alert_title">Are you sure you want to confirm the reservation?</string>
+    <string name="alert_title_booking">Are you sure you want to confirm the reservation?</string>
+    <string name="alert_title_review">Are you sure you want to add the review?</string>
     <string name="add_addtional_notes">Add additional notes…</string>
     <string name="title_activity_my_reservations">MyReservations</string>
     <string name="cardView_reservation_restaurant_ID">ID</string>
@@ -214,6 +215,44 @@
     <string name="waitforloading">Wait for restaurant loading and retry</string>
     <string name="logout">LOGOUT</string>
     <string name="localization_permission">Give permission to localization</string>
+    <string name="title_activity_add_review_activity_layout">AddReviewActivityLayoutActivity
+    </string>
+    <string name="score_3">Location</string>
+    <string name="score_2">Punctuality</string>
+    <string name="score_1">Food</string>
+    <string name="give_vote">Give your vote to the restaurant</string>
+    <string name="final_score">Final score</string>
+    <string name="write_review">Write your review (optional)</string>
+    <string name="title_add_review">Title</string>
+    <string name="add_review_title">Review Title...</string>
+    <string name="text_add_review">Text</string>
+    <string name="add_review_text">Write here your review...</string>
+    <string name="hint_rate">Rate all sections to find out the final score and add the review</string>
+    <string name="rate_all_section">You should assess all the sections to add a review</string>
+    <string name="add_review_success">Review added successfully</string>
+    <string-array name="scores_array">
+        <item> <i>Select a score...</i> </item>
+        <item>0.5</item>
+        <item>1.0</item>
+        <item>1.5</item>
+        <item>2.0</item>
+        <item>2.5</item>
+        <item>3.0</item>
+        <item>3.5</item>
+        <item>4.0</item>
+        <item>4.5</item>
+        <item>5.0</item>
+        <item>5.5</item>
+        <item>6.0</item>
+        <item>6.5</item>
+        <item>7.0</item>
+        <item>7.5</item>
+        <item>8.0</item>
+        <item>8.5</item>
+        <item>9.0</item>
+        <item>9.5</item>
+        <item>10</item>
+    </string-array>
     <string name="title_activity_edit_offer">EditOfferActivity</string>
     <string name="noLog">NO LOG</string>
     <string name="error_input_new_daily_offer">All field must be filled</string>

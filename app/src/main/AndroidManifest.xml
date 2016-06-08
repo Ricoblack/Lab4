@@ -127,6 +127,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.DailyMenuActivity" />
         </activity>
+        <activity
+            android:name=".activities.AddReviewActivity"
+            android:label="@string/title_activity_add_review_activity_layout"
+            android:parentActivityName=".activities.RestaurantProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
+        </activity>
     </application>
 
 </manifest>

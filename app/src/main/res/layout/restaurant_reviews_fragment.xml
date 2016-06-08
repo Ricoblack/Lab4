@@ -93,8 +93,6 @@
                         android:textColor="@color/colorPrimary"
                         />
 
-
-
                 </LinearLayout>
 
                 <LinearLayout
