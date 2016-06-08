@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 /**
  * Created by miche on 03/06/2016.
  */
-public class DailyOffer
+public class DailyOffer implements Serializable
 {
 
     private String ID;

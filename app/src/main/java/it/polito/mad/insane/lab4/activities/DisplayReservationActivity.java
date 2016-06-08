@@ -32,6 +32,7 @@ public class DisplayReservationActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.currentBooking = (Booking) getIntent().getSerializableExtra("Booking");
+
         setTitle(getIntent().getStringExtra("nameRestaurant"));
 
         date = (Button) findViewById(R.id.reservation_date);

@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.geofire.GeoFire;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,23 +52,24 @@ import im.delight.android.location.SimpleLocation;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.HomeSpinnerAdapter;
 import it.polito.mad.insane.lab4.adapters.RestaurantsRecyclerAdapter;
-import it.polito.mad.insane.lab4.data.DailyOfferSimple;
+
 import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.managers.NotificationDailyOfferService;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 
 public class HomePageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private static RestaurateurJsonManager manager = null;
-    static final String PREF_NAME = "myPref";
+    static final String PREF_NAME = "myPrefFilter";
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
     private List<Restaurant> listaFiltrata;
     private Context myContext=this;
     private static String uid ;
     private String rid;
-
-
+    private DatabaseReference restaurantsRef;
+    private ValueEventListener listener;
 
 
     @Override
@@ -174,9 +177,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
         // set up clean Recycler
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference restaurantsRef = database.getReference("/restaurants");
+        restaurantsRef = database.getReference("/restaurants");
 
-        restaurantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        listener=new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
@@ -203,7 +206,9 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        restaurantsRef.addListenerForSingleValueEvent(listener);
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -273,12 +278,29 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         startLocalization();
 
         //notification listener
-        //fixme ovviamente non funziona
-        Intent mServiceIntent = new Intent(this, DailyOfferSimple.class);
-        startService(mServiceIntent);
-        Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
 
 
+        if(isServiceStarted()==false) {
+            Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
+            Intent mServiceIntent = new Intent(this, NotificationDailyOfferService.class);
+            startService(mServiceIntent);
+
+        }
+        else {
+            Toast.makeText(this,"service gia attivo",Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private boolean isServiceStarted() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (NotificationDailyOfferService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -306,13 +328,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             Dialog dialog = builder.create();
             dialog.show();
 
-            manager.simpleLocation.setListener(new SimpleLocation.Listener() {
 
-                @Override
-                public void onPositionChanged() {
-                    Toast.makeText(manager.myContext,"Lat: " + manager.simpleLocation.getLatitude() + " long: " + manager.simpleLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                }
-            });
             // make the device update its location
             manager.simpleLocation.beginUpdates();
         }
@@ -357,8 +373,25 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // check login
         this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
+        if(this.mPrefs != null)
+        {
+            //If coming from filter activity...
+            if(mPrefs.getString("haveToFilter","no").equals("yes")) {
+                listaFiltrata = manager.getAdvancedFilteredRestaurants(this.mPrefs.getString("distanceValue", ""), this.mPrefs
+                        .getString("priceValue", ""), this.mPrefs.getString("typeValue", ""), this.mPrefs.getString("timeValue", ""));
+
+                setUpRestaurantsRecycler(listaFiltrata);
+            }
+
+        }else
+        {
+            //No filtering needed
+            setUpRestaurantsRecycler(manager.listaFiltrata);
+        }
         // make the device update its location
         manager.simpleLocation.beginUpdates();
+
+
     }
 
     @Override
@@ -456,9 +489,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         dSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                /*
                 if(position==1|| position==2){
                   setUpRestaurantsRecycler(manager.getOrderedRestaurants(dSpinner.getSelectedItem().toString(),manager.listaFiltrata));
                 }
+                */
             }
 
             @Override
@@ -530,4 +565,18 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
     /*************************************************/
+
+    @Override
+    protected void onDestroy() {
+        restaurantsRef.removeEventListener(listener);
+        super.onDestroy();
+    }
+
+
 }
+
+//solo come utente deve partire il servizio, al logout devo stopparlo e togliere anche le notifiche
+//verificare caso in cui utente sloggato clicca sulla notifica
+//una volta cliccata viene eliminata la notifica
+
+

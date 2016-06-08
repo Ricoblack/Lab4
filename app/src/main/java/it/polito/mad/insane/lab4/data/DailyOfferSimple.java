@@ -8,6 +8,7 @@ public class DailyOfferSimple {
     private String restaurantId;
     private String restaurantName;
     private String offerText;
+    private String ID;
 
     public DailyOfferSimple(){}
 
@@ -33,5 +34,13 @@ public class DailyOfferSimple {
 
     public void setRestaurantName(String restaurantName) {
         this.restaurantName = restaurantName;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 }
