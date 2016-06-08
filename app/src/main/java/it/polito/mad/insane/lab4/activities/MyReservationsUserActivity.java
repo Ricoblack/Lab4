@@ -78,6 +78,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                         }
                     });
                     if(bookings != null) {
+                        //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
+                        findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
                         setUpView(new ArrayList<Booking>(bookings.values()), rv);
                     }
                 }

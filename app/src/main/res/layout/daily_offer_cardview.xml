@@ -126,7 +126,7 @@
                 android:layout_height="1dp"
                 android:background="@color/colorPrimary"/>
 
-            <ListView
+            <it.polito.mad.insane.lab4.managers.NonScrollListView
                 android:id="@+id/daily_offer_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
