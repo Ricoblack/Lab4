@@ -35,7 +35,7 @@ dependencies {
     compile 'com.firebase:geofire:1.1.0+'
     compile 'com.github.delight-im:Android-SimpleLocation:v1.0.1'
     compile 'com.firebase:firebase-client-android:2.5.2+'
-    compile 'com.google.android.gms:play-services:9.0.1'
+    compile 'com.google.android.gms:play-services-maps:9.0.1'
 
 }
 apply plugin: 'com.google.gms.google-services'
