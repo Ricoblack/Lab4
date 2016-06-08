@@ -32,7 +32,6 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
     private int layoutResourceId;
     private List<Dish> dishes;
     private HashMap<Dish, Integer> quantitiesMap;
-    private Dish currentDish;
 
     public DishArrayAdapter(Context context, int resource, HashMap<Dish, Integer> quantitiesMap,
                             int currentActivity) {
@@ -84,7 +83,9 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                                                               {
                                                                   dishQuantity --;
                                                                   holder.quantity.setText(String.valueOf(dishQuantity));
-                                                                  quantitiesMap.put(currentDish, dishQuantity);
+                                                                  quantitiesMap.put(holder.currentDish, dishQuantity);
+                                                                  DecimalFormat df = new DecimalFormat("0.00");
+                                                                  holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
                                                               }
 
                                                           }
@@ -97,7 +98,9 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                                                         int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
                                                         dishQuantity ++;
                                                         holder.quantity.setText(String.valueOf(dishQuantity));
-                                                        quantitiesMap.put(currentDish, dishQuantity);
+                                                        quantitiesMap.put(holder.currentDish, dishQuantity);
+                                                        DecimalFormat df = new DecimalFormat("0.00");
+                                                        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
                                                     }
                                                 });
             }
@@ -107,15 +110,15 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
             holder = (DishHolder) row.getTag();
         }
 
-        currentDish = dishes.get(position);
-        holder.name.setText(currentDish.getName());
+        holder.currentDish = dishes.get(position);
+        holder.name.setText(holder.currentDish.getName());
         if(currentActivity == 3)
-            holder.quantity.setText(String.valueOf(quantitiesMap.get(currentDish)));
+            holder.quantity.setText(String.valueOf(quantitiesMap.get(holder.currentDish)));
         else
-            holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(currentDish))));
+            holder.quantity.setText(MessageFormat.format("{0}x", String.valueOf(quantitiesMap.get(holder.currentDish))));
 
         DecimalFormat df = new DecimalFormat("0.00");
-        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentDish.getPrice() * quantitiesMap.get(currentDish)))));
+        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
         if(currentActivity == 1)
             holder.totalPrice.setVisibility(View.GONE);
 
@@ -129,6 +132,7 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
         private TextView totalPrice;
         private ImageView minusButton;
         private ImageView plusButton;
+        private Dish currentDish;
     }
 
     public HashMap<Dish,Integer> getQuantitiesMap()

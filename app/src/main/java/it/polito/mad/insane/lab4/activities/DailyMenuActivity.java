@@ -18,11 +18,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +47,6 @@ import it.polito.mad.insane.lab4.data.Dish;
  */
 public class DailyMenuActivity extends AppCompatActivity {
 
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -64,7 +63,10 @@ public class DailyMenuActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
     private static DishesRecyclerAdapter dishesAdapter = null;
+    private static DailyOfferRecyclerAdapter offersAdapter = null;
     private ArrayList<Dish> dishes;
+    private static HashMap<String,DailyOffer> dailyOffersLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
+    private static ArrayList<DailyOffer> offersList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
     private static String rid; // restaurant id
@@ -73,6 +75,19 @@ public class DailyMenuActivity extends AppCompatActivity {
     /**
      * Standard Methods
      **/
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        dailyOffersLocalCache.clear();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +106,9 @@ public class DailyMenuActivity extends AppCompatActivity {
         }
 
         // initialize Recycler View
-//        updateDishes(); //FIXME: occhio che ho commentato questo
+//        updateDishes();
 
-        // TODO: Le cardview quando si clicca non devono venire fuori + e - ma deve rimandare alla edit dishes (Michele)
+        // TODO: Le cardview dei dishes quando si clicca non devono venire fuori + e - ma deve rimandare alla edit dishes (Michele)
 
         // set add_dish fab button
         final FloatingActionButton dishFab = (FloatingActionButton) findViewById(R.id.add_dish);
@@ -101,9 +116,6 @@ public class DailyMenuActivity extends AppCompatActivity {
             dishFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Toast.makeText(DailyMenuActivity.this,"Hai cliccato su add_dish button",Toast.LENGTH_SHORT).show();
-                    //TODO inserire edit dish sull'onclick (Federico)
-
                     // open activity EditDishActivity
                     Intent i = new Intent(view.getContext(),EditDishActivity.class);
                     view.getContext().startActivity(i);
@@ -118,7 +130,6 @@ public class DailyMenuActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     // open activity EditOffer
-//                    Toast.makeText(DailyMenuActivity.this,"Hai cliccato su add_offer button",Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(view.getContext(),EditOfferActivity.class);
                     view.getContext().startActivity(i);
 
@@ -178,39 +189,94 @@ public class DailyMenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (this.dishesAdapter != null)
-            this.dishesAdapter.notifyDataSetChanged();
-//        updateDishes(); //FIXME: occhio che ho commentato questo (Michele)
+        if (dishesAdapter != null)
+            dishesAdapter.notifyDataSetChanged();
+        if(offersAdapter != null)
+            offersAdapter.notifyDataSetChanged();
+        updateDishes();
+        updateDailyOffers();
     }
 
     /**
      * Our Methods
      */
+    private void updateDishes()
+    {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dishMap");
 
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String, Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+                if (r!=null)
+                {
+                    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
+                    if (recyclerView != null)
+                    {
+                        if(dishesAdapter == null)
+                            dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, new ArrayList<Dish>(r.values()), rid);
+                        recyclerView.setAdapter(dishesAdapter);
+                    }
 
-//    public void updateDishes()
-//    {
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("/restaurants/"+rid+"/dishMap");
-//
-//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                HashMap<String,Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
-//                    @Override
-//                    protected Object clone() throws CloneNotSupportedException {
-//                        return super.clone();
-//                    }
-//                });
-//
-//                dishes = new ArrayList<>(r.values());
-//                setupDishesRecyclerView();
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-//    }
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void updateDailyOffers()
+    {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dailyOfferMap");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                // method invoked when data are availables
+                HashMap<String,DailyOffer> rTemp = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+
+                // set up recycler view
+                if(rTemp!=null)
+                {
+                    dailyOffersLocalCache.putAll(rTemp);
+                    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.daily_offers_recycler_view);
+                    offersList = new ArrayList<DailyOffer>(dailyOffersLocalCache.values());
+                    offersAdapter = new DailyOfferRecyclerAdapter(DailyMenuActivity.this, offersList, rid, 1);
+                    if(recyclerView != null) {
+                        recyclerView.setAdapter(offersAdapter);
+                        offersAdapter.notifyDataSetChanged();
+                    }
+                }
+                else
+                {
+                    //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter
     {
         final int PAGE_COUNT = 2;
@@ -299,6 +365,7 @@ public class DailyMenuActivity extends AppCompatActivity {
             }
         }
 
+
         private View menuLayout(LayoutInflater inflater, ViewGroup container)
         {
             final View rootView = inflater.inflate(R.layout.restaurant_menu_fragment, container, false);
@@ -308,8 +375,6 @@ public class DailyMenuActivity extends AppCompatActivity {
             // remove the cart textview
             TextView cartText = (TextView) rootView.findViewById(R.id.show_reservation_button);
             cartText.setVisibility(View.GONE);
-
-
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dishMap");
@@ -413,15 +478,20 @@ public class DailyMenuActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // method invoked when data are availables
-                    HashMap<String,DailyOffer> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
+                    HashMap<String,DailyOffer> rTemp = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
                         @Override
                         protected Object clone() throws CloneNotSupportedException {
                             return super.clone();
                         }
                     });
                     // set up recycler view
-                    if(r!=null)
-                        setupDailyOfferRecyclerView(rootView, new ArrayList<>(r.values()));
+                    if(rTemp!=null)
+                    {
+                        DailyMenuActivity.dailyOffersLocalCache.putAll(rTemp);
+                        offersList = new ArrayList<>(dailyOffersLocalCache.values());
+                        setupDailyOfferRecyclerView(rootView, offersList);
+                    }
+
                     else
                     {
                         //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
@@ -437,11 +507,13 @@ public class DailyMenuActivity extends AppCompatActivity {
         private void setupDailyOfferRecyclerView(View rootView, List<DailyOffer> offers)
         {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.daily_offers_recycler_view);
-            RecyclerView.Adapter dailyOffersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, rid);
+            offersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, rid, 1);
 
             if(recyclerView != null)
             {
-                recyclerView.setAdapter(dailyOffersAdapter);
+                recyclerView.setAdapter(offersAdapter);
+                offersAdapter.notifyDataSetChanged();
+
                 // set Layout Manager
                 if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
                 {
@@ -487,55 +559,14 @@ public class DailyMenuActivity extends AppCompatActivity {
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
             }
         }
-
-        // FIXME X fede: nel fragment del menu, compare per qualche motivo la toolbar anche se sto usando lo stesso layout del fragment usato lato user "restaurant_menu_fragment" che funziona bene (Michele)
-//        private void setupDishesRecyclerView() {
-//            // set Adapter
-//            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
-//            DailyMenuActivity.this.dishesAdapter = new DishesRecyclerAdapter(this, dishes, rid);
-//            if (recyclerView != null) {
-//                recyclerView.setAdapter(DailyMenuActivity.this.dishesAdapter);
-//
-//                // set Layout Manager
-//                if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
-//                    // 10 inches
-//                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                        // 2 columns
-//                        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 2);
-//                        recyclerView.setLayoutManager(mGridLayoutManager);
-//                    } else {
-//                        // 3 columns
-//                        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 3);
-//                        recyclerView.setLayoutManager(mGridLayoutManager);
-//                    }
-//
-//                } else if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-//                    // 7 inches
-//                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//                        // 2 columns
-//                        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 2);
-//                        recyclerView.setLayoutManager(mGridLayoutManager);
-//
-//                    } else {
-//                        // 1 column
-//                        LinearLayoutManager mLinearLayoutManagerVertical = new LinearLayoutManager(this);
-//                        mLinearLayoutManagerVertical.setOrientation(LinearLayoutManager.VERTICAL);
-//                        recyclerView.setLayoutManager(mLinearLayoutManagerVertical);
-//                    }
-//                } else {
-//                    // small and normal screen
-//                    // 1 columns
-//                    LinearLayoutManager mLinearLayoutManagerVertical = new LinearLayoutManager(this);
-//                    mLinearLayoutManagerVertical.setOrientation(LinearLayoutManager.VERTICAL);
-//                    recyclerView.setLayoutManager(mLinearLayoutManagerVertical);
-//                }
-//
-//
-//                // set Animator
-//                recyclerView.setItemAnimator(new DefaultItemAnimator()); // default animations
-//            }
-//        }
     }
 
-
+    public static void removeOffer(DailyOffer offer)
+    {
+        dailyOffersLocalCache.remove(offer.getID());
+        for( DailyOffer d : offersList)
+            if(d.getID().equals(offer.getID()))
+                offersList.remove(d);
+        offersAdapter.notifyDataSetChanged();
+    }
 }

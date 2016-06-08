@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.activities.EditOfferActivity;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
@@ -41,18 +42,21 @@ import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRecyclerAdapter.DailyOfferHolder>
 {
 
+
     private final Context context;
     private LayoutInflater mInflater;
     private List<DailyOffer> mData; // actual data to be displayed
     private int[] popupsVisibility;
     private String restaurantId;
+    private int currentActivity;
 
-    public DailyOfferRecyclerAdapter(Context context, List < DailyOffer > data, String restaurantID)
+    public DailyOfferRecyclerAdapter(Context context, List < DailyOffer > data, String restaurantID, int currentActivity)
     {
         this.context = context;
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
         this.restaurantId = restaurantID;
+        this.currentActivity = currentActivity;
 
         popupsVisibility = new int[data.size()];
         Arrays.fill(popupsVisibility, View.GONE); // all'inizio i popup sono tutti invisibili
@@ -102,6 +106,8 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
             this.cardView = itemView;
             this.popupLayout = (RelativeLayout) itemView.findViewById(R.id.daily_offer_popup_layout);
             this.expandArrow = (ImageView) itemView.findViewById(R.id.expand_arrow);
+            if(currentActivity == 1) // DailyMenu
+                this.expandArrow.setVisibility(View.GONE);
             this.dishListView = (ListView) itemView.findViewById(R.id.daily_offer_listview);
         }
 
@@ -152,25 +158,38 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
 
                 }
             });
-//
 
+            if(currentActivity == 0) // restaurant profile activity
+            {
+                this.cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (popupsVisibility[position] == View.GONE) { // al click se il popup è invisibile
+                            // e il prodotto e' disponibile lo faccio apparire...
+                            popupLayout.setVisibility(View.VISIBLE);
+                            expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_up_black_24dp));
+                            popupsVisibility[position] = View.VISIBLE;
+                        } else { //... se e' visibile lo nascondo
+                            popupLayout.setVisibility(View.GONE);
+                            expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_down_black_24dp));
+                            popupsVisibility[position] = View.GONE;
+                        }
+                    }
+                });
+            } else if(currentActivity == 1 ) // DailyMenuActivity
+            {
+                this.cardView.setOnClickListener(new View.OnClickListener()
+                {
 
-            this.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(popupsVisibility[position] == View.GONE) { // al click se il popup è invisibile
-                        // e il prodotto e' disponibile lo faccio apparire...
-                        popupLayout.setVisibility(View.VISIBLE);
-                        expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_up_black_24dp));
-                        popupsVisibility[position] = View.VISIBLE;
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent i = new Intent(v.getContext(),EditOfferActivity.class);
+                        i.putExtra("offer",currentDailyOffer);
+                        v.getContext().startActivity(i);
                     }
-                    else { //... se e' visibile lo nascondo
-                        popupLayout.setVisibility(View.GONE);
-                        expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_down_black_24dp));
-                        popupsVisibility[position] = View.GONE;
-                    }
-                }
-            });
+                });
+            }
         }
     }
 }
