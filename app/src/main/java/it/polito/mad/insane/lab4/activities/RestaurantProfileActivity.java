@@ -131,6 +131,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 //                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
                     bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
                     bundle.putString("ID", restaurantId);
+                    bundle.putString("restName", restaurantName);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 }

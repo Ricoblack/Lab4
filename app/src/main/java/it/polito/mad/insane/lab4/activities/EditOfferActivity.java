@@ -209,6 +209,7 @@ public class EditOfferActivity extends AppCompatActivity
         {
             case R.id.delete_dish:
                 deleteOffer(currentOffer);
+                // TODO aggiungi alert dialog di conferma (Michele)
                 break;
             default:
                 break;

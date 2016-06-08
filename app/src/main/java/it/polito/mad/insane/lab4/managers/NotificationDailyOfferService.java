@@ -137,7 +137,7 @@ public class NotificationDailyOfferService extends Service {
                     (NotificationCompat.Builder) new NotificationCompat.Builder(myContext)
                             .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark_pressed)  //TODO inventare icona notifica (carlo)
                             .setContentTitle(getResources().getText(R.string.new_offer))
-                            .setContentText(offer.getOfferText())
+                            .setContentText(offer.getDescription())
                             .setAutoCancel(true);
             Intent resultIntent = new Intent(myContext, RestaurantProfileActivity.class);
             resultIntent.putExtra("ID",offer.getRestaurantId());
@@ -173,7 +173,7 @@ public class NotificationDailyOfferService extends Service {
                     (NotificationCompat.Builder) new NotificationCompat.Builder(myContext)
                             .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark_pressed)  //TODO inventare icona notifica (carlo)
                             .setContentTitle(getResources().getText(R.string.offer_edited))
-                            .setContentText(offer.getOfferText())
+                            .setContentText(offer.getDescription())
                             .setAutoCancel(true);
             Intent resultIntent = new Intent(myContext, RestaurantProfileActivity.class);
             resultIntent.putExtra("ID",offer.getRestaurantId());
