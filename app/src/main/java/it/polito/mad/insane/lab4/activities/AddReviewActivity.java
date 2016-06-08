@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,22 +19,39 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.AddReviewSpinnerAdapter;
 import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.data.Review;
 
 public class AddReviewActivity extends AppCompatActivity {
 
     private static final int N_SCORES = 3;
+    static final String PREF_LOGIN = "loginPref";
     private static double reviewScores[];
     private static double finalScore = -1;
     private static String restaurantId;
+    private static String reviewTitle;
+    private static String reviewText;
+    private static HashMap<String, Double> restaurantScoresMap;
+    private double restaurantFinalScore;
+    private static int reviewsNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +62,9 @@ public class AddReviewActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         restaurantId = bundle.getString("ID");
+        restaurantScoresMap = (HashMap<String, Double>) bundle.getSerializable("scoresMap");
+        restaurantFinalScore = bundle.getDouble("finalScore");
+        reviewsNumber = bundle.getInt("reviewsNumber");
 
         reviewScores = new double[N_SCORES];
         Arrays.fill(reviewScores, -1);
@@ -190,9 +211,11 @@ public class AddReviewActivity extends AppCompatActivity {
                         Toast.makeText(AddReviewActivity.this, R.string.rate_all_section, Toast.LENGTH_LONG).show();
                     else {
                         EditText etTitle = (EditText) findViewById(R.id.add_review_title);
+                        final String title = String.valueOf(etTitle.getText());
                         EditText etText = (EditText) findViewById(R.id.add_review_text);
+                        final String text = String.valueOf(etText.getText());
 
-                        if (!String.valueOf(etText.getText()).equals("") && String.valueOf(etTitle.getText()).equals("")) {
+                        if (!text.equals("") && title.equals("")) {
                             //se ho settato il testo ma non il titolo della recensione
                             Toast.makeText(AddReviewActivity.this, R.string.hint_review_title, Toast.LENGTH_LONG).show();
                         }
@@ -205,15 +228,18 @@ public class AddReviewActivity extends AppCompatActivity {
 
                             builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
+                                    if( !text.equals("") ){
+                                        reviewText = text;
+                                        reviewTitle = title;
+                                    }
                                     saveReview();
-                                    clearStaticVariables();
                                     finish();
                                     Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
                                     //FIXME se si fa in tempo creare activity MyReviews (Renato)
-                                    Intent intent = new Intent(AddReviewActivity.this, RestaurantProfileActivity.class);
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString("ID", restaurantId);
-                                    startActivity(intent);
+//                                    Intent intent = new Intent(AddReviewActivity.this, RestaurantProfileActivity.class);
+//                                    Bundle bundle = new Bundle();
+//                                    bundle.putString("ID", restaurantId);
+//                                    startActivity(intent);
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -235,9 +261,97 @@ public class AddReviewActivity extends AppCompatActivity {
         finalScore = -1;
         reviewScores = null;
         restaurantId = null;
+        reviewTitle = null;
+        reviewText = null;
     }
 
     private void saveReview() {
-        //TODO aggiungere la review al db e calcolare il nuovo punteggio del ristorante (Renato)
+
+        //CREO L'OGGETTO REVIEW
+        final Review r = new Review();
+
+        r.setAvgFinalScore(finalScore);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Calendar cal = Calendar.getInstance();
+        r.setDateTime(sdf.format(cal.getTime()));
+        r.setRestaurantId(restaurantId);
+
+        HashMap<String, Double> scoresMap = new HashMap<>();
+        scoresMap.put(getResources().getString(R.string.food), reviewScores[0]);
+        scoresMap.put(getResources().getString(R.string.punctuality), reviewScores[1]);
+        scoresMap.put(getResources().getString(R.string.location), reviewScores[2]);
+        r.setScoresMap(scoresMap);
+
+        if( reviewText != null )
+            r.setText(reviewText);
+        else
+            r.setText("");
+
+        if(reviewTitle != null)
+            r.setTitle(reviewTitle);
+        else
+            r.setTitle("");
+
+        SharedPreferences mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if (mPrefs != null) {
+            r.setUserId(mPrefs.getString("uid", null));
+        }
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference addReviewRef = database.getReference("/reviews");
+
+        //AGGIORNO L'OGGETTO RISTORANTE
+        if(restaurantFinalScore == -1){
+//            restaurant.setAvgFinalScore(finalScore);
+//            restaurant.setAvgScores(scoresMap);
+        }
+        if(restaurantFinalScore != -1) {
+            double totFinal = restaurantFinalScore * reviewsNumber;
+            finalScore = (totFinal + finalScore) / (reviewsNumber + 1);
+
+//            HashMap<String, Double> updateMap = (HashMap<String, Double>) restaurant.getAvgScores();
+
+//            double temp = updateMap.get(getResources().getString(R.string.food)) * reviewsNumber;
+//            updateMap.put(getResources().getString(R.string.food), ((temp + reviewScores[0]) / (reviewsNumber + 1)));
+//
+//            temp = updateMap.get(getResources().getString(R.string.punctuality)) * reviewsNumber;
+//            updateMap.put(getResources().getString(R.string.punctuality), ((temp + reviewScores[1]) / (reviewsNumber +1)));
+//
+//            temp = updateMap.get(getResources().getString(R.string.location)) * reviewsNumber;
+//            updateMap.put(getResources().getString(R.string.location), ((temp + reviewScores[2]) / (reviewsNumber +1)));
+//
+//            restaurant.setAvgScores(updateMap);
+        }
+
+        //AGGIORNO IL DB
+        addReviewRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                DatabaseReference restaurantBookingsRef = addReviewRef.child("restaurants").child(restaurantId);
+                DatabaseReference pushRef = restaurantBookingsRef.push();
+                String key = pushRef.getKey();
+                r.setID(key);
+                pushRef.setValue(r);
+
+                DatabaseReference userBookingRef = addReviewRef.child("users").child(r.getUserId()).child(key);
+                userBookingRef.setValue(r);
+
+                //TODO aggiornare i punteggi del ristorante
+                DatabaseReference restaurantRef = database.getReference("/restaurants" + restaurantId);
+//                restaurantRef.setValue(restaurant);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+//                if(committed)
+//                    Toast.makeText(AddReviewActivity.this, "Reservation done", Toast.LENGTH_SHORT).show();
+//                else
+//                    Toast.makeText(AddReviewActivity.this, "Reservation failed", Toast.LENGTH_SHORT).show();
+
+                clearStaticVariables();
+            }
+        });
     }
 }

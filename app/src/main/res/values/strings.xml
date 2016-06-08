@@ -267,6 +267,7 @@
     <string name="description">Description</string>
     <string name="alert_title_review_notext">Are you sure you want to add the review without a comment?</string>
     <string name="hint_review_title">You should add a title if you want to insert a comment</string>
+    <string name="no_reviews_available">No reviews available for this restaurant. Be the first to add a new one!</string>
     <string name="new_offer">New offer available</string>
     <string name="offer_edited">Offer changed</string>
     <string name="cant_delete_offer">The offer you are trying to delete  doesn\'t exists yet</string>
