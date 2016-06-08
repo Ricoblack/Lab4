@@ -36,6 +36,7 @@ import java.util.List;
 import im.delight.android.location.SimpleLocation;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
 
 /**
@@ -344,6 +345,17 @@ public class RestaurateurJsonManager
         return null;
     }
 
+    private boolean checkIfRespectsPriceConstraint(Restaurant r, String priceValue) {
+
+        //check if exists at least one dish that costs less that price
+        String subString=priceValue.substring(0,priceValue.length()-1);
+        int price=Integer.parseInt(subString);
+        for(Dish d : r.getDishMap().values()){
+            if(d.getPrice()<=price) return true;
+        }
+
+        return false;
+    }
     //TODO: da scommentare successivamente (Renato)
 //    public static void deleteReservationByID(List<Booking> mData, String id)
 //    {
@@ -359,6 +371,44 @@ public class RestaurateurJsonManager
 //        }
 //        return;
 //    }
+
+    public List<Restaurant> getAdvancedFilteredRestaurants(String distanceValue, String priceValue, String typeValue, String timeValue) {
+        ArrayList<Restaurant> restaurants=new ArrayList<Restaurant>();
+
+        //finds restaurant whose values respect filtering
+
+        for(Restaurant r : this.listaFiltrata){
+
+            if(distanceValue.equals("")==false){
+                //check if respects distance contraint
+
+                if(checkIfRespectsDistanceConstraint(r,distanceValue)==false) continue;
+            }
+
+            if(priceValue.equals("")==false){
+                if(checkIfRespectsPriceConstraint(r,priceValue)==false) continue;
+            }
+
+            if(typeValue.equals("")==false){
+                if(checkIfRespectsTypeConstraint(r,typeValue)==false) continue;
+            }
+
+            if(timeValue.equals("")==false){
+                try {
+                    if (checkIfRespectsTimeConstraint(r, timeValue) == false) continue;
+                }
+                catch(Exception e){
+                        continue;
+                    }
+
+            }
+
+            restaurants.add(r);
+        }
+
+        return restaurants;
+
+    }
 
     /**
      * Created by carlocaramia on 09/04/16.

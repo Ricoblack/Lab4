@@ -23,7 +23,7 @@ import it.polito.mad.insane.lab4.adapters.MySpinnerAdapterFilter;
 public class FilterActivity extends AppCompatActivity
 {
 
-    static final String PREF_NAME = "myPref";
+    static final String PREF_NAME = "myPrefFilter";
     private SharedPreferences mPrefs = null;
 
     @Override
@@ -96,6 +96,7 @@ public class FilterActivity extends AppCompatActivity
         editor.putInt("pricePos",pSpinner.getSelectedItemPosition());
         editor.putInt("typePos",tSpinner.getSelectedItemPosition());
         editor.putInt("timePos",tiSpinner.getSelectedItemPosition());
+        editor.putString("haveToFilter","yes");
         editor.apply();
 
         /*Intent i = new Intent(this,HomeConsumer.class);
@@ -161,6 +162,7 @@ public class FilterActivity extends AppCompatActivity
                 tSpinner.setSelection(mPrefs.getInt("typePos",0));
                 pSpinner.setSelection(mPrefs.getInt("pricePos",0));
                 tiSpinner.setSelection(mPrefs.getInt("timePos",0));
+
             }
         }else
         {
