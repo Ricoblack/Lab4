@@ -66,8 +66,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            //TODO: usare lo userid in shared preferences e non uno fisso (carlo)
-            DatabaseReference myRef = database.getReference("/bookings/users/-KJQAkQrf8Ucme-NflCc");
+            DatabaseReference myRef = database.getReference("/bookings/users/"+uid);
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -78,7 +77,9 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                             return super.clone();
                         }
                     });
-                    setUpView(new ArrayList<Booking>(bookings.values()),rv);
+                    if(bookings != null) {
+                        setUpView(new ArrayList<Booking>(bookings.values()), rv);
+                    }
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -124,16 +125,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//            Toast.makeText(HomePageActivity.this, "Hai cliccato su stocazzo", Toast.LENGTH_SHORT).show();
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        }
         switch (id)
         {
             case R.id.home_drawer_item:
@@ -164,11 +155,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                 finish();
                 break;
         }
-//        if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

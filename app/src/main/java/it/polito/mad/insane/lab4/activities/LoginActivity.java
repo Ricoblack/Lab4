@@ -60,7 +60,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //     * Id to identity READ_CONTACTS permission request.
 //     */
 //    private static final int REQUEST_READ_CONTACTS = 0;
-    //TODO bug quando fallisce l'autenticazione quando per esempio usi le credenziali del ristoratore per accedere lato utente quando poi cambi il radio button il primo tentativo fallisce mentre il secondo va a buon fine (Federico)
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -215,15 +214,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        }
         switch (id)
         {
             case R.id.home_activity:
@@ -235,11 +225,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
                 break;
         }
-//        if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -507,8 +492,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                Toast.makeText(LoginActivity.this, getString(R.string.error_connection), Toast.LENGTH_SHORT).show();
                 return false; // Error connection
             }
-            else if(userId == " ")
+            else if(userId == " ") {
                 return false; // Authentication failed
+            }
             else
                 return true; // Authentication succeded
 
@@ -563,6 +549,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Toast.makeText(LoginActivity.this, getString(R.string.error_authentication), Toast.LENGTH_SHORT).show();
 //                    mPasswordView.setError(getString(R.string.error_authentication));
 //                    mPasswordView.requestFocus();
+                      userId = null;
                 }
 
             }

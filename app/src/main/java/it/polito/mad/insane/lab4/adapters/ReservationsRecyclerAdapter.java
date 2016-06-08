@@ -19,6 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
@@ -111,6 +114,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 @Override
                 public void onClick(View v)
                 {
+                    //TODO implementare la cancellazione di una reservation (Federico)
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle(context.getResources().getString(R.string.delete_reservation_alert_title))
                             .setPositiveButton(v.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -155,21 +159,35 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
         }
 
         public void setData(Booking current, int position, View view) {
+
             this.position = position;
-            RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(context);
-            nameRist = "nomeRistProva";
+
+            //TODO quando il db sarà sistemato prelevare il nome del ristorante dall'oggetto Booking (Federico)
+            //nameRist = current.getNameRist();
             restaurantName.setText("nomeRistProva");
-            ID.setText(current.getID());
+
+            //TODO quando il db sarà sistemato prelevare il nome dell'utente dall'oggetto Booking (Federico)
+            ID.setText("nomeUser");
+
             nItems.setText(MessageFormat.format("{0} " +view.getResources().getString(R.string.dishes), current.getTotalDishesQty()));
+
             DecimalFormat df = new DecimalFormat("0.00");
+
             totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(current.getTotalPrice()))));
-            /*
-            Calendar calendar = current.getDate_time();
+
+
+            SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Calendar calendar = Calendar.getInstance();
+            try {
+                calendar.setTime(parser.parse(current.getDateTime()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             hour.setText(MessageFormat.format("{0}:{1}", calendar.get(Calendar.HOUR_OF_DAY),
                     pad(calendar.get(Calendar.MINUTE))));
             date.setText(MessageFormat.format("{0}/{1}/{2}", pad(calendar.get(Calendar.DAY_OF_MONTH)),
                     pad(calendar.get(Calendar.MONTH) + 1), pad(calendar.get(Calendar.YEAR))));
-             */
+
             currentBooking = current;
         }
 
