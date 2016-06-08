@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,6 +78,9 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     private static String restaurantId;
     private static String restaurantName;
     private static DishesRecyclerAdapter dishesAdapter = null;
+    private static HashMap<String, Review> reviewsMap = new HashMap<>();
+    private static Restaurant restaurant;
+    private static int reviewsNumber;
 //    private static List<Dish> reservationList = null;
 
     public static Activity RestaurantProfileActivity = null; // attribute used to finish() the current activity from another activity
@@ -143,8 +148,12 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 //                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
 //                bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
                 bundle.putString("ID", restaurantId);
+                bundle.putSerializable("scoresMap", (Serializable) restaurant.getAvgScores());
+                bundle.putDouble("finalScore", restaurant.getAvgFinalScore());
+                bundle.putInt("reviewsNumber", reviewsNumber);
                 intent.putExtras(bundle);
                 startActivity(intent);
+
             }
         });
 
@@ -209,6 +218,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         dishesAdapter = null;
 //        reservationList = null;
         restaurantId = null;
+        finish();
     }
 
 
@@ -217,6 +227,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         super.onResume();
         if(dishesAdapter != null)
             editShowButton(dishesAdapter.getReservationQty(), dishesAdapter.getReservationPrice());
+        //TODO fare l'update del RecyclerView delle reviews (Renato)
+
     }
 
     public void editShowButton(int quantity, double price) {
@@ -253,6 +265,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.dishesAdapter = null;
 //        it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.reservationList = null;
         it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.restaurantId = null;
+        reviewsMap.clear();
     }
 
     /**
@@ -461,7 +474,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/info");
 
-
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -617,9 +629,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         private View reviewsLayout(LayoutInflater inflater, ViewGroup container) {
             final View rootView = inflater.inflate(R.layout.restaurant_reviews_fragment, container, false);
 
-            //TODO: controllare che sia online
-
-            //FIXME: adattare alla nuova logica di Firebase
+            //TODO: controllare che sia online (che vuol dire? chi l'ha scritto? by Renato)
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
 //            tv.setVisibility(View.GONE);
 
@@ -627,31 +637,41 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
             // get restaurant in order to get his avg final score
-            final DatabaseReference restaurantRef = database.getReference("restaurants/"+restaurantId);
+            final DatabaseReference restaurantRef = database.getReference("restaurants/" + restaurantId);
             restaurantRef.addListenerForSingleValueEvent(new ValueEventListener()
             {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot)
                 {
-                    Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                    restaurant = dataSnapshot.getValue(Restaurant.class);
 
                     if(restaurant != null) {
-                        TextView tv = (TextView) rootView.findViewById(R.id.restaurant_final_score);
-                        DecimalFormat df = new DecimalFormat("0.0");
-                        tv.setText(df.format(restaurant.getAvgFinalScore()));
+                        double finalScore = restaurant.getAvgFinalScore();
+                        if (finalScore == -1){
+                            TextView tv = (TextView) rootView.findViewById(R.id.review_fragment_no_reviews);
+                            tv.setVisibility(View.VISIBLE);
+                            CardView cv = (CardView) rootView.findViewById(R.id.review_total_score_cardview);
+                            cv.setVisibility(View.GONE);
+                            RecyclerView rv = (RecyclerView) rootView.findViewById(R.id.reviews_recycler_view);
+                            rv.setVisibility(View.GONE);
+                        }
+                        else {
+                            TextView tv = (TextView) rootView.findViewById(R.id.restaurant_final_score);
+                            DecimalFormat df = new DecimalFormat("0.0");
+                            tv.setText(df.format(restaurant.getAvgFinalScore()));
 
-                        //TODO inserire i vari score nel DB, ora c'e' solo il finalScore (Renato)
-                        tv = (TextView) rootView.findViewById(R.id.score_1);
-                        df = new DecimalFormat("0.0");
-                        tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.first_score))));
+                            tv = (TextView) rootView.findViewById(R.id.score_1);
+                            df = new DecimalFormat("0.0");
+                            tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.first_score))));
 
-                        tv = (TextView) rootView.findViewById(R.id.score_2);
-                        df = new DecimalFormat("0.0");
-                        tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.second_score))));
+                            tv = (TextView) rootView.findViewById(R.id.score_2);
+                            df = new DecimalFormat("0.0");
+                            tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.second_score))));
 
-                        tv = (TextView) rootView.findViewById(R.id.score_3);
-                        df = new DecimalFormat("0.0");
-                        tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.third_score))));
+                            tv = (TextView) rootView.findViewById(R.id.score_3);
+                            df = new DecimalFormat("0.0");
+                            tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.third_score))));
+                        }
                     }
                 }
 
@@ -675,17 +695,13 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     });
                     if(data != null)
                     {
-                        ArrayList<Review> reviewsList = new ArrayList<Review>(data.values());
-                        setupReviewsRecyclerView(rootView, reviewsList);
+                        reviewsMap.putAll(data);
+//                        ArrayList<Review> reviewsList = new ArrayList<Review>(data.values());
+                        setupReviewsRecyclerView(rootView, new ArrayList<>(reviewsMap.values()));
                         TextView tv = (TextView) rootView.findViewById(R.id.reviews_number);
                         tv.setText(String.format(getResources().getString(R.string.reviewsFormat), data.size()));
-                    }else
-                    {
-                        //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
+                        reviewsNumber = data.size();
                     }
-
-
-
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {

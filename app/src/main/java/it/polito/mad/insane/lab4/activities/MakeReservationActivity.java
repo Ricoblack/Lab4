@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MakeReservationActivity extends AppCompatActivity {
 
+    static final String PREF_LOGIN = "loginPref";
     private static Calendar reservationDate = null;
     private static RestaurateurJsonManager manager = null;
     private static String restaurantId;
@@ -150,7 +152,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                         tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
                     }
 
-                    DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 3);
+                    DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 0);
 
                     ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
                     if (mylist != null) {
@@ -274,9 +276,10 @@ public class MakeReservationActivity extends AppCompatActivity {
         b.setTotalDishesQty(totalDishesQty);
         b.setTotalPrice(totalPrice);
 
-        //TODO inserire id dello user che dovremmo avere nelle sharedPref (Renato)
-//        b.setUserId(userId);
-
+        SharedPreferences mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if (mPrefs != null) {
+            b.setUserId(mPrefs.getString("uid", null));
+        }
 
         //TODO implementare meccanismo di decremento quantita' disponibili dei piatti
 //        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
@@ -290,29 +293,20 @@ public class MakeReservationActivity extends AppCompatActivity {
 //        manager.saveDbApp();
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference addBookingsRef = database.getReference("/bookings");
+        final DatabaseReference addBookingRef = database.getReference("/bookings");
 
-        //TODO salvare la prenotazione anche nello user
-        //TODO inserire id prenotazione (Renato)
-//        b.setID(String.valueOf(manager.getNextReservationID()));
-
-        addBookingsRef.runTransaction(new Transaction.Handler() {
+        addBookingRef.runTransaction(new Transaction.Handler() {
 
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                DatabaseReference restaurantRef = database.getReference("/bookings/restaurants/" + restaurantId + "/");
-                DatabaseReference newRef = restaurantRef.push();
-                String key = newRef.getKey();
+                DatabaseReference restaurantRef = addBookingRef.child("restaurants").child(restaurantId);
+                DatabaseReference pushRef = restaurantRef.push();
+                String key = pushRef.getKey();
                 b.setID(key);
-                newRef.setValue(b);
-//
-//                b.setID(generatedId);
-//                restaurantRef.push(b);
-//                addBookingsRef.child("restaurants").child(restaurantId).child(generatedId).setValue(b);
+                pushRef.setValue(b);
 
-                //TODO inserire prenotazione nella sezione users, scommentare queste righe (Renato)
-//                DatabaseReference userRef = addBookingsRef.child("users").child(userId);
-//                userRef.push().setValue(b);
+                DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
+                userRef.setValue(b);
 
                 return Transaction.success(mutableData);
             }
