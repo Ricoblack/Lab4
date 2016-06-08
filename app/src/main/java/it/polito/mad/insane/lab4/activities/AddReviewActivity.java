@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -146,7 +147,7 @@ public class AddReviewActivity extends AppCompatActivity {
                     String s = String.valueOf(parent.getItemAtPosition(position));
                     if(!s.equals(scoreStrings[0])) {
                         reviewScores[2] = (Double.parseDouble(s));
-                        int total = 0;
+                        double total = 0;
                         for(double d : reviewScores){
                             if(d == -1){
                                 total = -1;
@@ -164,7 +165,8 @@ public class AddReviewActivity extends AppCompatActivity {
                             if (tvHint != null && ll != null && tvScore != null) {
                                 tvHint.setVisibility(View.GONE);
                                 ll.setVisibility(View.VISIBLE);
-                                tvScore.setText(String.valueOf(finalScore));
+                                DecimalFormat df = new DecimalFormat("0.0");
+                                tvScore.setText(String.valueOf(df.format(finalScore)));
                             }
 
                         }
@@ -184,33 +186,44 @@ public class AddReviewActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(finalScore == -1)
-                        Toast.makeText(AddReviewActivity.this, R.string.rate_all_section, Toast.LENGTH_SHORT).show();
-                    //TODO gestire la questione del titolo e del testo (Renato)
+                    if (finalScore == -1) // se non ho settato tutti i punteggi
+                        Toast.makeText(AddReviewActivity.this, R.string.rate_all_section, Toast.LENGTH_LONG).show();
                     else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(AddReviewActivity.this);
-                        builder.setTitle(AddReviewActivity.this.getResources().getString(R.string.alert_title_review))
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        saveReview();
-                                        clearStaticVariables();
-                                        finish();
-                                        Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
-                                        //FIXME se si fa in tempo creare activity MyReviews (Renato)
-                                        Intent intent = new Intent(AddReviewActivity.this, RestaurantProfileActivity.class);
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("ID", restaurantId);
-                                        startActivity(intent);
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.dismiss();
-                                    }
-                                });
+                        EditText etTitle = (EditText) findViewById(R.id.add_review_title);
+                        EditText etText = (EditText) findViewById(R.id.add_review_text);
 
-                        Dialog dialog = builder.create();
-                        dialog.show();
+                        if (!String.valueOf(etText.getText()).equals("") && String.valueOf(etTitle.getText()).equals("")) {
+                            //se ho settato il testo ma non il titolo della recensione
+                            Toast.makeText(AddReviewActivity.this, R.string.hint_review_title, Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(AddReviewActivity.this);
+                            if (String.valueOf(etText.getText()).equals("")) // sto inserendo una recensione senza commento
+                                builder.setTitle(AddReviewActivity.this.getResources().getString(R.string.alert_title_review_notext));
+                            else //sto inserendo una recensione con commento
+                                builder.setTitle(AddReviewActivity.this.getResources().getString(R.string.alert_title_review));
+
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    saveReview();
+                                    clearStaticVariables();
+                                    finish();
+                                    Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
+                                    //FIXME se si fa in tempo creare activity MyReviews (Renato)
+                                    Intent intent = new Intent(AddReviewActivity.this, RestaurantProfileActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("ID", restaurantId);
+                                    startActivity(intent);
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            Dialog dialog = builder.create();
+                            dialog.show();
+                        }
                     }
                 }
             });
