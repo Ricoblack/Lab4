@@ -203,7 +203,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     protected void onResume() {
         myRef.addValueEventListener(listener);
         super.onResume();
-        //
     }
 
     private void setUpView(List<Booking> bookingList, RecyclerView rv){
