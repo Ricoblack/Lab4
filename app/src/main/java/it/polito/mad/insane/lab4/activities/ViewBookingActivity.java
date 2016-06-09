@@ -8,14 +8,25 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.Dish;
 
 public class ViewBookingActivity extends AppCompatActivity {
 
@@ -38,7 +49,7 @@ public class ViewBookingActivity extends AppCompatActivity {
 
         setTitle(getString(R.string.reservation_details));
 
-        Booking currentBooking = (Booking) getIntent().getSerializableExtra("Booking");
+        final Booking currentBooking = (Booking) getIntent().getSerializableExtra("Booking");
 
         TextView tv = (TextView) findViewById(R.id.view_booking_username);
         if(tv != null){
@@ -56,13 +67,50 @@ public class ViewBookingActivity extends AppCompatActivity {
         String splitDate[] = currentBooking.getDateTime().split(" ");
         tv = (TextView) findViewById(R.id.view_booking_hour);
         if(tv != null)
-            tv.setText(splitDate[0]);
+            tv.setText(splitDate[1]);
         tv = (TextView) findViewById(R.id.view_booking_date);
         if(tv != null)
-            tv.setText(splitDate[1]);
+            tv.setText(splitDate[0]);
 
-        //TODO riempire la ListView
+        tv = (TextView) findViewById(R.id.view_booking_items_number);
+        if(tv != null)
+            tv.setText(String.valueOf(currentBooking.getTotalDishesQty()));
+        tv = (TextView) findViewById(R.id.view_booking_price);
+        if(tv != null)
+            tv.setText(String.valueOf(currentBooking.getTotalPrice()));
 
+        final ListView lv = (ListView) findViewById(R.id.view_booking_list_view);
+        if (lv != null){
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference dishesRef = database.getReference("/restaurants/" + currentBooking.getRestaurantId() + "/dishMap" );
+
+            dishesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, Dish> dishesMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
+                        @Override
+                        protected Object clone() throws CloneNotSupportedException {
+                            return super.clone();
+                        }
+                    });
+                    if(dishesMap != null){
+                        HashMap<Dish, Integer> filteredDishesMap = new HashMap<Dish, Integer>();
+                        for(Dish d : dishesMap.values()){
+                            if(currentBooking.getDishesIdMap().containsKey(d.getID()))
+                                filteredDishesMap.put(d, currentBooking.getDishesIdMap().get(d.getID()));
+                        }
+
+                        DishArrayAdapter adapter = new DishArrayAdapter(ViewBookingActivity.this, R.layout.dish_listview_item, filteredDishesMap, 4);
+                        lv.setAdapter(adapter);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
