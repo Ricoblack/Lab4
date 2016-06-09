@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -28,7 +29,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +52,8 @@ public class EditDishActivity extends AppCompatActivity
     private static int MY_GL_MAX_TEXTURE_SIZE = 1024; // compatible with almost all devices. To obtain the right value for each device use:   int[] maxSize = new int[1];
                                                       // (this needs an OpenGL context)                                                       GLES10.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
 
+    static final String PREF_LOGIN = "loginPref";
+    private SharedPreferences mPrefs = null;
     private static final int REQUEST_IMAGE_GALLERY = 157;
     private Dish currentDish = null;
     private EditText dishID;
@@ -51,74 +62,7 @@ public class EditDishActivity extends AppCompatActivity
     private EditText dishQty;
     private EditText dishPrice;
     private ImageView dishPhoto;
-
-    View.OnClickListener saveDishFabListener = new View.OnClickListener()
-    {
-
-        @Override
-        public void onClick(View view)
-        {
-            // check if all the required info are filled
-            if(!isAllDataFilled()) {
-                Toast.makeText(EditDishActivity.this, R.string.error_some_empty_fill, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // save data in manager
-            if(currentDish != null)
-            {
-//                for (Dish d : EditDishActivity.manager.getDishes())
-//                {
-//                    try
-//                    {
-//                        if (d.getID().equals(currentDish.getID()))
-//                        {
-//                            // edit existing dish
-//                            d.setName(EditDishActivity.this.dishName.getText().toString());
-//                            d.setDescription(EditDishActivity.this.dishDesc.getText().toString());
-//                            d.setAvailability_qty(Integer.parseInt(EditDishActivity.this.dishQty.getText().toString()));
-//                            d.setPrice(Double.parseDouble(EditDishActivity.this.dishPrice.getText().toString()));
-//                            d.setPhotoPath(EditDishActivity.this.currentDish.getPhotoPath());
-//                            //String photoPath = (String) EditDish.this.dishPhoto.getTag();
-//                            //if(photoPath != null)
-//                            //d.setPhotoPath(photoPath);
-//                            EditDishActivity.manager.saveDbApp();
-//                            Toast.makeText(EditDishActivity.this, R.string.confirm_save_dish, Toast.LENGTH_SHORT).show();
-//                            finish();
-//                            return;
-//                        }
-//                    } catch (NumberFormatException e) {
-//                        e.printStackTrace();
-//                        Toast.makeText(EditDishActivity.this, R.string.error_input_number, Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-
-                // Dish not found: user is adding a new dish
-                try
-                {
-//                    currentDish.setName(dishName.getText().toString());
-//                    currentDish.setDescription(dishDesc.getText().toString());
-//                    currentDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
-//                    currentDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
-                    //photoPath already set
-
-                    //String photoPath = (String) EditDish.this.dishPhoto.getTag();
-                    //if(photoPath != null)
-                    //EditDish.this.currentDish.setPhotoPath(photoPath);
-
-                    //EditDish.manager.getDishes().add(EditDish.this.currentDish);
-                    //EditDish.manager.saveDbApp();
-                    Toast.makeText(EditDishActivity.this, R.string.confirm_add_dish, Toast.LENGTH_SHORT).show();
-                    finish();
-                }catch( NumberFormatException e)
-                {
-                    e.printStackTrace();
-                    Toast.makeText(EditDishActivity.this, R.string.error_input_number, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
-
+    private static String rid;
 
     /** Standard Methods **/
     @Override
@@ -134,15 +78,15 @@ public class EditDishActivity extends AppCompatActivity
         // set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         // show back arrow
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // set button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.save_edit_dish);
-        if (fab != null)
-            fab.setOnClickListener(saveDishFabListener);
 
+        // get restaurant id
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        if (mPrefs != null) {
+            rid = this.mPrefs.getString("rid", null);
+        }
 
         this.dishID = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_ID);
         this.dishName = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_name);
@@ -150,50 +94,84 @@ public class EditDishActivity extends AppCompatActivity
         this.dishQty = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_availab_qty);
         this.dishPrice = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_price);
         this.dishPhoto = (ImageView) EditDishActivity.this.findViewById(R.id.dishPhoto);
-        if(dishPhoto != null) {
+        if(dishPhoto != null)
+        {
             dishPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)
                 {
 //                    displayChooseDialog();
-//                    if(suppportDynamicPermissions() == true)
+//                    if(supportDynamicPermissions() == true)
 //                        checkAndRequestPermissions(PERMS_REQUEST_CODE_CAMERA);
 //                    else
-                    takePhotoFromGallery();
+
+
+//                    takePhotoFromGallery(); // TODO: da scommentare se si implementa gestione immagini (Michele)
                 }
             });
         }
-        this.currentDish = (Dish)getIntent().getSerializableExtra("Dish");
+        //TODO: da commentare se si implementa gestione immagini (Michele)
+        TextView rL = (TextView) findViewById(R.id.editDish);
+        rL.setVisibility(View.GONE);
+
+        this.currentDish = (Dish)getIntent().getSerializableExtra("dish");
         if(this.currentDish != null)
         {
             // Edit existing dish
             this.dishID.setText(this.currentDish.getID());
             this.dishName.setText(this.currentDish.getName());
-            //setTitle(this.currentDish.getName()); // set Activity Title
+            setTitle(this.currentDish.getName()); // set Activity Title
             this.dishDesc.setText(this.currentDish.getDescription());
             this.dishQty.setText(Integer.toString(this.currentDish.getAvailabilityQty()));
             this.dishPrice.setText(Double.toString(this.currentDish.getPrice()));
-            String imgPath = this.currentDish.getPhotoPath();
-            if(imgPath != null)
-                this.dishPhoto.setImageURI(Uri.parse(imgPath));
+//            String imgPath = this.currentDish.getPhotoPath();
+//            if(imgPath != null)
+//                this.dishPhoto.setImageURI(Uri.parse(imgPath));
 
         }else
-        {
-            try
-            {
-                // Crete new dish
-                // TODO: usare firebase (Michele)
+            setTitle(R.string.new_dish);
 
-//               //setTitle(R.string.new_dish);
-//                this.currentDish = new Dish();
-//                // set ID
-//                this.currentDish.setID(getNextDishID(EditDish.manager.getDishes()));
-            } catch (Exception e)
+
+        // set button
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.save_edit_dish);
+        if (fab != null)
+            fab.setOnClickListener( new View.OnClickListener()
             {
-                Toast.makeText(EditDishActivity.this, R.string.error_create_newDish, Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        }
+
+                @Override
+                public void onClick(View view)
+                {
+                    // check if all the required info are filled
+                    if(!isAllDataFilled()) {
+                        Toast.makeText(EditDishActivity.this, R.string.error_some_empty_fill, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if(currentDish != null)
+                    {
+                        // editing existing dish
+                        currentDish.setName(dishName.getText().toString());
+                        currentDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
+                        currentDish.setDescription(dishDesc.getText().toString());
+//                        currentDish.setPhotoPath(); //TODO: da scommentare se si implementa gestione immagini (Michele)
+                        currentDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
+//                        currentDish.setID(dishID.getText().toString()); // not needed; id already set
+                        addDishInFirebase(currentDish);
+                    }else
+                    {
+                        // adding new dish
+                        Dish newDish = new Dish();
+                        newDish.setName(dishName.getText().toString());
+                        newDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
+                        newDish.setDescription(dishDesc.getText().toString());
+//                        newDish.setPhotoPath(); //TODO: da scommentare se si implementa gestione immagini (Michele)
+                        newDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
+                        newDish.setID(null);
+                        addDishInFirebase(newDish);
+                    }
+                    finish();
+                }
+            });
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -218,7 +196,7 @@ public class EditDishActivity extends AppCompatActivity
         switch (id)
         {
             case R.id.delete_dish:
-                deleteDish(this.currentDish.getID());
+                deleteDish(currentDish);
                 break;
             default:
                 break;
@@ -281,24 +259,6 @@ public class EditDishActivity extends AppCompatActivity
             default:
                 break;
         }
-    }
-
-    /**
-    * Method that delete the dish with the input ID
-    * @param dishID
-    */
-    private void deleteDish(String dishID)
-    {
-        //TODO Implementare con firebase (Michele)
-//        for (Dish d : EditDishActivity.manager.getDishes())
-//            if (d.getID().equals(dishID))
-//            {
-//                EditDishActivity.manager.getDishes().remove(d);
-//                EditDishActivity.manager.saveDbApp();
-//                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
-//                finish();
-//                return;
-//            }
     }
 
     /**
@@ -459,6 +419,7 @@ public class EditDishActivity extends AppCompatActivity
         // return Bitmap file
         return photoBitmap;
     }
+
 //    public void displayChooseDialog() { // not used in this version
 //
 //        AlertDialog.Builder builder = new AlertDialog.Builder(EditDishActivity.this);
@@ -540,6 +501,79 @@ public class EditDishActivity extends AppCompatActivity
             return  true;
         else
             return false;
+
+    }
+
+    private void addDishInFirebase(Dish dish)
+    {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dishesRef = database.getReference("/restaurants/"+rid+"/dishMap");
+
+        if(dish.getID() == null)
+        {
+            // adding a new dish
+            DatabaseReference newRef = dishesRef.push();
+            dish.setID(newRef.getKey());
+
+            newRef.setValue(dish, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    Toast.makeText(EditDishActivity.this,R.string.confirm_add_dish,Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }else
+        {
+            //editing existing dish
+            DatabaseReference newRef = dishesRef.child(dish.getID());
+            newRef.setValue(dish, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    Toast.makeText(EditDishActivity.this,R.string.confirm_add_dish,Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        DailyMenuActivity.notifyNewDish(EditDishActivity.this, dish);
+    }
+
+    private void deleteDish(final Dish dish)
+    {
+        if(currentDish == null)
+        {
+            Toast.makeText(EditDishActivity.this, R.string.cant_delete_dish, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditDishActivity.this);
+        builder.setTitle(EditDishActivity.this.getResources().getString(R.string.alert_title_delete_dish))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        // remove dish from local cache of the recyclerAdapter
+                        DailyMenuActivity.removeDish(dish);
+
+                        // remove dish from firebase
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference disheRef = database.getReference("/restaurants/"+rid+"/dishMap/"+ dish.getID());
+                        disheRef.setValue(null, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_dialog_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        Dialog dialog = builder.create();
+        dialog.show();
 
     }
 

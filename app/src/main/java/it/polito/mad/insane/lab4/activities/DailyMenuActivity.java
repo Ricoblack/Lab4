@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -18,11 +19,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
@@ -64,7 +66,8 @@ public class DailyMenuActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private static DishesRecyclerAdapter dishesAdapter = null;
     private static DailyOfferRecyclerAdapter offersAdapter = null;
-    private ArrayList<Dish> dishes;
+    private static HashMap<String, Dish> dishesLocalCache = new HashMap<>();// questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera dishesList
+    private static ArrayList<Dish> dishesList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
     private static HashMap<String,DailyOffer> dailyOffersLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
     private static ArrayList<DailyOffer> offersList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
     static final String PREF_LOGIN = "loginPref";
@@ -86,8 +89,11 @@ public class DailyMenuActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         dailyOffersLocalCache.clear();
+        dishesLocalCache.clear();
     }
 
+    // FIXME: quando cancelli l'ultima offerta della lista, non viene svuotato l'adapter e si vede ancora l'elemento
+    // FIXME: problema 2) quando cancello un piatto non lo cancello anche dalla daily offer perché non ho il riferimento ad essa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,10 +111,6 @@ public class DailyMenuActivity extends AppCompatActivity {
             rid = this.mPrefs.getString("rid", null);
         }
 
-        // initialize Recycler View
-//        updateDishes();
-
-        // TODO: Le cardview dei dishes quando si clicca non devono venire fuori + e - ma deve rimandare alla edit dishes (Michele)
 
         // set add_dish fab button
         final FloatingActionButton dishFab = (FloatingActionButton) findViewById(R.id.add_dish);
@@ -130,8 +132,13 @@ public class DailyMenuActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     // open activity EditOffer
-                    Intent i = new Intent(view.getContext(),EditOfferActivity.class);
-                    view.getContext().startActivity(i);
+                    if(dishesList == null || dishesList.isEmpty())
+                        Toast.makeText(DailyMenuActivity.this, R.string.error_no_dishes, Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        Intent i = new Intent(view.getContext(),EditOfferActivity.class);
+                        view.getContext().startActivity(i);
+                    }
 
                 }
             });
@@ -208,22 +215,29 @@ public class DailyMenuActivity extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
+                HashMap<String, Dish> rTemp = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
                     @Override
                     protected Object clone() throws CloneNotSupportedException {
                         return super.clone();
                     }
                 });
-                if (r!=null)
+                if (rTemp!=null)
                 {
+                    dishesLocalCache.putAll(rTemp);
+                    dishesList = new ArrayList<>(dishesLocalCache.values());
+                    dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, dishesList, rid, 1);
                     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
                     if (recyclerView != null)
                     {
-                        if(dishesAdapter == null)
-                            dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, new ArrayList<Dish>(r.values()), rid);
                         recyclerView.setAdapter(dishesAdapter);
+                        dishesAdapter.notifyDataSetChanged();
                     }
 
+                }else
+                {
+                    if(dishesList == null)
+                        dishesList = new ArrayList<>();
+                    dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, dishesList, rid, 1);
                 }
 
             }
@@ -257,7 +271,7 @@ public class DailyMenuActivity extends AppCompatActivity {
                 {
                     dailyOffersLocalCache.putAll(rTemp);
                     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.daily_offers_recycler_view);
-                    offersList = new ArrayList<DailyOffer>(dailyOffersLocalCache.values());
+                    offersList = new ArrayList<>(dailyOffersLocalCache.values());
                     offersAdapter = new DailyOfferRecyclerAdapter(DailyMenuActivity.this, offersList, rid, 1);
                     if(recyclerView != null) {
                         recyclerView.setAdapter(offersAdapter);
@@ -267,6 +281,9 @@ public class DailyMenuActivity extends AppCompatActivity {
                 else
                 {
                     //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
+                    if(offersList == null)
+                        offersList = new ArrayList<>();
+                    offersAdapter = new DailyOfferRecyclerAdapter(DailyMenuActivity.this, offersList, rid, 1);
                 }
             }
             @Override
@@ -382,14 +399,23 @@ public class DailyMenuActivity extends AppCompatActivity {
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String, Dish> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
+                    HashMap<String, Dish> rTemp = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
                         @Override
                         protected Object clone() throws CloneNotSupportedException {
                             return super.clone();
                         }
                     });
-                    if (r!=null)
-                        setupDishesRecyclerView(rootView, new ArrayList<>(r.values()));
+                    if (rTemp!=null)
+                    {
+                        dishesLocalCache.putAll(rTemp);
+                        dishesList = new ArrayList<>(dishesLocalCache.values());
+                        setupDishesRecyclerView(rootView, dishesList);
+                    }else
+                    {
+                        if(dishesList == null)
+                            dishesList = new ArrayList<>();
+                        setupDishesRecyclerView(rootView, dishesList);
+                    }
 
                 }
                 @Override
@@ -403,16 +429,12 @@ public class DailyMenuActivity extends AppCompatActivity {
         private RecyclerView setupDishesRecyclerView(View rootView, List<Dish> dishes)
         {
             // set Adapter
+            dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, rid, 1);
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.MenuRecyclerView);
-            if (recyclerView != null) {
-                if(dishesAdapter == null)
-                    dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, null);
-                recyclerView.setAdapter(dishesAdapter);
-            }
-
             if (recyclerView != null)
             {
                 recyclerView.setAdapter(dishesAdapter);
+                dishesAdapter.notifyDataSetChanged();
 
                 // set Layout Manager
                 if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
@@ -487,14 +509,17 @@ public class DailyMenuActivity extends AppCompatActivity {
                     // set up recycler view
                     if(rTemp!=null)
                     {
-                        DailyMenuActivity.dailyOffersLocalCache.putAll(rTemp);
+                        dailyOffersLocalCache.putAll(rTemp);
                         offersList = new ArrayList<>(dailyOffersLocalCache.values());
                         setupDailyOfferRecyclerView(rootView, offersList);
                     }
 
                     else
                     {
-                        //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
+                        //TODO: far uscire un messaggio che indica che non ci sono offerte disponibili (Michele)
+                        if(offersList == null)
+                            offersList = new ArrayList<>();
+                        setupDailyOfferRecyclerView(rootView, offersList);
                     }
                 }
                 @Override
@@ -564,9 +589,48 @@ public class DailyMenuActivity extends AppCompatActivity {
     public static void removeOffer(DailyOffer offer)
     {
         dailyOffersLocalCache.remove(offer.getID());
-        for( DailyOffer d : offersList)
-            if(d.getID().equals(offer.getID()))
-                offersList.remove(d);
+        for(Iterator<DailyOffer> it = offersList.iterator(); it.hasNext();)
+        {
+            DailyOffer d = it.next();
+            if (d.getID().equals(offer.getID()))
+                it.remove();
+        }
         offersAdapter.notifyDataSetChanged();
     }
+
+    public static void removeDish(Dish dish)
+    {
+        dishesLocalCache.remove(dish.getID());
+        for(Iterator<Dish> it = dishesList.iterator(); it.hasNext();)
+        {
+            Dish d = it.next();
+            if(d.getID().equals(dish.getID()))
+                it.remove();
+        }
+
+        dishesAdapter.notifyDataSetChanged();
+    }
+
+    public static void notifyNewDish(Context context, Dish dish)
+    {
+        if(dishesList == null)
+            dishesList = new ArrayList<>();
+        dishesList.add(dish);
+
+        if(dishesAdapter == null)
+            dishesAdapter = new DishesRecyclerAdapter(context, dishesList, rid, 1);
+        dishesAdapter.notifyDataSetChanged();
+
+    }
+    public static void notifyNewOffer(Context context, DailyOffer offer)
+    {
+        if(offersList == null)
+            offersList = new ArrayList<>();
+        offersList.add(offer);
+
+        if(offersAdapter == null)
+            offersAdapter = new DailyOfferRecyclerAdapter(context, offersList, rid, 1);
+        offersAdapter.notifyDataSetChanged();
+    }
+
 }

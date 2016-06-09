@@ -5,6 +5,7 @@ package it.polito.mad.insane.lab4.adapters;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.activities.EditDishActivity;
+import it.polito.mad.insane.lab4.activities.EditOfferActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.Dish;
 
@@ -37,13 +40,15 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
     private  double reservationPrice; //prezzo totale degli item presenti nella prenotazione in esame
     private HashMap<Dish, Integer> quantitiesMap; //mappa che contiene le quantita' selezionate di ogni piatto del menu'
     private String ridAdapter;
+    private int currentActivity;
 
 
-    public DishesRecyclerAdapter(Context context, List<Dish> data, String rid)
+    public DishesRecyclerAdapter(Context context, List<Dish> data, String rid, int currentActivity)
     {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
         this.mData = data;
+        this.currentActivity = currentActivity;
 
         popupsVisibility = new int[data.size()];
         Arrays.fill(popupsVisibility, View.GONE); // all'inizio i popup sono tutti invisibili
@@ -148,6 +153,8 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
             this.mainLayout = (LinearLayout) itemView.findViewById(R.id.cardView_main_layout);
             this.separator = itemView.findViewById(R.id.cardView_separator);
             this.expandArrow = (ImageView) itemView.findViewById(R.id.expand_arrow);
+            if(currentActivity == 1) //DailyMenuActivity
+                this.expandArrow.setVisibility(View.GONE);
         }
 
         public void setData(final Dish current, int position )
@@ -164,8 +171,11 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                 popupsVisibility[position] = View.GONE;             // mostrare solo quando non e' disponibile
             }
 
-            this.selectionLayout.setVisibility(popupsVisibility[position]); //layout del popup
-            this.separator.setVisibility(popupsVisibility[position]); //layout della linea separatrice
+            if(currentActivity != 1)
+            {
+                this.selectionLayout.setVisibility(popupsVisibility[position]); //layout del popup
+                this.separator.setVisibility(popupsVisibility[position]); //layout della linea separatrice
+            }
             if(quantitiesMap.get(current) != null){
                 this.selectedQuantity.setText(String.valueOf(quantitiesMap.get(current)));
                 df = new DecimalFormat("0.00");
@@ -178,92 +188,108 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                         String.valueOf(df.format(0))));
             }
 
-            this.mainLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(popupsVisibility[pos] == View.GONE && current.getAvailabilityQty() != 0) { // al click se il popup è invisibile
-                        // e il prodotto e' disponibile lo faccio apparire...
-                        selectionLayout.setVisibility(View.VISIBLE);
-                        separator.setVisibility(View.VISIBLE);
-                        expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_up_black_24dp));
-                        popupsVisibility[pos] = View.VISIBLE;
-                    }
-                    else { //... se e' visibile lo nascondo
-                        selectionLayout.setVisibility(View.GONE);
-                        separator.setVisibility(View.GONE);
-                        expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_down_black_24dp));
-                        popupsVisibility[pos] = View.GONE;
-                    }
-                }
-            });
+            if(currentActivity == 0)
+            {
+                // RestaurantProfileActivity
 
-            this.minusButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int quantity = 0;
-                    if (quantitiesMap.containsKey(current)) {
-                        quantity = quantitiesMap.get(current);
+                this.mainLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (popupsVisibility[pos] == View.GONE && current.getAvailabilityQty() != 0) { // al click se il popup è invisibile
+                            // e il prodotto e' disponibile lo faccio apparire...
+                            selectionLayout.setVisibility(View.VISIBLE);
+                            separator.setVisibility(View.VISIBLE);
+                            expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_up_black_24dp));
+                            popupsVisibility[pos] = View.VISIBLE;
+                        } else { //... se e' visibile lo nascondo
+                            selectionLayout.setVisibility(View.GONE);
+                            separator.setVisibility(View.GONE);
+                            expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_down_black_24dp));
+                            popupsVisibility[pos] = View.GONE;
+                        }
+                    }
+                });
+
+                this.minusButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int quantity = 0;
+                        if (quantitiesMap.containsKey(current)) {
+                            quantity = quantitiesMap.get(current);
 
 //                        selectedQuantities[pos]--;
-                        quantity --;
-                        if (quantity != 0)
-                            quantitiesMap.put(current, quantity);
-                        else
-                            quantitiesMap.remove(current);
-
-                        selectedQuantity.setText(String.valueOf(quantity));
-                        DecimalFormat df = new DecimalFormat("0.00");
-                        selectedPrice.setText(MessageFormat.format("{0}€",
-                                String.valueOf(df.format(quantity * current.getPrice()))));
-
-                        reservationPrice -= current.getPrice(); //decremento il prezzo totale della prenotazione
-                        reservationQty--; //decremento la quantita' di item della prenotazione
-
-                        TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
-                        if (tv != null) {
-                            if (reservationQty != 0)
-                                tv.setText(String.format(MessageFormat.format("%d {0} - %s€", v.getResources().getString(R.string.itemsFormat)), reservationQty, reservationPrice));
+                            quantity--;
+                            if (quantity != 0)
+                                quantitiesMap.put(current, quantity);
                             else
-                                tv.setText(R.string.empty_cart);
+                                quantitiesMap.remove(current);
+
+                            selectedQuantity.setText(String.valueOf(quantity));
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            selectedPrice.setText(MessageFormat.format("{0}€",
+                                    String.valueOf(df.format(quantity * current.getPrice()))));
+
+                            reservationPrice -= current.getPrice(); //decremento il prezzo totale della prenotazione
+                            reservationQty--; //decremento la quantita' di item della prenotazione
+
+                            TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
+                            if (tv != null) {
+                                if (reservationQty != 0)
+                                    tv.setText(String.format(MessageFormat.format("%d {0} - %s€", v.getResources().getString(R.string.itemsFormat)), reservationQty, reservationPrice));
+                                else
+                                    tv.setText(R.string.empty_cart);
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            this.plusButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int quantity = 0;
-                    if(quantitiesMap.containsKey(current)){
-                        quantity = quantitiesMap.get(current);
-                    }
-                    else
-                        quantitiesMap.put(current, 0);
+                this.plusButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int quantity = 0;
+                        if (quantitiesMap.containsKey(current)) {
+                            quantity = quantitiesMap.get(current);
+                        } else
+                            quantitiesMap.put(current, 0);
 
-                    if(quantity < current.getAvailabilityQty()) {
+                        if (quantity < current.getAvailabilityQty()) {
 //                        selectedQuantities[pos]++;
-                        quantity ++;
-                        quantitiesMap.put(current, quantity);
+                            quantity++;
+                            quantitiesMap.put(current, quantity);
 
-                        selectedQuantity.setText(String.valueOf(quantity));
-                        DecimalFormat df = new DecimalFormat("0.00");
-                        selectedPrice.setText(MessageFormat.format("{0}€",
-                                String.valueOf(df.format((quantity) * current.getPrice()))));
+                            selectedQuantity.setText(String.valueOf(quantity));
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            selectedPrice.setText(MessageFormat.format("{0}€",
+                                    String.valueOf(df.format((quantity) * current.getPrice()))));
 
-                        reservationPrice += current.getPrice(); //incremento il prezzo totale della prenotazione
-                        reservationQty++; //incremento la quantita' di item della prenotazione
+                            reservationPrice += current.getPrice(); //incremento il prezzo totale della prenotazione
+                            reservationQty++; //incremento la quantita' di item della prenotazione
 
 
-                        TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
-                        if (tv != null){
-                            if(reservationQty != 0)
-                                tv.setText(String.format("%d "+v.getResources().getString(R.string.itemsFormat)+" - %s€", reservationQty, reservationPrice));
-                            else
-                                tv.setText(R.string.empty_cart);
+                            TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
+                            if (tv != null) {
+                                if (reservationQty != 0)
+                                    tv.setText(String.format("%d " + v.getResources().getString(R.string.itemsFormat) + " - %s€", reservationQty, reservationPrice));
+                                else
+                                    tv.setText(R.string.empty_cart);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }else
+            {
+                // DailyMenuActivity
+                this.mainLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent i = new Intent(v.getContext(),EditDishActivity.class);
+                        i.putExtra("dish",current);
+                        v.getContext().startActivity(i);
+                    }
+                });
+
+            }
         }
     }
 }

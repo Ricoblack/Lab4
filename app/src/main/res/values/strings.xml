@@ -271,4 +271,8 @@
     <string name="new_offer">New offer available</string>
     <string name="offer_edited">Offer changed</string>
     <string name="cant_delete_offer">The offer you are trying to delete  doesn\'t exists yet</string>
+    <string name="cant_delete_dish">The dish you are trying to delete  doesn\'t exists yet</string>
+    <string name="alert_title_delete_dish">Are you sure to delete this dish?</string>
+    <string name="alert_title_delete_offer">Are you sure to delete this offer?</string>
+    <string name="error_no_dishes">There are no available dishes in menu. Please add a dish before adding a new offer.</string>
 </resources>

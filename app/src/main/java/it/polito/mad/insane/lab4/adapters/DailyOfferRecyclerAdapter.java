@@ -106,9 +106,12 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
             this.cardView = itemView;
             this.popupLayout = (RelativeLayout) itemView.findViewById(R.id.daily_offer_popup_layout);
             this.expandArrow = (ImageView) itemView.findViewById(R.id.expand_arrow);
-            if(currentActivity == 1) // DailyMenu
-                this.expandArrow.setVisibility(View.GONE);
             this.dishListView = (ListView) itemView.findViewById(R.id.daily_offer_listview);
+            if(currentActivity == 1) // DailyMenu
+            {
+                this.popupLayout.setVisibility(View.GONE);
+                this.expandArrow.setVisibility(View.GONE);
+            }
         }
 
         public void setData(final DailyOffer current, final int position, View view)
@@ -125,7 +128,8 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
             DecimalFormat df = new DecimalFormat("0.00");
             this.dailyOfferPrice.setText(MessageFormat.format("{0}€", String.valueOf( df.format(current.getPrice()))));
 
-            this.popupLayout.setVisibility(popupsVisibility[position]); //layout del popup
+            if(currentActivity != 1)
+                this.popupLayout.setVisibility(popupsVisibility[position]); //layout del popup
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference dishesRef = database.getReference("/restaurants/" + restaurantId + "/dishMap" );
@@ -157,7 +161,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                 }
             });
 
-            if(currentActivity == 0) // restaurant profile activity
+            if(currentActivity == 0) // RestaurantProfileActivity
             {
                 this.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
