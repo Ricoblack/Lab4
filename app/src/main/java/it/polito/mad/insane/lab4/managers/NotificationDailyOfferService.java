@@ -203,6 +203,7 @@ public class NotificationDailyOfferService extends Service {
 
     private void showNotification(DailyOfferSimple offer, int type){
 
+
         if(type==CHILD_ADDED){
             //child added
             NotificationCompat.Builder mBuilder =
@@ -234,8 +235,10 @@ public class NotificationDailyOfferService extends Service {
             NotificationManager mNotifyMgr =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             // Builds the notification and issues it.
+            Notification notif=mBuilder.build();
+            notif.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
-            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+            mNotifyMgr.notify(mNotificationId, notif);
 
 
         }
@@ -275,10 +278,12 @@ public class NotificationDailyOfferService extends Service {
             Notification notif=mBuilder.build();
             notif.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
-            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+            mNotifyMgr.notify(mNotificationId, notif);
 
 
         }
+
+
 
 
 

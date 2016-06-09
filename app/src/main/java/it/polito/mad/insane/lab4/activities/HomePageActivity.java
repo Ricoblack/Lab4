@@ -586,6 +586,5 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
 }
 
-//creo activity notifiche
 
 
