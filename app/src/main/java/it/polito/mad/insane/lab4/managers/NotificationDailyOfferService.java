@@ -1,6 +1,7 @@
 package it.polito.mad.insane.lab4.managers;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -42,7 +43,9 @@ public class NotificationDailyOfferService extends Service {
     private SharedPreferences mPrefs = null;
 
     public Context myContext=this;
-
+    private ChildEventListener addedListener;
+    ChildEventListener changedListener;
+    DatabaseReference offersRef;
 
 
     @Nullable
@@ -62,9 +65,12 @@ public class NotificationDailyOfferService extends Service {
         super.onCreate();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference offersRef = database.getReference("/offers");
+        offersRef = database.getReference("/offers");
 
-        offersRef.limitToLast(1).addChildEventListener(new ChildEventListener() {
+
+
+
+        addedListener=new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -85,7 +91,67 @@ public class NotificationDailyOfferService extends Service {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
+               // DailyOfferSimple offer=dataSnapshot.getValue(DailyOfferSimple.class);
+
+                //gli eventi di cambiamento vengono correttamente lanciati solo al cambio dallo stato attuale, quindi
+                //lascio la notifica ogni volta
+
+                /*
+                //check se ho già mostrato l'ultimo change
+                mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+
+                String lastChangedId=mPrefs.getString("lastChangedId","");
+                if(lastChangedId.equals(offer.getID())==false) {
+                    //nuova offerta modificata
+                    mPrefs.edit().putString("lastChangedId",offer.getID()).commit();
+
+                }
+                */
+                //showNotification(offer, CHILD_MODIFIED);
+
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        changedListener=new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                /*
                 DailyOfferSimple offer=dataSnapshot.getValue(DailyOfferSimple.class);
+
+                //check se ho già mostrato l'ultima aggiunta (se il service è ripartito) ed evito di rimostrarla
+                //firebase al primo lancio mi notifica tutto
+                mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+
+                String lastAddedId=mPrefs.getString("lastAddedId","");
+                if(lastAddedId.equals(offer.getID())==false) {
+                    //nuova offerta aggiunta
+                    mPrefs.edit().putString("lastAddedId",offer.getID()).commit();
+                    showNotification(offer, CHILD_ADDED);
+                }
+                */
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                 DailyOfferSimple offer=dataSnapshot.getValue(DailyOfferSimple.class);
 
                 //gli eventi di cambiamento vengono correttamente lanciati solo al cambio dallo stato attuale, quindi
                 //lascio la notifica ogni volta
@@ -120,12 +186,18 @@ public class NotificationDailyOfferService extends Service {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+
+        offersRef.limitToLast(1).addChildEventListener(addedListener);
+        offersRef.addChildEventListener(changedListener);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        offersRef.removeEventListener(changedListener);
+        offersRef.removeEventListener(addedListener);
         Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 
@@ -192,12 +264,16 @@ public class NotificationDailyOfferService extends Service {
 
             mBuilder.setContentIntent(resultPendingIntent);
 
+
             // Sets an ID for the notification
-            int mNotificationId = 001;
+            int mNotificationId = 123456789;
             // Gets an instance of the NotificationManager service
             NotificationManager mNotifyMgr =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             // Builds the notification and issues it.
+
+            Notification notif=mBuilder.build();
+            notif.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 
             mNotifyMgr.notify(mNotificationId, mBuilder.build());
 

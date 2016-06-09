@@ -18,12 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustPan">
+        >
+
         <service
             android:name=".managers.NotificationDailyOfferService"
             android:exported="false" />
 
             android:name="it.polito.mad.insane.lab4.managers.NotificationDailyOfferService"
             android:exported="false"/>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAMqM-5pRyY6bjudE8HVYuhzCYh6VMbt4o" />
