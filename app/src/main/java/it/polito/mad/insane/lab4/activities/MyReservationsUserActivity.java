@@ -33,6 +33,7 @@ import java.util.List;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.ReservationsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MyReservationsUserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -40,6 +41,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     static final String PREF_LOGIN = "loginPref";
     private static String uid ;
     private SharedPreferences mPrefs = null;
+    private static HashMap<String,Booking> bookingLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
+    private static ArrayList<Booking> bookingList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
 
 
     @Override
@@ -65,31 +68,43 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         final RecyclerView rv = (RecyclerView) findViewById(R.id.reservation_recycler_view);
         if(rv != null)
         {
-            RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("/bookings/users/"+uid);
+            if(bookingLocalCache == null) {
 
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
-                        @Override
-                        protected Object clone() throws CloneNotSupportedException {
-                            return super.clone();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("/bookings/users/" + uid);
+
+
+                myRef.addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        HashMap<String, Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
+
+                            @Override
+                            protected Object clone() throws CloneNotSupportedException {
+                                return super.clone();
+                            }
+                        });
+                        if (bookings != null) {
+                            //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
+                            findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
+                            bookingLocalCache.putAll(bookings);
+                            bookingList = new ArrayList<Booking>(bookingLocalCache.values());
+                            //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a Malnati(Federico)
+                            setUpView(bookingList, rv);
                         }
-                    });
-                    if(bookings != null) {
-                        //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
-                        findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
-                        setUpView(new ArrayList<Booking>(bookings.values()), rv);
                     }
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }else{
+                bookingList = new ArrayList<Booking>(bookingLocalCache.values());
+                setUpView(bookingList, rv);
+            }
 
         }
 
@@ -186,6 +201,12 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //
     }
 
     private void setUpView(List<Booking> bookingList, RecyclerView rv){
