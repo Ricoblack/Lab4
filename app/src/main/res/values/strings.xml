@@ -194,7 +194,7 @@
     <string name="graph_title">Dishes</string>
     <string name="no_notes_in_bookings">There are no notes in this booking</string>
     <string name="booking_title">Booking</string>
-    <string name="note">Note:</string>
+    <string name="note">Notes:</string>
     <string name="confirm_profile_updated">Profile data updated</string>
     <string name="totalDishesNr">Total Dishes</string>
     <string name="horizontal_axis_label">Hour</string>
@@ -368,4 +368,5 @@
     <string name="alert_title_delete_offer">Are you sure to delete this offer?</string>
     <string name="error_no_dishes">There are no available dishes in menu. Please add a dish before adding a new offer.</string>
     <string name="dependecies_dish_error">This dish can\'t be removed because it is used at least in one daily offer.</string>
+    <string name="reservation_details">Reservation details</string>
 </resources>
