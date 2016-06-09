@@ -266,6 +266,7 @@ public class AddReviewActivity extends AppCompatActivity {
     }
 
     private void saveReview() {
+        //TODO implementare il fatto che se non sei loggato a questa pagina non dovresti proprio accedere pd (Renato)
 
         //CREO L'OGGETTO REVIEW
         final Review r = new Review();
@@ -297,33 +298,35 @@ public class AddReviewActivity extends AppCompatActivity {
             r.setUserId(mPrefs.getString("uid", null));
         }
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference addReviewRef = database.getReference("/reviews");
-
         //AGGIORNO L'OGGETTO RISTORANTE
-        if(restaurantFinalScore == -1){
-//            restaurant.setAvgFinalScore(finalScore);
-//            restaurant.setAvgScores(scoresMap);
-        }
+        double updateScore = -1;
+        HashMap<String, Double> updateMap = null;
         if(restaurantFinalScore != -1) {
-            double totFinal = restaurantFinalScore * reviewsNumber;
-            finalScore = (totFinal + finalScore) / (reviewsNumber + 1);
+            updateScore = restaurantFinalScore * reviewsNumber;
+            updateScore = (updateScore + finalScore) / (reviewsNumber + 1);
 
-//            HashMap<String, Double> updateMap = (HashMap<String, Double>) restaurant.getAvgScores();
+            updateMap = restaurantScoresMap;
 
-//            double temp = updateMap.get(getResources().getString(R.string.food)) * reviewsNumber;
-//            updateMap.put(getResources().getString(R.string.food), ((temp + reviewScores[0]) / (reviewsNumber + 1)));
-//
-//            temp = updateMap.get(getResources().getString(R.string.punctuality)) * reviewsNumber;
-//            updateMap.put(getResources().getString(R.string.punctuality), ((temp + reviewScores[1]) / (reviewsNumber +1)));
-//
-//            temp = updateMap.get(getResources().getString(R.string.location)) * reviewsNumber;
-//            updateMap.put(getResources().getString(R.string.location), ((temp + reviewScores[2]) / (reviewsNumber +1)));
-//
-//            restaurant.setAvgScores(updateMap);
+            double temp = updateMap.get(getResources().getString(R.string.food)) * reviewsNumber;
+            updateMap.put(getResources().getString(R.string.food), ((temp + reviewScores[0]) / (reviewsNumber + 1)));
+
+            temp = updateMap.get(getResources().getString(R.string.punctuality)) * reviewsNumber;
+            updateMap.put(getResources().getString(R.string.punctuality), ((temp + reviewScores[1]) / (reviewsNumber +1)));
+
+            temp = updateMap.get(getResources().getString(R.string.location)) * reviewsNumber;
+            updateMap.put(getResources().getString(R.string.location), ((temp + reviewScores[2]) / (reviewsNumber +1)));
+        }
+        else{
+            updateScore = finalScore;
+            updateMap = scoresMap;
         }
 
         //AGGIORNO IL DB
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference addReviewRef = database.getReference("/reviews");
+
+        final double finalUpdateScore = updateScore;
+        final HashMap<String, Double> finalUpdateMap = updateMap;
         addReviewRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -338,6 +341,9 @@ public class AddReviewActivity extends AppCompatActivity {
 
                 //TODO aggiornare i punteggi del ristorante
                 DatabaseReference restaurantRef = database.getReference("/restaurants" + restaurantId);
+
+                restaurantRef.child("avgFinalScore").setValue(finalUpdateScore);
+                restaurantRef.child("acgScores").setValue(finalUpdateMap);
 //                restaurantRef.setValue(restaurant);
 
                 return Transaction.success(mutableData);

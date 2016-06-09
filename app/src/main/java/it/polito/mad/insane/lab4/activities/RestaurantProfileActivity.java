@@ -54,6 +54,8 @@ import it.polito.mad.insane.lab4.data.RestaurantInfo;
 import it.polito.mad.insane.lab4.data.Review;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
+//TODO x Michele se non ci sono dailyOffers far comparire una scritta che dice nessuna offerta attiva (Renato)
+
 
 public class RestaurantProfileActivity extends AppCompatActivity {
 
