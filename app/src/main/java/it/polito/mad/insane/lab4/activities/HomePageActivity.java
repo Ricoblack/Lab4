@@ -2,6 +2,7 @@ package it.polito.mad.insane.lab4.activities;
 
 import android.app.ActivityManager;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -87,6 +88,18 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     Intent ir = new Intent(HomePageActivity.this, HomeRestaurateurActivity.class);
                     startActivity(ir);
                     finish();
+                }
+            }
+            else {
+                //loggato come user, attivo service
+                if(isServiceStarted()==false) {
+                    Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
+                    Intent mServiceIntent = new Intent(this, NotificationDailyOfferService.class);
+                    startService(mServiceIntent);
+
+                }
+                else {
+                    Toast.makeText(this,"service gia attivo",Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -280,15 +293,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         //notification listener
 
 
-        if(isServiceStarted()==false) {
-            Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
-            Intent mServiceIntent = new Intent(this, NotificationDailyOfferService.class);
-            startService(mServiceIntent);
 
-        }
-        else {
-            Toast.makeText(this,"service gia attivo",Toast.LENGTH_SHORT).show();
-        }
 
 
     }
@@ -544,12 +549,20 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
                 }else {
                     //LOGOUT
+
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
+
                         uid = null;
                         SharedPreferences.Editor editor = this.mPrefs.edit();
                         editor.clear();
                         editor.apply();
+
+                        //stop service and clear notifications
+                        stopService(new Intent(this, NotificationDailyOfferService.class));
+                        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                        notificationManager.cancel(123456789);
+                        Toast.makeText(this,"Service stopped",Toast.LENGTH_SHORT);
                     }
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
@@ -573,8 +586,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
 }
 
-//solo come utente deve partire il servizio, al logout devo stopparlo e togliere anche le notifiche
-//verificare caso in cui utente sloggato clicca sulla notifica
-//una volta cliccata viene eliminata la notifica
+//creo activity notifiche
 
 
