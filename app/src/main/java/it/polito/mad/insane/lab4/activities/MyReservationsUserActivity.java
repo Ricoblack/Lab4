@@ -49,8 +49,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(RestaurantProfileActivity.RestaurantProfileActivity != null)
-            RestaurantProfileActivity.RestaurantProfileActivity.finish();
         /*
         // finish the RestaurantProfile activity if is not finished
         if(RestaurantProfile.RestaurantProfileActivity != null)
@@ -68,43 +66,35 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         final RecyclerView rv = (RecyclerView) findViewById(R.id.reservation_recycler_view);
         if(rv != null)
         {
+            RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
-            if(bookingLocalCache == null) {
-
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("/bookings/users/" + uid);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("/bookings/users/"+uid);
 
 
-                myRef.addValueEventListener(new ValueEventListener() {
+            myRef.addValueEventListener(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        HashMap<String, Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
 
-                            @Override
-                            protected Object clone() throws CloneNotSupportedException {
-                                return super.clone();
-                            }
-                        });
-                        if (bookings != null) {
-                            //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
-                            findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
-                            bookingLocalCache.putAll(bookings);
-                            bookingList = new ArrayList<Booking>(bookingLocalCache.values());
-                            //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a Malnati(Federico)
-                            setUpView(bookingList, rv);
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
+                        @Override
+                        protected Object clone() throws CloneNotSupportedException {
+                            return super.clone();
                         }
+                    });
+                    if(bookings != null) {
+                        //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
+                        findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
+                        //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a michele(Federico)
+                        setUpView(new ArrayList<Booking>(bookings.values()), rv);
                     }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }else{
-                bookingList = new ArrayList<Booking>(bookingLocalCache.values());
-                setUpView(bookingList, rv);
-            }
+                }
+            });
 
         }
 
