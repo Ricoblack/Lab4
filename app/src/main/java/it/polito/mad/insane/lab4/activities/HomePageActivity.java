@@ -390,8 +390,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         }
         // make the device update its location
         manager.simpleLocation.beginUpdates();
-
-
     }
 
     @Override

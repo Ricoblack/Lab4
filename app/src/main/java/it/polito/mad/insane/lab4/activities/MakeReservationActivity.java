@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -128,7 +129,6 @@ public class MakeReservationActivity extends AppCompatActivity {
                                 }
                             }
                         }
-
                         if (numberDishes == 0) {
                             totalDiscount += repeater * tempOffer.getDiscount();
                         }
@@ -148,19 +148,21 @@ public class MakeReservationActivity extends AppCompatActivity {
                             tv.setText(MessageFormat.format("{0}€", df.format(totalDiscount)));
                         }
                     }
-                    TextView tv = (TextView) findViewById(R.id.reservation_total_price);
-                    DecimalFormat df = new DecimalFormat("0.00");
-                    if (tv != null) {
-                        tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
-                    }
 
-                    DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 0);
+                }
 
-                    ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
-                    if (mylist != null) {
-                        mylist.setAdapter(adapter);
-                    }
+                // operazioni che devono essere performate anche in caso non ci siano dailyOffer
+                TextView tv = (TextView) findViewById(R.id.reservation_total_price);
+                DecimalFormat df = new DecimalFormat("0.00");
+                if (tv != null) {
+                    tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
+                }
 
+                DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 0);
+
+                ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
+                if (mylist != null) {
+                    mylist.setAdapter(adapter);
                 }
             }
 
@@ -169,10 +171,6 @@ public class MakeReservationActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
@@ -203,6 +201,14 @@ public class MakeReservationActivity extends AppCompatActivity {
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     saveReservation(selectedQuantities);
+                                    //FIXME queste operazioni andrebbero gestite nell'onComplete della transaction, che non funziona (Renato)
+                                    Toast.makeText(getApplicationContext(), "Reservation done successfully",
+                                            Toast.LENGTH_SHORT).show();
+                                    clearStaticVariables();
+                                    finish(); // finish() the current activity
+                                    RestaurantProfileActivity.clearStaticVariables();
+                                    Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
+                                    startActivity(intent); // start the new activity
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -256,7 +262,6 @@ public class MakeReservationActivity extends AppCompatActivity {
 
     public void saveReservation(HashMap<Dish, Integer> selectedQuantities) {
         final Booking b = new Booking();
-
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         b.setDateTime(sdf.format(reservationDate.getTime()));
 
@@ -285,7 +290,7 @@ public class MakeReservationActivity extends AppCompatActivity {
             b.setUserName(mPrefs.getString("uName",null));
         }
 
-        //TODO implementare meccanismo di decremento quantita' disponibili dei piatti
+        //TODO implementare meccanismo di decremento quantita' disponibili dei piatti (Renato)
 //        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
 //            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailabilityQty();
 ////            int newQuantity = quantity - quantities[i];
@@ -317,19 +322,16 @@ public class MakeReservationActivity extends AppCompatActivity {
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-                if(committed)
-                    Toast.makeText(MakeReservationActivity.this, "Reservation done", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(MakeReservationActivity.this, "Reservation failed", Toast.LENGTH_SHORT).show();
+                    //FIXME non entra mai in questo metodo anche se la transazione va a buon fine nel DB (Renato)
+//                    Toast.makeText(getApplicationContext(), "Reservation done successfully",
+//                            Toast.LENGTH_SHORT).show();
+//                    clearStaticVariables();
+//                    finish(); // finish() the current activity
+//                    RestaurantProfileActivity.clearStaticVariables();
+//                    Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
+//                    startActivity(intent); // start the new activity
             }
         });
-
-
-        //TODO scommentare queste righe e gestire la cosa
-//        finish(); // finish() the current activity
-//        Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
-//        startActivity(intent); // start the new activity
-
     }
 
     @Override
