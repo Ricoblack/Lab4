@@ -63,7 +63,6 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static int totalDishesQty;
     private static int[] quantities;
 
-
     //TODO: aggiungere il controllo che verifichi se i piatti presenti presenti nel carrello sono legati da qualche offerta (daily offer) e in tal caso applichi lo sconto (Michele)
 
     @Override
@@ -322,14 +321,14 @@ public class MakeReservationActivity extends AppCompatActivity {
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-                    //FIXME non entra mai in questo metodo anche se la transazione va a buon fine nel DB (Renato)
-//                    Toast.makeText(getApplicationContext(), "Reservation done successfully",
-//                            Toast.LENGTH_SHORT).show();
-//                    clearStaticVariables();
-//                    finish(); // finish() the current activity
-//                    RestaurantProfileActivity.clearStaticVariables();
-//                    Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
-//                    startActivity(intent); // start the new activity
+                //FIXME non entra mai in questo metodo anche se la transazione va a buon fine nel DB (Renato)
+//                Toast.makeText(getApplicationContext(), "Reservation done successfully",
+//                        Toast.LENGTH_SHORT).show();
+//                clearStaticVariables();
+//                finish(); // finish() the current activity
+//                RestaurantProfileActivity.clearStaticVariables();
+//                Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
+//                startActivity(intent); // start the new activity
             }
         });
     }

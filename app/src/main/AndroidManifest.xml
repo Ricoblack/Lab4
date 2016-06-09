@@ -17,12 +17,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:windowSoftInputMode="adjustPan"
-        >
-
+        android:windowSoftInputMode="adjustPan">
         <service
-            android:name="it.polito.mad.insane.lab4.managers.NotificationDailyOfferService"
-            android:exported="false"/>
+            android:name=".managers.NotificationDailyOfferService"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -70,7 +68,7 @@
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activities.MakeReservationActivity"
             android:label="@string/title_activity_make_reservation"
@@ -146,6 +144,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
+        </activity>
+        <activity
+            android:name=".activities.EditProfileRestaurateurActivity"
+            android:label="@string/title_activity_edit_profile_restaurateur"
+            android:parentActivityName=".activities.HomeRestaurateurActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.HomeRestaurateurActivity" />
         </activity>
     </application>
 

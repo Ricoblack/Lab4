@@ -2,6 +2,7 @@ package it.polito.mad.insane.lab4.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
 
+    static final String PREF_LOGIN = "loginPref";
     private ViewPager mViewPager;
     private static FloatingActionButton menuFab;
     private static FloatingActionButton reviewsFab;
@@ -124,13 +126,24 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         menuFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, MakeReservationActivity.class);
-                Bundle bundle = new Bundle();
-                if(dishesAdapter.getReservationQty() == 0)
-                    Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, getResources().getString(R.string.cart_empty_alert), Toast.LENGTH_SHORT).show();
+
+                SharedPreferences mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                String userID = null;
+                if (mPrefs != null) {
+                    userID = mPrefs.getString("uid", null);
+                }
+
+                if(userID == null){
+                    Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
+                            getResources().getString(R.string.logged_in_booking_alert), Toast.LENGTH_LONG).show();
+                }
+                else if(dishesAdapter.getReservationQty() == 0) {
+                    Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
+                            getResources().getString(R.string.cart_empty_alert), Toast.LENGTH_SHORT).show();
+                }
                 else {
-//                                bundle.putParcelableArrayList("reservationList", (ArrayList<? extends Parcelable>) reservationList);
-//                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
+                    Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, MakeReservationActivity.class);
+                    Bundle bundle = new Bundle();
                     bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
                     bundle.putString("ID", restaurantId);
                     bundle.putString("restName", restaurantName);
@@ -145,18 +158,27 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         reviewsFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, AddReviewActivity.class);
-                Bundle bundle = new Bundle();
-//                                bundle.putParcelableArrayList("reservationList", (ArrayList<? extends Parcelable>) reservationList);
-//                    bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
-//                bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
-                bundle.putString("ID", restaurantId);
-                bundle.putSerializable("scoresMap", (Serializable) restaurant.getAvgScores());
-                bundle.putDouble("finalScore", restaurant.getAvgFinalScore());
-                bundle.putInt("reviewsNumber", reviewsNumber);
-                intent.putExtras(bundle);
-                startActivity(intent);
 
+                SharedPreferences mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                String userID = null;
+                if (mPrefs != null) {
+                    userID = mPrefs.getString("uid", null);
+                }
+
+                if(userID == null){
+                    Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
+                            getResources().getString(R.string.logged_in_review_alert), Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, AddReviewActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("ID", restaurantId);
+                    bundle.putSerializable("scoresMap", (Serializable) restaurant.getAvgScores());
+                    bundle.putDouble("finalScore", restaurant.getAvgFinalScore());
+                    bundle.putInt("reviewsNumber", reviewsNumber);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -230,8 +252,98 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         super.onResume();
         if(dishesAdapter != null)
             editShowButton(dishesAdapter.getReservationQty(), dishesAdapter.getReservationPrice());
-        //TODO fare l'update del RecyclerView delle reviews (Renato)
 
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // get restaurant in order to get his avg final score
+        final DatabaseReference restaurantRef = database.getReference("restaurants/" + restaurantId);
+        restaurantRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                restaurant = dataSnapshot.getValue(Restaurant.class);
+
+                if (restaurant != null) {
+                    if (restaurant.getAvgFinalScore() == -1) {
+                        TextView tv = (TextView) findViewById(R.id.review_fragment_no_reviews);
+                        if (tv != null) {
+                            tv.setVisibility(View.VISIBLE);
+                        }
+                        CardView cv = (CardView) findViewById(R.id.review_total_score_cardview);
+                        if (cv != null) {
+                            cv.setVisibility(View.GONE);
+                        }
+                        RecyclerView rv = (RecyclerView) findViewById(R.id.reviews_recycler_view);
+                        if (rv != null) {
+                            rv.setVisibility(View.GONE);
+                        }
+                    }
+                    else {
+                        TextView tv = (TextView) findViewById(R.id.restaurant_final_score);
+                        DecimalFormat df = new DecimalFormat("0.0");
+                        if (tv != null) {
+                            tv.setText(df.format(restaurant.getAvgFinalScore()));
+                        }
+
+                        tv = (TextView) findViewById(R.id.score_1);
+                        df = new DecimalFormat("0.0");
+                        if (tv != null) {
+                            tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.first_score))));
+                        }
+
+                        tv = (TextView) findViewById(R.id.score_2);
+                        df = new DecimalFormat("0.0");
+                        if (tv != null) {
+                            tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.second_score))));
+                        }
+
+                        tv = (TextView) findViewById(R.id.score_3);
+                        df = new DecimalFormat("0.0");
+                        if (tv != null) {
+                            tv.setText(df.format(restaurant.getAvgScores().get(getString(R.string.third_score))));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        final DatabaseReference reviewsRef = database.getReference("/reviews/restaurants/"+restaurantId);
+
+        reviewsRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String, Review> data = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Review>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+                if(data != null)
+                {
+                    reviewsMap.putAll(data);
+//                        ArrayList<Review> reviewsList = new ArrayList<Review>(data.values());
+                    RecyclerView rv = (RecyclerView) findViewById(R.id.reviews_recycler_view);
+                    if (rv != null) {
+                        ReviewsRecyclerAdapter adapter = new ReviewsRecyclerAdapter(RestaurantProfileActivity.this,
+                                new ArrayList<>(reviewsMap.values()));
+                        rv.setAdapter(adapter);
+                    }
+                    TextView tv = (TextView) findViewById(R.id.reviews_number);
+                    if (tv != null) {
+                        tv.setText(String.format(getResources().getString(R.string.reviewsFormat), data.size()));
+                    }
+                    reviewsNumber = data.size();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void editShowButton(int quantity, double price) {
@@ -605,25 +717,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             if(tv != null) {
                 if(dishesAdapter != null)
                     editShowButton(dishesAdapter.getReservationQty(), dishesAdapter.getReservationPrice(), rootView);
-
-//                tv.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent intent = new Intent(getActivity(), MakeReservationActivity.class);
-//                        if (rv != null) {
-//                            Bundle bundle = new Bundle();
-//                            if(dishesAdapter.getReservationQty() == 0)
-//                                Toast.makeText(getActivity(), "Cart must contain at least one dish", Toast.LENGTH_SHORT).show();
-//                            else {
-////                                bundle.putParcelableArrayList("reservationList", (ArrayList<? extends Parcelable>) reservationList);
-//                                bundle.putIntArray("selectedQuantities", dishesAdapter.getSelectedQuantities());
-//                                bundle.putString("ID", restaurantId);
-//                                intent.putExtras(bundle);
-//                                startActivity(intent);
-//                            }
-//                        }
-//                    }
-//                });
             }
 
             return rootView;
@@ -649,8 +742,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     restaurant = dataSnapshot.getValue(Restaurant.class);
 
                     if(restaurant != null) {
-                        double finalScore = restaurant.getAvgFinalScore();
-                        if (finalScore == -1){
+                        if (restaurant.getAvgFinalScore() == -1){
                             TextView tv = (TextView) rootView.findViewById(R.id.review_fragment_no_reviews);
                             tv.setVisibility(View.VISIBLE);
                             CardView cv = (CardView) rootView.findViewById(R.id.review_total_score_cardview);
@@ -714,7 +806,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             return rootView;
         }
-
 
         private void setupReviewsRecyclerView(View rootView, List<Review> reviews)
         {

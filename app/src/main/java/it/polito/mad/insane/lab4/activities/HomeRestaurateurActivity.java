@@ -25,6 +25,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -212,8 +213,8 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         {
             case R.id.action_edit_profile:
                 //Start EditProfileActivity
-//                Intent invokeEditProfile = new Intent(HomeRestaurateurActivity.this, EditProfileActivity.class);
-//                startActivity(invokeEditProfile);
+                Intent invokeEditProfile = new Intent(HomeRestaurateurActivity.this, EditProfileRestaurateurActivity.class);
+                startActivity(invokeEditProfile);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -646,16 +647,16 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
             String picker = this.getTag();
             switch (picker){
-//                case "openingPicker":
-//                    Button button = (Button) getActivity().findViewById(R.id.openingHour);
-//                    button.setText(new StringBuilder().append(pad(hourOfDay))
-//                            .append(":").append(pad(minute)));
-//                    break;
-//                case "closingPicker":
-//                    button = (Button) getActivity().findViewById(R.id.closingHour);
-//                    button.setText(new StringBuilder().append(pad(hourOfDay))
-//                            .append(":").append(pad(minute)));
-//                    break;
+                case "openingPicker":
+                    Button button = (Button) getActivity().findViewById(R.id.restaurateur_profile_openingHour);
+                    button.setText(new StringBuilder().append(pad(hourOfDay))
+                            .append(":").append(pad(minute)));
+                    break;
+                case "closingPicker":
+                    button = (Button) getActivity().findViewById(R.id.restaurateur_profile_closingHour);
+                    button.setText(new StringBuilder().append(pad(hourOfDay))
+                            .append(":").append(pad(minute)));
+                    break;
                 case "homeTitleHourPicker":
                     ((HomeRestaurateurActivity) getActivity()).setTime(hourOfDay);
                 default:

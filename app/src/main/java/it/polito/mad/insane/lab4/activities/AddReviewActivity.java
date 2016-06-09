@@ -1,9 +1,7 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -26,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +34,6 @@ import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.AddReviewSpinnerAdapter;
-import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.data.Review;
 
 public class AddReviewActivity extends AppCompatActivity {
@@ -45,13 +41,9 @@ public class AddReviewActivity extends AppCompatActivity {
     private static final int N_SCORES = 3;
     static final String PREF_LOGIN = "loginPref";
     private static double reviewScores[];
-    private static double finalScore = -1;
-    private static String restaurantId;
     private static String reviewTitle;
     private static String reviewText;
-    private static HashMap<String, Double> restaurantScoresMap;
-    private double restaurantFinalScore;
-    private static int reviewsNumber;
+    private static double reviewFinalScore = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +53,10 @@ public class AddReviewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Bundle bundle = getIntent().getExtras();
-        restaurantId = bundle.getString("ID");
-        restaurantScoresMap = (HashMap<String, Double>) bundle.getSerializable("scoresMap");
-        restaurantFinalScore = bundle.getDouble("finalScore");
-        reviewsNumber = bundle.getInt("reviewsNumber");
+        final String restaurantId = bundle.getString("ID");
+        final HashMap<String, Double> restaurantScoresMap = (HashMap<String, Double>) bundle.getSerializable("scoresMap");
+        final double restaurantFinalScore = bundle.getDouble("finalScore");
+        final double reviewsNumber = bundle.getInt("reviewsNumber");
 
         reviewScores = new double[N_SCORES];
         Arrays.fill(reviewScores, -1);
@@ -86,28 +78,7 @@ public class AddReviewActivity extends AppCompatActivity {
                     String s = String.valueOf(parent.getItemAtPosition(position));
                     if(!s.equals(scoreStrings[0])) {
                         reviewScores[0] = (Double.parseDouble(s));
-                        int total = 0;
-                        for(double d : reviewScores){
-                            if(d == -1){
-                                total = -1;
-                                break;
-                            }
-                            else
-                                total += d;
-                        }
-                        if(total != -1) {
-                            finalScore = total / N_SCORES;
-
-                            LinearLayout ll = (LinearLayout) findViewById(R.id.final_score_layout);
-                            TextView tvHint = (TextView) findViewById(R.id.add_review_hint);
-                            TextView tvScore = (TextView) findViewById(R.id.add_review_final_score);
-                            if (tvHint != null && ll != null && tvScore != null) {
-                                tvHint.setVisibility(View.GONE);
-                                ll.setVisibility(View.VISIBLE);
-                                tvScore.setText(String.valueOf(finalScore));
-                            }
-
-                        }
+                        checkAllVotes();
                     }
                 }
 
@@ -127,28 +98,7 @@ public class AddReviewActivity extends AppCompatActivity {
                     String s = String.valueOf(parent.getItemAtPosition(position));
                     if(!s.equals(scoreStrings[0])) {
                         reviewScores[1] = (Double.parseDouble(s));
-                        int total = 0;
-                        for(double d : reviewScores){
-                            if(d == -1){
-                                total = -1;
-                                break;
-                            }
-                            else
-                                total += d;
-                        }
-                        if(total != -1) {
-                            finalScore = total / N_SCORES;
-
-                            LinearLayout ll = (LinearLayout) findViewById(R.id.final_score_layout);
-                            TextView tvHint = (TextView) findViewById(R.id.add_review_hint);
-                            TextView tvScore = (TextView) findViewById(R.id.add_review_final_score);
-                            if (tvHint != null && ll != null && tvScore != null) {
-                                tvHint.setVisibility(View.GONE);
-                                ll.setVisibility(View.VISIBLE);
-                                tvScore.setText(String.valueOf(finalScore));
-                            }
-
-                        }
+                        checkAllVotes();
                     }
                 }
 
@@ -168,29 +118,7 @@ public class AddReviewActivity extends AppCompatActivity {
                     String s = String.valueOf(parent.getItemAtPosition(position));
                     if(!s.equals(scoreStrings[0])) {
                         reviewScores[2] = (Double.parseDouble(s));
-                        double total = 0;
-                        for(double d : reviewScores){
-                            if(d == -1){
-                                total = -1;
-                                break;
-                            }
-                            else
-                                total += d;
-                        }
-                        if(total != -1) {
-                            finalScore = total / N_SCORES;
-
-                            LinearLayout ll = (LinearLayout) findViewById(R.id.final_score_layout);
-                            TextView tvHint = (TextView) findViewById(R.id.add_review_hint);
-                            TextView tvScore = (TextView) findViewById(R.id.add_review_final_score);
-                            if (tvHint != null && ll != null && tvScore != null) {
-                                tvHint.setVisibility(View.GONE);
-                                ll.setVisibility(View.VISIBLE);
-                                DecimalFormat df = new DecimalFormat("0.0");
-                                tvScore.setText(String.valueOf(df.format(finalScore)));
-                            }
-
-                        }
+                        checkAllVotes();
                     }
                 }
 
@@ -207,7 +135,7 @@ public class AddReviewActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (finalScore == -1) // se non ho settato tutti i punteggi
+                    if (reviewFinalScore == -1) // se non ho settato tutti i punteggi
                         Toast.makeText(AddReviewActivity.this, R.string.rate_all_section, Toast.LENGTH_LONG).show();
                     else {
                         EditText etTitle = (EditText) findViewById(R.id.add_review_title);
@@ -232,14 +160,11 @@ public class AddReviewActivity extends AppCompatActivity {
                                         reviewText = text;
                                         reviewTitle = title;
                                     }
-                                    saveReview();
+                                    saveReview(restaurantId, restaurantFinalScore, reviewsNumber, restaurantScoresMap);
                                     finish();
+                                    clearStaticVariables();
                                     Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
                                     //FIXME se si fa in tempo creare activity MyReviews (Renato)
-//                                    Intent intent = new Intent(AddReviewActivity.this, RestaurantProfileActivity.class);
-//                                    Bundle bundle = new Bundle();
-//                                    bundle.putString("ID", restaurantId);
-//                                    startActivity(intent);
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -258,29 +183,52 @@ public class AddReviewActivity extends AppCompatActivity {
     }
 
     private void clearStaticVariables() {
-        finalScore = -1;
+        reviewFinalScore = -1;
         reviewScores = null;
-        restaurantId = null;
         reviewTitle = null;
         reviewText = null;
     }
 
-    private void saveReview() {
-        //TODO implementare il fatto che se non sei loggato a questa pagina non dovresti proprio accedere pd (Renato)
+    private void checkAllVotes(){
+        int total = 0;
+        for(double d : reviewScores){
+            if(d == -1){
+                total = -1;
+                break;
+            }
+            else
+                total += d;
+        }
+        if(total != -1) {
+            reviewFinalScore = total / N_SCORES;
+
+            LinearLayout ll = (LinearLayout) findViewById(R.id.final_score_layout);
+            TextView tvHint = (TextView) findViewById(R.id.add_review_hint);
+            TextView tvScore = (TextView) findViewById(R.id.add_review_final_score);
+            if (tvHint != null && ll != null && tvScore != null) {
+                tvHint.setVisibility(View.GONE);
+                ll.setVisibility(View.VISIBLE);
+                tvScore.setText(String.valueOf(reviewFinalScore));
+            }
+
+        }
+    }
+
+    private void saveReview(final String restaurantId, double restaurantFinalScore, double reviewsNumber, HashMap<String, Double> restaurantScoresMap) {
 
         //CREO L'OGGETTO REVIEW
         final Review r = new Review();
 
-        r.setAvgFinalScore(finalScore);
+        r.setAvgFinalScore(reviewFinalScore);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Calendar cal = Calendar.getInstance();
         r.setDateTime(sdf.format(cal.getTime()));
         r.setRestaurantId(restaurantId);
 
         HashMap<String, Double> scoresMap = new HashMap<>();
-        scoresMap.put(getResources().getString(R.string.food), reviewScores[0]);
-        scoresMap.put(getResources().getString(R.string.punctuality), reviewScores[1]);
-        scoresMap.put(getResources().getString(R.string.location), reviewScores[2]);
+        scoresMap.put(getResources().getString(R.string.first_score), reviewScores[0]);
+        scoresMap.put(getResources().getString(R.string.second_score), reviewScores[1]);
+        scoresMap.put(getResources().getString(R.string.third_score), reviewScores[2]);
         r.setScoresMap(scoresMap);
 
         if( reviewText != null )
@@ -299,37 +247,39 @@ public class AddReviewActivity extends AppCompatActivity {
         }
 
         //AGGIORNO L'OGGETTO RISTORANTE
-        double updateScore = -1;
-        HashMap<String, Double> updateMap = null;
+        double updateScore;
+        HashMap<String, Double> updateMap;
         if(restaurantFinalScore != -1) {
             updateScore = restaurantFinalScore * reviewsNumber;
-            updateScore = (updateScore + finalScore) / (reviewsNumber + 1);
+            updateScore = (updateScore + reviewFinalScore) / (reviewsNumber + 1);
 
             updateMap = restaurantScoresMap;
 
-            double temp = updateMap.get(getResources().getString(R.string.food)) * reviewsNumber;
-            updateMap.put(getResources().getString(R.string.food), ((temp + reviewScores[0]) / (reviewsNumber + 1)));
+            double temp = updateMap.get(getResources().getString(R.string.first_score)) * reviewsNumber;
+            updateMap.put(getResources().getString(R.string.first_score), ((temp + reviewScores[0]) / (reviewsNumber + 1)));
 
-            temp = updateMap.get(getResources().getString(R.string.punctuality)) * reviewsNumber;
-            updateMap.put(getResources().getString(R.string.punctuality), ((temp + reviewScores[1]) / (reviewsNumber +1)));
+            temp = updateMap.get(getResources().getString(R.string.second_score)) * reviewsNumber;
+            updateMap.put(getResources().getString(R.string.second_score), ((temp + reviewScores[1]) / (reviewsNumber +1)));
 
-            temp = updateMap.get(getResources().getString(R.string.location)) * reviewsNumber;
-            updateMap.put(getResources().getString(R.string.location), ((temp + reviewScores[2]) / (reviewsNumber +1)));
+            temp = updateMap.get(getResources().getString(R.string.third_score)) * reviewsNumber;
+            updateMap.put(getResources().getString(R.string.third_score), ((temp + reviewScores[2]) / (reviewsNumber +1)));
         }
         else{
-            updateScore = finalScore;
+            updateScore = reviewFinalScore;
             updateMap = scoresMap;
         }
 
         //AGGIORNO IL DB
+        final double finalUpdateScore = updateScore;
+        final HashMap<String, Double> finalUpdateMap = updateMap;
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference addReviewRef = database.getReference("/reviews");
 
-        final double finalUpdateScore = updateScore;
-        final HashMap<String, Double> finalUpdateMap = updateMap;
         addReviewRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
+
                 DatabaseReference restaurantBookingsRef = addReviewRef.child("restaurants").child(restaurantId);
                 DatabaseReference pushRef = restaurantBookingsRef.push();
                 String key = pushRef.getKey();
@@ -340,23 +290,20 @@ public class AddReviewActivity extends AppCompatActivity {
                 userBookingRef.setValue(r);
 
                 //TODO aggiornare i punteggi del ristorante
-                DatabaseReference restaurantRef = database.getReference("/restaurants" + restaurantId);
+                DatabaseReference restaurantRef = database.getReference("/restaurants/" + restaurantId);
 
                 restaurantRef.child("avgFinalScore").setValue(finalUpdateScore);
-                restaurantRef.child("acgScores").setValue(finalUpdateMap);
-//                restaurantRef.setValue(restaurant);
+                restaurantRef.child("avgScores").setValue(finalUpdateMap);
 
                 return Transaction.success(mutableData);
             }
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-//                if(committed)
-//                    Toast.makeText(AddReviewActivity.this, "Reservation done", Toast.LENGTH_SHORT).show();
-//                else
-//                    Toast.makeText(AddReviewActivity.this, "Reservation failed", Toast.LENGTH_SHORT).show();
-
-                clearStaticVariables();
+                // FIXME non entra qui dentro anche se ha salvato tutte le modifiche sul DB
+//                finish();
+//                clearStaticVariables();
+//                Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
             }
         });
     }
