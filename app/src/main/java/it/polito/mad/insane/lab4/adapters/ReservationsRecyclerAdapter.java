@@ -13,9 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -26,6 +29,7 @@ import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
+import it.polito.mad.insane.lab4.activities.MyReservationsUserActivity;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
@@ -79,7 +83,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
         private int position;
         private Booking currentBooking;
         private View cardView;
-        private String nameRist;
 
         private View.OnClickListener cardViewListener = new View.OnClickListener()
         {
@@ -90,7 +93,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 //Toast.makeText(v.getContext(),"Cliccato sulla cardView", Toast.LENGTH_LONG).show();
                 Intent i = new Intent(v.getContext(),DisplayReservationActivity.class);
                 i.putExtra("Booking", BookingsViewHolder.this.currentBooking);
-                i.putExtra("nameRestaurant", nameRist);
                 v.getContext().startActivity(i);
             }
         };
@@ -119,30 +121,45 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     builder.setTitle(context.getResources().getString(R.string.delete_reservation_alert_title))
                             .setPositiveButton(v.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    /*
-                                    manager.deleteReservation(ID.getText().toString());
-                                    RestaurateurJsonManager.deleteReservationByID(ReservationsRecyclerAdapter.this.mData, ID.getText().toString());
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeRemoved(position, getItemCount());
-//                                    Intent i = new Intent(context, MyReservationsUserActivity.class);
-//                                    AppCompatActivity act = (AppCompatActivity) context;
-//                                    act.startActivity(i);
-//                                    act.finish();
-                                    */
-                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    //FIXME: eliminare la reservation da tutti i posti (carlo)
-                                    DatabaseReference myRef = database.getReference("/bookings/"+ID.getText().toString()+"/");
 
-                                    myRef.setValue(null, new DatabaseReference.CompletionListener() {
+                                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    //FIXME: eliminare la reservation da tutti i posti (carlo)
+                                    final DatabaseReference myRef = database.getReference("/bookings/users/"+currentBooking.getUserId()+"/");
+
+//                                    myRef.setValue(null, new DatabaseReference.CompletionListener() {
+//                                        @Override
+//                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                                            mData.remove(position);
+//                                            notifyItemRemoved(position);
+//                                            notifyItemRangeChanged(position, mData.size());
+//                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+//                                        }
+//                                    });
+                                    /*********************************************************/
+                                    myRef.runTransaction(new Transaction.Handler() {
+
                                         @Override
-                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                            mData.remove(position);
-                                            notifyItemRemoved(position);
-                                            notifyItemRangeChanged(position, mData.size());
-                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                            DatabaseReference bookingRef = myRef.child(currentBooking.getID());
+                                            bookingRef.setValue(null);
+
+                                            return Transaction.success(mutableData);
+                                        }
+
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                                            if (!committed){
+                                                mData.remove(position);
+                                                notifyItemRemoved(position);
+                                                notifyItemRangeChanged(position, mData.size());
+                                                Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+                                            }
+                                            else
+                                                Toast.makeText(context, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
+
                                         }
                                     });
-
+                                    /**********************************************************/
                                 }
                             })
                             .setNegativeButton(v.getResources().getString(R.string.cancel_dialog_button), new DialogInterface.OnClickListener() {
@@ -162,12 +179,9 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
             this.position = position;
 
-            //TODO quando il db sarà sistemato prelevare il nome del ristorante dall'oggetto Booking (Federico)
-            //nameRist = current.getNameRist();
-            restaurantName.setText("nomeRistProva");
+            restaurantName.setText(current.getRestaurantName());
 
-            //TODO quando il db sarà sistemato prelevare il nome dell'utente dall'oggetto Booking (Federico)
-            ID.setText("nomeUser");
+            ID.setText(current.getUserName());
 
             nItems.setText(MessageFormat.format("{0} " +view.getResources().getString(R.string.dishes), current.getTotalDishesQty()));
 
@@ -198,5 +212,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             else
                 return "0" + String.valueOf(c);
         }
+
+
     }
 }

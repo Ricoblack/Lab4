@@ -74,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String typeConsumer = "User";
     private String userId = null;
     private String userName = null;
+    private String restaurantName = null;
 
     // shared prefs
     static final String PREF_LOGIN = "loginPref";
@@ -459,6 +460,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     {
                                         userId = r.getID();
                                         userName = r.getUsername();
+                                        restaurantName = r.getInfo().getRestaurantName();
                                     }
                                     else
                                         break; // wrong psw
@@ -531,7 +533,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     mPrefs = getSharedPreferences(PREF_LOGIN,MODE_PRIVATE);
                     SharedPreferences.Editor editor = mPrefs.edit();
                     editor.putString("rid",userId);
-                    editor.putString("rName", userName);
+                    editor.putString("rName", restaurantName);
+                    editor.putString("rUser", userName);
                     editor.apply();
                     Intent intent = new Intent(LoginActivity.this, HomeRestaurateurActivity.class);
                     startActivity(intent);

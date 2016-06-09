@@ -1,8 +1,11 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -42,8 +45,6 @@ public class EditOfferActivity extends AppCompatActivity
     private EditText name;
     private DailyOffer currentOffer = null;
 
-
-
     /** Standard methods **/
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,7 +55,7 @@ public class EditOfferActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // get restaurant id
+        // get restaurant id and name
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         if (mPrefs != null) {
             rid = this.mPrefs.getString("rid", null);
@@ -84,7 +85,12 @@ public class EditOfferActivity extends AppCompatActivity
                 public void onClick(View view) {
                     int allFilled = 1; // -1 = not filled all field, 0 = warning on price, 1 = filled all field
 
-                    HashMap<Dish,Integer> quantitiesMap = dishesArrayAdapter.getQuantitiesMap();
+                    HashMap<Dish,Integer> quantitiesMap;
+                    if(dishesArrayAdapter != null)
+                         quantitiesMap = dishesArrayAdapter.getQuantitiesMap();
+                    else
+                        quantitiesMap = new HashMap<Dish, Integer>();
+
 
                     // adding a new offer
                     DailyOffer newOffer = new DailyOffer();
@@ -209,7 +215,6 @@ public class EditOfferActivity extends AppCompatActivity
         {
             case R.id.delete_dish:
                 deleteOffer(currentOffer);
-                // TODO aggiungi alert dialog di conferma (Michele)
                 break;
             default:
                 break;
@@ -308,6 +313,7 @@ public class EditOfferActivity extends AppCompatActivity
                 }
             });
         }
+        DailyMenuActivity.notifyNewOffer(EditOfferActivity.this,offer);
     }
 
     private void deleteOffer(final DailyOffer offer) {
@@ -316,37 +322,53 @@ public class EditOfferActivity extends AppCompatActivity
             return;
         }
 
-        // remove from local cache in recyclerAdapter
-        DailyMenuActivity.removeOffer(offer);
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditOfferActivity.this);
+        builder.setTitle(EditOfferActivity.this.getResources().getString(R.string.alert_title_delete_offer))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        // remove from local cache in recyclerAdapter
+                        DailyMenuActivity.removeOffer(offer);
 
 
-        // remove from firebase
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference restaurantRef = database.getReference("/restaurants/" + rid + "/");
-        // adding new offer
-        restaurantRef.runTransaction(new Transaction.Handler() {
+                        // remove from firebase
+                        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        final DatabaseReference restaurantRef = database.getReference("/restaurants/" + rid + "/");
+                        // adding new offer
+                        restaurantRef.runTransaction(new Transaction.Handler() {
 
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                DatabaseReference dailyOffersRef = restaurantRef.child("dailyOfferMap").child(offer.getID());
-                dailyOffersRef.setValue(null);
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                DatabaseReference dailyOffersRef = restaurantRef.child("dailyOfferMap").child(offer.getID());
+                                dailyOffersRef.setValue(null);
 
 
-                // delete simple daily offer in /offers
-                DatabaseReference offersRef = database.getReference("/offers/" + offer.getID());
-                offersRef.setValue(null);
-                return Transaction.success(mutableData);
-            }
+                                // delete simple daily offer in /offers
+                                DatabaseReference offersRef = database.getReference("/offers/" + offer.getID());
+                                offersRef.setValue(null);
+                                return Transaction.success(mutableData);
+                            }
 
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-                if (!committed)
-                    Toast.makeText(EditOfferActivity.this, R.string.confirm_delete_offer, Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(EditOfferActivity.this, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                                if (!committed)
+                                    Toast.makeText(EditOfferActivity.this, R.string.confirm_delete_offer, Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(EditOfferActivity.this, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
 
-            }
-        });
-        finish();
+                            }
+                        });
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_dialog_button, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        Dialog dialog = builder.create();
+        dialog.show();
+
     }
 }
