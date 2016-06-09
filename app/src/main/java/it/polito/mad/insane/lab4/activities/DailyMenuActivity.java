@@ -93,7 +93,7 @@ public class DailyMenuActivity extends AppCompatActivity {
     }
 
     // FIXME: quando cancelli l'ultima offerta della lista, non viene svuotato l'adapter e si vede ancora l'elemento
-    // FIXME: problema 2) quando cancello un piatto non lo cancello anche dalla daily offer perché non ho il riferimento ad essa
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

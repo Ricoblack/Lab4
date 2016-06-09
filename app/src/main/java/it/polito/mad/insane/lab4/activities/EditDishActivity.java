@@ -33,24 +33,29 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 
-        // TODO: integrare la logica di firebase (Michele)
 public class EditDishActivity extends AppCompatActivity
 {
     private static int MY_GL_MAX_TEXTURE_SIZE = 1024; // compatible with almost all devices. To obtain the right value for each device use:   int[] maxSize = new int[1];
-                                                      // (this needs an OpenGL context)                                                       GLES10.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+    // (this needs an OpenGL context)                                                       GLES10.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
 
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
@@ -64,10 +69,11 @@ public class EditDishActivity extends AppCompatActivity
     private ImageView dishPhoto;
     private static String rid;
 
-    /** Standard Methods **/
+    /**
+     * Standard Methods
+     **/
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // initialize manager
 //        EditDishActivity.manager = RestaurateurJsonManager.getInstance(this);
@@ -94,12 +100,10 @@ public class EditDishActivity extends AppCompatActivity
         this.dishQty = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_availab_qty);
         this.dishPrice = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_price);
         this.dishPhoto = (ImageView) EditDishActivity.this.findViewById(R.id.dishPhoto);
-        if(dishPhoto != null)
-        {
+        if (dishPhoto != null) {
             dishPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
 //                    displayChooseDialog();
 //                    if(supportDynamicPermissions() == true)
 //                        checkAndRequestPermissions(PERMS_REQUEST_CODE_CAMERA);
@@ -114,9 +118,8 @@ public class EditDishActivity extends AppCompatActivity
         TextView rL = (TextView) findViewById(R.id.editDish);
         rL.setVisibility(View.GONE);
 
-        this.currentDish = (Dish)getIntent().getSerializableExtra("dish");
-        if(this.currentDish != null)
-        {
+        this.currentDish = (Dish) getIntent().getSerializableExtra("dish");
+        if (this.currentDish != null) {
             // Edit existing dish
             this.dishID.setText(this.currentDish.getID());
             this.dishName.setText(this.currentDish.getName());
@@ -128,27 +131,24 @@ public class EditDishActivity extends AppCompatActivity
 //            if(imgPath != null)
 //                this.dishPhoto.setImageURI(Uri.parse(imgPath));
 
-        }else
+        } else
             setTitle(R.string.new_dish);
 
 
         // set button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.save_edit_dish);
         if (fab != null)
-            fab.setOnClickListener( new View.OnClickListener()
-            {
+            fab.setOnClickListener(new View.OnClickListener() {
 
                 @Override
-                public void onClick(View view)
-                {
+                public void onClick(View view) {
                     // check if all the required info are filled
-                    if(!isAllDataFilled()) {
+                    if (!isAllDataFilled()) {
                         Toast.makeText(EditDishActivity.this, R.string.error_some_empty_fill, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    if(currentDish != null)
-                    {
+                    if (currentDish != null) {
                         // editing existing dish
                         currentDish.setName(dishName.getText().toString());
                         currentDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
@@ -157,8 +157,7 @@ public class EditDishActivity extends AppCompatActivity
                         currentDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
 //                        currentDish.setID(dishID.getText().toString()); // not needed; id already set
                         addDishInFirebase(currentDish);
-                    }else
-                    {
+                    } else {
                         // adding new dish
                         Dish newDish = new Dish();
                         newDish.setName(dishName.getText().toString());
@@ -174,29 +173,25 @@ public class EditDishActivity extends AppCompatActivity
             });
 
         // Fix Portrait Mode
-        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
-                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
-        {
+        if ((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.edit_dish_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id)
-        {
+        switch (id) {
             case R.id.delete_dish:
-                deleteDish(currentDish);
+                tryDeleteDish(currentDish);
                 break;
             default:
                 break;
@@ -208,13 +203,11 @@ public class EditDishActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String imgPath;
 
-        switch(requestCode)
-        {
+        switch (requestCode) {
             case REQUEST_IMAGE_GALLERY:
 //                if(resultCode == RESULT_OK)
 //                {
@@ -330,12 +323,12 @@ public class EditDishActivity extends AppCompatActivity
 
     /**
      * Rotate the image which is located in the input imgPath
+     *
      * @param imgPath
      * @return the bitmap image rotated (if needed)
      * @throws Exception
      */
-    private Bitmap rotateImg(String imgPath) throws Exception
-    {
+    private Bitmap rotateImg(String imgPath) throws Exception {
         int rotationInDegrees;
         Bitmap resultImg;
 
@@ -352,15 +345,14 @@ public class EditDishActivity extends AppCompatActivity
         int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
         // Convert exif rotation to degrees:
-        switch(rotation)
-        {
+        switch (rotation) {
             case ExifInterface.ORIENTATION_ROTATE_90:
                 rotationInDegrees = 90;
                 break;
             case ExifInterface.ORIENTATION_ROTATE_180:
                 rotationInDegrees = 180;
                 break;
-            case  ExifInterface.ORIENTATION_ROTATE_270:
+            case ExifInterface.ORIENTATION_ROTATE_270:
                 rotationInDegrees = 270;
                 break;
             default:
@@ -374,18 +366,18 @@ public class EditDishActivity extends AppCompatActivity
             matrix.preRotate(rotationInDegrees);
 
         // create the new rotate img
-        resultImg = Bitmap.createBitmap(originalBitmapImg, 0, 0, originalBitmapImg.getWidth(),originalBitmapImg.getHeight(), matrix, true);
+        resultImg = Bitmap.createBitmap(originalBitmapImg, 0, 0, originalBitmapImg.getWidth(), originalBitmapImg.getHeight(), matrix, true);
 
         return resultImg;
     }
 
     /**
      * Decode the input photo in relation to the display dim
+     *
      * @param photoPath
      * @return
      */
-    private Bitmap decodePhoto(String photoPath)
-    {
+    private Bitmap decodePhoto(String photoPath) {
         int ratio = 1;
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -393,7 +385,7 @@ public class EditDishActivity extends AppCompatActivity
         display.getSize(size);
         int displayWidth = size.x;
         int displayHeight = size.y;
-        this.MY_GL_MAX_TEXTURE_SIZE = Math.max(displayWidth,displayHeight);
+        this.MY_GL_MAX_TEXTURE_SIZE = Math.max(displayWidth, displayHeight);
 
         // Create an object BitmapFactory.Options
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -404,8 +396,7 @@ public class EditDishActivity extends AppCompatActivity
         int photoW = options.outWidth;
         int photoH = options.outHeight;
 
-        if(photoW > displayWidth || photoH > displayHeight)
-        {
+        if (photoW > displayWidth || photoH > displayHeight) {
             // Compute the scaling ratio to avoid distortion
             ratio = Math.min(photoW / displayWidth, photoH / displayHeight);
         }
@@ -489,28 +480,26 @@ public class EditDishActivity extends AppCompatActivity
 
     /**
      * Method that check if all the field of the activity are filled
+     *
      * @return
      */
-    private boolean isAllDataFilled()
-    {
+    private boolean isAllDataFilled() {
         //this.dishID.getText().toString().trim().length() > 0
-        if(this.dishName.getText().toString().trim().length() > 0 &&
+        if (this.dishName.getText().toString().trim().length() > 0 &&
                 this.dishDesc.getText().toString().trim().length() > 0 &&
                 this.dishPrice.getText().toString().trim().length() > 0 &&
                 this.dishQty.getText().toString().trim().length() > 0)
-            return  true;
+            return true;
         else
             return false;
 
     }
 
-    private void addDishInFirebase(Dish dish)
-    {
+    private void addDishInFirebase(Dish dish) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dishesRef = database.getReference("/restaurants/"+rid+"/dishMap");
+        DatabaseReference dishesRef = database.getReference("/restaurants/" + rid + "/dishMap");
 
-        if(dish.getID() == null)
-        {
+        if (dish.getID() == null) {
             // adding a new dish
             DatabaseReference newRef = dishesRef.push();
             dish.setID(newRef.getKey());
@@ -518,18 +507,17 @@ public class EditDishActivity extends AppCompatActivity
             newRef.setValue(dish, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    Toast.makeText(EditDishActivity.this,R.string.confirm_add_dish,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditDishActivity.this, R.string.confirm_add_dish, Toast.LENGTH_SHORT).show();
                 }
             });
 
-        }else
-        {
+        } else {
             //editing existing dish
             DatabaseReference newRef = dishesRef.child(dish.getID());
             newRef.setValue(dish, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    Toast.makeText(EditDishActivity.this,R.string.confirm_add_dish,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditDishActivity.this, R.string.confirm_add_dish, Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -537,10 +525,8 @@ public class EditDishActivity extends AppCompatActivity
         DailyMenuActivity.notifyNewDish(EditDishActivity.this, dish);
     }
 
-    private void deleteDish(final Dish dish)
-    {
-        if(currentDish == null)
-        {
+    private void tryDeleteDish(final Dish dish) {
+        if (currentDish == null) {
             Toast.makeText(EditDishActivity.this, R.string.cant_delete_dish, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -548,22 +534,48 @@ public class EditDishActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(EditDishActivity.this);
         builder.setTitle(EditDishActivity.this.getResources().getString(R.string.alert_title_delete_dish))
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        // remove dish from local cache of the recyclerAdapter
-                        DailyMenuActivity.removeDish(dish);
+                    public void onClick(DialogInterface dialog, int id) {
+                        // check if the dish is used in some daily offers
+                        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference dailyOffersRef = database.getReference("/restaurants/" + rid + "/dailyOfferMap/");
 
-                        // remove dish from firebase
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        DatabaseReference disheRef = database.getReference("/restaurants/"+rid+"/dishMap/"+ dish.getID());
-                        disheRef.setValue(null, new DatabaseReference.CompletionListener() {
+                        dailyOffersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                boolean founded = false;
+                                HashMap<String, DailyOffer> dailyOffersMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
+                                    @Override
+                                    protected Object clone() throws CloneNotSupportedException {
+                                        return super.clone();
+                                    }
+                                });
+
+                                if (dailyOffersMap != null)
+                                {
+                                    // search the dish to remove in daily offers
+                                    ArrayList<DailyOffer> dailyOffersList = new ArrayList<DailyOffer>(dailyOffersMap.values());
+                                    for (DailyOffer d : dailyOffersList)
+                                        if (d.getDishesIdMap().containsKey(dish.getID())) {
+                                            founded = true; // dish is used in at least one offer
+                                            break;
+                                        }
+                                }
+
+                                if (!founded)
+                                    deleteDish(database, dish);
+                                else
+                                    Toast.makeText(EditDishActivity.this, R.string.dependecies_dish_error, Toast.LENGTH_LONG).show();
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
                             }
                         });
 
-                        finish();
+
                     }
                 })
                 .setNegativeButton(R.string.cancel_dialog_button, new DialogInterface.OnClickListener() {
@@ -577,4 +589,20 @@ public class EditDishActivity extends AppCompatActivity
 
     }
 
+    private void deleteDish(FirebaseDatabase database, Dish dish)
+    {
+        // remove dish from local cache of the recyclerAdapter
+        DailyMenuActivity.removeDish(dish);
+
+        // remove dish from firebase
+        DatabaseReference disheRef = database.getReference("/restaurants/" + rid + "/dishMap/" + dish.getID());
+        disheRef.setValue(null, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        finish();
+    }
 }
