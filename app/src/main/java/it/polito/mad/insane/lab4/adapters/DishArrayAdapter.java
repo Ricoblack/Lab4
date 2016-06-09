@@ -21,6 +21,7 @@ import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
 import it.polito.mad.insane.lab4.activities.EditOfferActivity;
 import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
+import it.polito.mad.insane.lab4.activities.ViewBookingActivity;
 import it.polito.mad.insane.lab4.data.Dish;
 
 /**
@@ -63,6 +64,8 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
                 case 3:
                     inflater = ((EditOfferActivity) context).getLayoutInflater();
                     break;
+                case 4:
+                    inflater = ((ViewBookingActivity) context).getLayoutInflater();
             }
 
             row = inflater.inflate(layoutResourceId, parent, false);
