@@ -85,7 +85,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     private static HashMap<String, Review> reviewsMap = new HashMap<>();
     private static Restaurant restaurant;
     private static int reviewsNumber;
-//    private static List<Dish> reservationList = null;
 
     public static Activity RestaurantProfileActivity = null; // attribute used to finish() the current activity from another activity
 
@@ -245,7 +244,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         restaurantId = null;
         finish();
     }
-
 
     @Override
     protected void onResume() {

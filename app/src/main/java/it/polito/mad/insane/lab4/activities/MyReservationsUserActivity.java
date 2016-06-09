@@ -46,6 +46,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(RestaurantProfileActivity.RestaurantProfileActivity != null)
+            RestaurantProfileActivity.RestaurantProfileActivity.finish();
         /*
         // finish the RestaurantProfile activity if is not finished
         if(RestaurantProfile.RestaurantProfileActivity != null)

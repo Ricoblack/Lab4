@@ -61,9 +61,6 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static double totalPrice = 0;
     private static double totalDiscount;
     private static int totalDishesQty;
-    private static int[] quantities;
-
-    //TODO: aggiungere il controllo che verifichi se i piatti presenti presenti nel carrello sono legati da qualche offerta (daily offer) e in tal caso applichi lo sconto (Michele)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +128,6 @@ public class MakeReservationActivity extends AppCompatActivity {
                         if (numberDishes == 0) {
                             totalDiscount += repeater * tempOffer.getDiscount();
                         }
-
                     }
 
                     if(totalDiscount > 0)
@@ -191,7 +187,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                     //Verifico che i costraint per la prenotazione siano rispettati: in orario di lavoro e tra almeno un ora
                     //TODO implementare questo metodi sul manager, preferibilmente chi li ha fatti la scorsa volta, se non sbaglio
                     //TODO Carlo e/o Michele (Renato)
-//                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId)==false){
+//                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId) == false){
 //                        Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
 //                        return;
 //                    }
@@ -205,7 +201,6 @@ public class MakeReservationActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                     clearStaticVariables();
                                     finish(); // finish() the current activity
-                                    RestaurantProfileActivity.clearStaticVariables();
                                     Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
                                     startActivity(intent); // start the new activity
                                 }

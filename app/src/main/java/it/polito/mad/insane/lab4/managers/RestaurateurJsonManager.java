@@ -372,6 +372,21 @@ public class RestaurateurJsonManager
 //        return;
 //    }
 
+    //TODO mr.Wolf pensaci tu
+    public boolean reservationRespectsTimeContraints(Calendar reservationDate, String restaurantId) {
+//        //controllo se la prenotazione è minimo tra un ora e nell'orario di apertura
+//        Calendar cal = Calendar.getInstance(); // creates calendar
+//        cal.setTime(new Date()); // sets calendar time/date
+//        cal.add(Calendar.MINUTE, 1); //add one minute
+//
+//        RestaurateurProfile profile=getRestaurant(restaurantId).getProfile();
+//
+//        if(reservationDate.after(cal) && timeIsAfter(reservationDate.getTime(),profile.getOpeningHour())&&
+//                timeIsBefore(reservationDate.getTime(),profile.getClosingHour()) ) return true;
+//        return false;
+        return true;
+    }
+
     public List<Restaurant> getAdvancedFilteredRestaurants(String distanceValue, String priceValue, String typeValue, String timeValue) {
         ArrayList<Restaurant> restaurants=new ArrayList<Restaurant>();
 
