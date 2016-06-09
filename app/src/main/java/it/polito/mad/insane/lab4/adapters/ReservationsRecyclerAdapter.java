@@ -116,15 +116,13 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 @Override
                 public void onClick(View v)
                 {
-                    //TODO implementare la cancellazione di una reservation (Federico)
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle(context.getResources().getString(R.string.delete_reservation_alert_title))
                             .setPositiveButton(v.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
 
                                     final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    //FIXME: eliminare la reservation da tutti i posti (carlo)
-                                    final DatabaseReference myRef = database.getReference("/bookings/users/"+currentBooking.getUserId()+"/");
+                                    final DatabaseReference myRef = database.getReference("/bookings/");
 
 //                                    myRef.setValue(null, new DatabaseReference.CompletionListener() {
 //                                        @Override
@@ -140,26 +138,36 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
                                         @Override
                                         public Transaction.Result doTransaction(MutableData mutableData) {
-                                            DatabaseReference bookingRef = myRef.child(currentBooking.getID());
-                                            bookingRef.setValue(null);
+                                            DatabaseReference bookingRefUser = myRef.child("users").child(currentBooking.getUserId()).child(currentBooking.getID());
+                                            bookingRefUser.setValue(null);
+
+                                            DatabaseReference bookingRefRest = myRef.child("restaurants").child(currentBooking.getRestaurantId()).child(currentBooking.getID());
+                                            bookingRefRest.setValue(null);
+
+
+
 
                                             return Transaction.success(mutableData);
                                         }
 
                                         @Override
                                         public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-                                            if (!committed){
-                                                mData.remove(position);
-                                                notifyItemRemoved(position);
-                                                notifyItemRangeChanged(position, mData.size());
-                                                Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
-                                            }
-                                            else
-                                                Toast.makeText(context, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
-
+//                                            if (!committed){
+//                                            mData.remove(position);
+//                                              notifyItemRemoved(position);
+//                                            notifyItemRangeChanged(position, mData.size());
+//                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+//                                            }
+//                                            else
+//                                                Toast.makeText(context, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     /**********************************************************/
+
+                                    mData.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, mData.size());
+                                    Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
                                 }
                             })
                             .setNegativeButton(v.getResources().getString(R.string.cancel_dialog_button), new DialogInterface.OnClickListener() {
@@ -167,6 +175,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                                     dialog.dismiss();
                                 }
                             });
+
 
                     Dialog dialog = builder.create();
                     dialog.show();
@@ -212,6 +221,13 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             else
                 return "0" + String.valueOf(c);
         }
+
+        public void removeBooking(){
+            mData.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, mData.size());
+            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+    }
 
 
     }

@@ -38,6 +38,7 @@ import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.data.RestaurantInfo;
 
 /**
  * Created by carlocaramia on 08/04/16.
@@ -304,11 +305,11 @@ public class RestaurateurJsonManager
     }
 
     private boolean timeIsBefore(Date d1, Date d2) {
-        DateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
+        DateFormat f = new SimpleDateFormat("HH:mm");
         return f.format(d1).compareTo(f.format(d2)) < 0;
     }
     private boolean timeIsAfter(Date d1, Date d2) {
-        DateFormat f = new SimpleDateFormat("HH:mm:ss.SSS");
+        DateFormat f = new SimpleDateFormat("HH:mm");
         return f.format(d1).compareTo(f.format(d2)) >= 0;
     }
 
@@ -372,19 +373,33 @@ public class RestaurateurJsonManager
 //        return;
 //    }
 
-    //TODO mr.Wolf pensaci tu
+    public Restaurant getRestaurant(String restaurantID){
+        for(Restaurant r : this.listaFiltrata)
+            if(r.getID().equals(restaurantID))
+                return r;
+        return null;
+    }
     public boolean reservationRespectsTimeContraints(Calendar reservationDate, String restaurantId) {
-//        //controllo se la prenotazione è minimo tra un ora e nell'orario di apertura
-//        Calendar cal = Calendar.getInstance(); // creates calendar
-//        cal.setTime(new Date()); // sets calendar time/date
-//        cal.add(Calendar.MINUTE, 1); //add one minute
-//
-//        RestaurateurProfile profile=getRestaurant(restaurantId).getProfile();
-//
-//        if(reservationDate.after(cal) && timeIsAfter(reservationDate.getTime(),profile.getOpeningHour())&&
-//                timeIsBefore(reservationDate.getTime(),profile.getClosingHour()) ) return true;
-//        return false;
-        return true;
+       //controllo se la prenotazione è minimo tra un ora e nell'orario di apertura
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date()); // sets calendar time/date
+        cal.add(Calendar.MINUTE, 1); //add one minute
+
+        RestaurantInfo profile=getRestaurant(restaurantId).getInfo();
+        Date openingHour,closingHour;
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        try {
+            openingHour=sdf.parse(profile.getOpeningHour());
+            closingHour=sdf.parse(profile.getClosingHour());
+        } catch (ParseException e) {
+            Toast.makeText(myContext,"error parsing date",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if(reservationDate.after(cal) && timeIsAfter(reservationDate.getTime(),openingHour)&&
+                timeIsBefore(reservationDate.getTime(),closingHour) ) return true;
+        return false;
+
     }
 
     public List<Restaurant> getAdvancedFilteredRestaurants(String distanceValue, String priceValue, String typeValue, String timeValue) {

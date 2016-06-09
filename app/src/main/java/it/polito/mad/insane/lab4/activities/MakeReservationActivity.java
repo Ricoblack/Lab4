@@ -187,10 +187,10 @@ public class MakeReservationActivity extends AppCompatActivity {
                     //Verifico che i costraint per la prenotazione siano rispettati: in orario di lavoro e tra almeno un ora
                     //TODO implementare questo metodi sul manager, preferibilmente chi li ha fatti la scorsa volta, se non sbaglio
                     //TODO Carlo e/o Michele (Renato)
-//                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId) == false){
-//                        Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
-//                        return;
-//                    }
+                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId) == false){
+                        Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     AlertDialog.Builder builder = new AlertDialog.Builder(MakeReservationActivity.this);
                     builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title_booking))
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

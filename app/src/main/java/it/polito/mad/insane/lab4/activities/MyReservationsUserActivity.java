@@ -33,6 +33,7 @@ import java.util.List;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.ReservationsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MyReservationsUserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -40,14 +41,16 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     static final String PREF_LOGIN = "loginPref";
     private static String uid ;
     private SharedPreferences mPrefs = null;
+    private static HashMap<String,Booking> bookingLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
+    private static ArrayList<Booking> bookingList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
 
+    private DatabaseReference myRef;
+    private ValueEventListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(RestaurantProfileActivity.RestaurantProfileActivity != null)
-            RestaurantProfileActivity.RestaurantProfileActivity.finish();
         /*
         // finish the RestaurantProfile activity if is not finished
         if(RestaurantProfile.RestaurantProfileActivity != null)
@@ -67,10 +70,9 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         {
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("/bookings/users/"+uid);
+            listener=new ValueEventListener() {
 
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
@@ -82,6 +84,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                     if(bookings != null) {
                         //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
                         findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
+                        //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a michele(Federico)
                         setUpView(new ArrayList<Booking>(bookings.values()), rv);
                     }
                 }
@@ -89,7 +92,13 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            };
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            myRef = database.getReference("/bookings/users/"+uid);
+
+
+            myRef.addValueEventListener(listener);
 
         }
 
@@ -188,6 +197,13 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        myRef.addValueEventListener(listener);
+        super.onResume();
+        //
+    }
+
     private void setUpView(List<Booking> bookingList, RecyclerView rv){
 
         if(!bookingList.isEmpty())
@@ -240,5 +256,11 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             rv.setItemAnimator(new DefaultItemAnimator());
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        myRef.removeEventListener(listener);
+        super.onPause();
     }
 }
