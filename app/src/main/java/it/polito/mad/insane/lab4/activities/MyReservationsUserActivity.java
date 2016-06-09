@@ -86,6 +86,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                         findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
                         //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a michele(Federico)
                         setUpView(new ArrayList<Booking>(bookings.values()), rv);
+                    }else{
+                        setUpView(new ArrayList<Booking>(), rv);
                     }
                 }
                 @Override
@@ -254,6 +256,11 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             }
 
             rv.setItemAnimator(new DefaultItemAnimator());
+        }else{
+            TextView reservationMessage = (TextView) findViewById(R.id.no_reservation_message);
+            reservationMessage.setVisibility(View.GONE);
+            ReservationsRecyclerAdapter adapter = new ReservationsRecyclerAdapter(this, bookingList);
+            rv.setAdapter(adapter);
         }
 
     }
