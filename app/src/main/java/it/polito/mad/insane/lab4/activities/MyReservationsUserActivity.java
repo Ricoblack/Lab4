@@ -44,6 +44,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     private static HashMap<String,Booking> bookingLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
     private static ArrayList<Booking> bookingList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
 
+    private DatabaseReference myRef;
+    private ValueEventListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +70,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         {
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("/bookings/users/"+uid);
-
-
-            myRef.addValueEventListener(new ValueEventListener() {
+            listener=new ValueEventListener() {
 
 
                 @Override
@@ -94,7 +92,13 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            };
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            myRef = database.getReference("/bookings/users/"+uid);
+
+
+            myRef.addValueEventListener(listener);
 
         }
 
@@ -195,6 +199,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 
     @Override
     protected void onResume() {
+        myRef.addValueEventListener(listener);
         super.onResume();
         //
     }
@@ -251,5 +256,11 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             rv.setItemAnimator(new DefaultItemAnimator());
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        myRef.removeEventListener(listener);
+        super.onPause();
     }
 }
