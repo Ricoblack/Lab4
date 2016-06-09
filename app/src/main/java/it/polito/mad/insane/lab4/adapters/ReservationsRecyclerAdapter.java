@@ -79,7 +79,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
         private int position;
         private Booking currentBooking;
         private View cardView;
-        private String nameRist;
 
         private View.OnClickListener cardViewListener = new View.OnClickListener()
         {
@@ -90,7 +89,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 //Toast.makeText(v.getContext(),"Cliccato sulla cardView", Toast.LENGTH_LONG).show();
                 Intent i = new Intent(v.getContext(),DisplayReservationActivity.class);
                 i.putExtra("Booking", BookingsViewHolder.this.currentBooking);
-                i.putExtra("nameRestaurant", nameRist);
                 v.getContext().startActivity(i);
             }
         };
@@ -162,12 +160,9 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
             this.position = position;
 
-            //TODO quando il db sarà sistemato prelevare il nome del ristorante dall'oggetto Booking (Federico)
-            //nameRist = current.getNameRist();
-            restaurantName.setText("nomeRistProva");
+            restaurantName.setText(current.getRestaurantName());
 
-            //TODO quando il db sarà sistemato prelevare il nome dell'utente dall'oggetto Booking (Federico)
-            ID.setText("nomeUser");
+            ID.setText(current.getUserName());
 
             nItems.setText(MessageFormat.format("{0} " +view.getResources().getString(R.string.dishes), current.getTotalDishesQty()));
 

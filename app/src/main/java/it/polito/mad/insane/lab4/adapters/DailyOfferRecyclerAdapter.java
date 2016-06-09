@@ -127,8 +127,6 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
 
             this.popupLayout.setVisibility(popupsVisibility[position]); //layout del popup
 
-            // TODO sistemare la grafica delle cardView del fragment dailyOffer: non si vedono tutti gli item della ListView ma
-            // TODO solo uno (x Federico, da Renato con affetto XD)
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference dishesRef = database.getReference("/restaurants/" + restaurantId + "/dishMap" );
 
