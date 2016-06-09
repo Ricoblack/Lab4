@@ -112,7 +112,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
         TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
         if(mPrefs != null) {
-            title_drawer.setText(mPrefs.getString("rName", null));
+            title_drawer.setText(mPrefs.getString("rUser", null));
         }
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/

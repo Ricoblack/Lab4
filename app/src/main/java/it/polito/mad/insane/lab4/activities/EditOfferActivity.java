@@ -42,8 +42,6 @@ public class EditOfferActivity extends AppCompatActivity
     private EditText name;
     private DailyOffer currentOffer = null;
 
-
-
     /** Standard methods **/
     @Override
     protected void onCreate(Bundle savedInstanceState)

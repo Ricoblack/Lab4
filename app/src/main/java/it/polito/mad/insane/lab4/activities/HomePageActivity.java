@@ -249,7 +249,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
             TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
             if(mPrefs != null) {
-                title_drawer.setText(mPrefs.getString("rName", null));
+                title_drawer.setText(mPrefs.getString("rUser", null));
             }
             Menu menu = navigationView.getMenu();
             MenuItem log = menu.findItem(R.id.logout_drawer);
