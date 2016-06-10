@@ -28,6 +28,18 @@
 
         </android.support.design.widget.AppBarLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -182,7 +194,7 @@
 
             </LinearLayout>
 
-            <ListView
+            <it.polito.mad.insane.lab4.managers.NonScrollListView
                 android:id="@+id/reservation_dish_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -190,7 +202,13 @@
 
         </LinearLayout>
 
+
     </LinearLayout>
+
+    </ScrollView>
+
+   </LinearLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
