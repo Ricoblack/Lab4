@@ -164,7 +164,7 @@
                 android:value="it.polito.mad.insane.lab4.activities.HomeRestaurateurActivity" />
         </activity>
         <activity
-            android:name=".activities.MyReviewsRestaurant"
+            android:name=".activities.MyReviewsRestaurantActivity"
             android:label="@string/title_activity_my_reviews_restaurant"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>

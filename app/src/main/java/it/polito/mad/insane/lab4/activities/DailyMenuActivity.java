@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -68,16 +69,21 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
      * The {@link ViewPager} that will host the section contents.
      */
 
+    public static Activity DailyMenuActivity = null; // attribute used to finish() the current activity from another activity
+
     private ViewPager mViewPager;
     private static DishesRecyclerAdapter dishesAdapter = null;
     private static DailyOfferRecyclerAdapter offersAdapter = null;
     private static HashMap<String, Dish> dishesLocalCache = new HashMap<>();// questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera dishesList
-    private static ArrayList<Dish> dishesList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
+    private static ArrayList<Dish> dishesList = new ArrayList<>(); // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
     private static HashMap<String,DailyOffer> dailyOffersLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
-    private static ArrayList<DailyOffer> offersList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
+    private static ArrayList<DailyOffer> offersList = new ArrayList<>(); // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
     private static String rid; // restaurant id
+    private static TextView noOffersTextView;
+    private static TextView noDishesTextView;
+    private NavigationView navigationView;
     //static private RestaurateurJsonManager manager = null;
 
     //TODO: sarebbe da sostituire la logica dei listener usando "addValueEventListener(listener)" che rende l'app piu interattiva (guarda MyReservationUserActivity) - (Michele)
@@ -102,6 +108,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     @Override
     public void finish() {
         super.finish();
+        DailyMenuActivity = null;
         dailyOffersLocalCache.clear();
         dishesLocalCache.clear();
     }
@@ -111,7 +118,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //DailyMenuActivity.manager = RestaurateurJsonManager.getInstance(this);
-
+        DailyMenuActivity = this;
         setContentView(R.layout.daily_menu_activity);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -212,7 +219,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
         TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
@@ -235,36 +242,49 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
             case R.id.home_restaurateur_activity:
                 if(!getClass().equals(HomeRestaurateurActivity.class))
                 {
+                    // finish the HomeRestaurateurActivity if is not finished
+                    if(HomeRestaurateurActivity.HomeRestaurateurActivity != null)
+                        HomeRestaurateurActivity.HomeRestaurateurActivity.finish();
+
                     Intent i = new Intent(this, HomeRestaurateurActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
             case R.id.action_daily_menu:
                 if(!getClass().equals(DailyMenuActivity.class))
                 {
+                    // finish the DailyMenuActivity if is not finished
+                    if(DailyMenuActivity != null)
+                        DailyMenuActivity.finish();
+
                     // Start DailyMenuActivity activity
                     Intent invokeDailyMenu = new Intent(this, DailyMenuActivity.class);
                     startActivity(invokeDailyMenu);
-                    finish();
                     break;
                 }
 
             case R.id.my_reviews_restaurant:
-                if(!getClass().equals(MyReviewsRestaurant.class)) {
-                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurant.class);
+                if(!getClass().equals(MyReviewsRestaurantActivity.class))
+                {
+                    // finish the MyReviewsRestaurantActivity if is not finished
+                    if(MyReviewsRestaurantActivity.MyReviewsRestaurantActivity != null)
+                        MyReviewsRestaurantActivity.MyReviewsRestaurantActivity.finish();
+
+                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurantActivity.class);
                     startActivity(invokeMyReviewsRestaurant);
-                    finish();
                 }
                 break;
 
             case R.id.action_edit_profile:
                 if(!getClass().equals(EditProfileRestaurateurActivity.class))
                 {
+                    // finish the EditProfileRestaurateurActivity if is not finished
+                    if(EditProfileRestaurateurActivity.EditProfileRestaurateurActivity != null)
+                        EditProfileRestaurateurActivity.EditProfileRestaurateurActivity.finish();
+
                     //Start EditProfileActivity
                     Intent invokeEditProfile = new Intent(this, EditProfileRestaurateurActivity.class);
                     startActivity(invokeEditProfile);
-                    finish();
                 }
                 break;
 
@@ -296,12 +316,15 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     @Override
     protected void onResume() {
         super.onResume();
+
+        navigationView.getMenu().findItem(R.id.action_daily_menu).setChecked(true);
         if (dishesAdapter != null)
             dishesAdapter.notifyDataSetChanged();
         if(offersAdapter != null)
             offersAdapter.notifyDataSetChanged();
         updateDishes();
         updateDailyOffers();
+
     }
 
     /**
@@ -311,6 +334,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dishMap");
+        noDishesTextView = (TextView) findViewById(R.id.dish_fragment_no_dishes);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -335,6 +359,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
 
                 }else
                 {
+                    if (noDishesTextView != null && dishesList.isEmpty()) // crasha
+                        noDishesTextView.setVisibility(View.VISIBLE);
+
                     if(dishesList.isEmpty()){
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
                         recyclerView.setVisibility(View.GONE);
@@ -353,6 +380,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dailyOfferMap");
+        noOffersTextView = (TextView) findViewById(R.id.offer_fragment_no_offers);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -381,7 +409,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                 }
                 else
                 {
-                    //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
+                    if (noOffersTextView != null && offersList.isEmpty())
+                        noOffersTextView.setVisibility(View.VISIBLE);
+
                     if(offersList.isEmpty()) {
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.daily_offers_recycler_view);
                         recyclerView.setVisibility(View.GONE);
@@ -488,6 +518,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         private View menuLayout(LayoutInflater inflater, ViewGroup container)
         {
             final View rootView = inflater.inflate(R.layout.restaurant_menu_fragment, container, false);
+            noDishesTextView = (TextView) rootView.findViewById(R.id.dish_fragment_no_dishes);
 
 //            manager = RestaurateurJsonManager.getInstance(getActivity());
 
@@ -514,6 +545,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                         setupDishesRecyclerView(rootView, dishesList);
                     }else
                     {
+                        if (noDishesTextView != null && dishesList.isEmpty())
+                            noDishesTextView.setVisibility(View.VISIBLE);
+
                         if(dishesList == null)
                             dishesList = new ArrayList<>();
                         setupDishesRecyclerView(rootView, dishesList);
@@ -530,6 +564,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         }
         private RecyclerView setupDishesRecyclerView(View rootView, List<Dish> dishes)
         {
+
             // set Adapter
             dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, rid, 1);
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.MenuRecyclerView);
@@ -590,6 +625,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         private View dailyOfferLayout(LayoutInflater inflater, ViewGroup container)
         {
             final View rootView = inflater.inflate(R.layout.daily_offer_fragment, container, false);
+            noOffersTextView = (TextView) rootView.findViewById(R.id.offer_fragment_no_offers);
 
             // take istance of the manager
 //            manager = RestaurateurJsonManager.getInstance(getActivity());
@@ -618,7 +654,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
 
                     else
                     {
-                        //TODO: far uscire un messaggio che indica che non ci sono offerte disponibili (Michele)
+                        if (noOffersTextView != null && offersList.isEmpty())
+                            noOffersTextView.setVisibility(View.VISIBLE);
+
                         if(offersList == null)
                             offersList = new ArrayList<>();
                         setupDailyOfferRecyclerView(rootView, offersList);

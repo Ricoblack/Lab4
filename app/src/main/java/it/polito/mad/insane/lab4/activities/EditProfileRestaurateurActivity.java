@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -54,9 +55,12 @@ import it.polito.mad.insane.lab4.data.RestaurantInfo;
 
 public class EditProfileRestaurateurActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener{
 
+
+    public static Activity EditProfileRestaurateurActivity = null; // attribute used to finish() the current activity from another activity
     private static int MY_GL_MAX_TEXTURE_SIZE = 1024;
     private static final int REQUEST_IMAGE_GALLERY = 581;
     private static Bitmap tempCoverPhoto = null;
+    private NavigationView navigationView;
     private String rUser;
     private String rid;
 
@@ -64,11 +68,18 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
     private SharedPreferences mPrefs = null;
 
     @Override
+    public void finish()
+    {
+        super.finish();
+        EditProfileRestaurateurActivity = null;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         //getWindow().//full screen prima di set content view
-
+        EditProfileRestaurateurActivity = this;
         setContentView(R.layout.edit_profile_restaurateur_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -144,7 +155,7 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
         TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
@@ -167,42 +178,55 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
             case R.id.home_restaurateur_activity:
                 if(!getClass().equals(HomeRestaurateurActivity.class))
                 {
+                    // finish the HomeRestaurateurActivity if is not finished
+                    if(HomeRestaurateurActivity.HomeRestaurateurActivity != null)
+                        HomeRestaurateurActivity.HomeRestaurateurActivity.finish();
+
                     Intent i = new Intent(this, HomeRestaurateurActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
             case R.id.action_daily_menu:
                 if(!getClass().equals(DailyMenuActivity.class))
                 {
+                    // finish the DailyMenuActivity if is not finished
+                    if(DailyMenuActivity.DailyMenuActivity != null)
+                        DailyMenuActivity.DailyMenuActivity.finish();
+
                     // Start DailyMenuActivity activity
                     Intent invokeDailyMenu = new Intent(this, DailyMenuActivity.class);
                     startActivity(invokeDailyMenu);
-                    finish();
                     break;
                 }
 
             case R.id.my_reviews_restaurant:
-                if(!getClass().equals(MyReviewsRestaurant.class)) {
-                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurant.class);
+                if(!getClass().equals(MyReviewsRestaurantActivity.class))
+                {
+                    // finish the MyReviewsRestaurantActivity if is not finished
+                    if(MyReviewsRestaurantActivity.MyReviewsRestaurantActivity != null)
+                        MyReviewsRestaurantActivity.MyReviewsRestaurantActivity.finish();
+
+                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurantActivity.class);
                     startActivity(invokeMyReviewsRestaurant);
-                    finish();
                 }
                 break;
 
             case R.id.action_edit_profile:
                 if(!getClass().equals(EditProfileRestaurateurActivity.class))
                 {
+                    // finish the EditProfileRestaurateurActivity if is not finished
+                    if(EditProfileRestaurateurActivity != null)
+                        EditProfileRestaurateurActivity.finish();
+
                     //Start EditProfileActivity
                     Intent invokeEditProfile = new Intent(this, EditProfileRestaurateurActivity.class);
                     startActivity(invokeEditProfile);
-                    finish();
                 }
                 break;
 
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
-                    Toast.makeText(this, R.string.not_logged, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.not_logged,Toast.LENGTH_SHORT).show();
                 }else {
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
@@ -239,6 +263,8 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
     @Override
     protected void onResume(){
         super.onResume();
+
+        navigationView.getMenu().findItem(R.id.action_edit_profile).setChecked(true);
         if(tempCoverPhoto != null){
             ImageView iv = (ImageView) findViewById(R.id.coverPhoto);
             iv.setImageBitmap(tempCoverPhoto);

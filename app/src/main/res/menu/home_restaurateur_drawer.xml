@@ -19,7 +19,7 @@
 
 
 
-    <item android:title="Peronal Area">
+    <item android:title="@string/personal_area">
         <menu>
             <item
                 android:id="@+id/action_edit_profile"

@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -61,6 +62,9 @@ import it.polito.mad.insane.lab4.data.Booking;
 
 public class HomeRestaurateurActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static Activity HomeRestaurateurActivity = null; // attribute used to finish() the current activity from another activity
+
+    private static NavigationView navigationView;
     private BookingsRecyclerAdapter adapter;
     private static Calendar globalDate = Calendar.getInstance();
     private static int globalHour = -1;
@@ -82,11 +86,21 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     //FIXME sistemare il grafico e la scelta delle ore (Renato)
     //TODO aggiungere almeno una prenotazione al giorno all'avvio dell'app altrimenti il giorno della valutazione l'home page sarà vuota (Renato)
 
+
     /** Standard methods **/
+
+    @Override
+    public void finish()
+    {
+        super.finish();
+        HomeRestaurateurActivity = null;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        HomeRestaurateurActivity = this;
+
         setContentView(R.layout.home_restaurateur_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,7 +128,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
         TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
@@ -124,12 +138,34 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
 
+        closeOtherActivities();
+
     }
 
+    private void closeOtherActivities()
+    {
+        // close other activities
+        if(DailyMenuActivity.DailyMenuActivity != null)
+            DailyMenuActivity.DailyMenuActivity.finish();
+
+        if(EditProfileRestaurateurActivity.EditProfileRestaurateurActivity != null)
+            EditProfileRestaurateurActivity.EditProfileRestaurateurActivity.finish();
+
+        if(MyReviewsRestaurantActivity.MyReviewsRestaurantActivity != null)
+            MyReviewsRestaurantActivity.MyReviewsRestaurantActivity.finish();
+
+//        // clean navigation drawer selection
+//        if (navigationView != null) {
+//            for(int i = 0; i < navigationView.getMenu().size(); i++)
+//                navigationView.getMenu().getItem(i).setChecked(false);
+//        }
+
+    }
     /********************DRAWER*****************************/
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item)
+    {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -138,42 +174,55 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             case R.id.home_restaurateur_activity:
                 if(!getClass().equals(HomeRestaurateurActivity.class))
                 {
+                    // finish the HomeRestaurateurActivity if is not finished
+                    if(HomeRestaurateurActivity != null)
+                        HomeRestaurateurActivity.finish();
+
                     Intent i = new Intent(this, HomeRestaurateurActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
             case R.id.action_daily_menu:
                 if(!getClass().equals(DailyMenuActivity.class))
                 {
+                    // finish the DailyMenuActivity if is not finished
+                    if(DailyMenuActivity.DailyMenuActivity != null)
+                        DailyMenuActivity.DailyMenuActivity.finish();
+
                     // Start DailyMenuActivity activity
                     Intent invokeDailyMenu = new Intent(this, DailyMenuActivity.class);
                     startActivity(invokeDailyMenu);
-                    finish();
                     break;
                 }
 
             case R.id.my_reviews_restaurant:
-                if(!getClass().equals(MyReviewsRestaurant.class)) {
-                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurant.class);
+                if(!getClass().equals(MyReviewsRestaurantActivity.class))
+                {
+                    // finish the MyReviewsRestaurantActivity if is not finished
+                    if(MyReviewsRestaurantActivity.MyReviewsRestaurantActivity != null)
+                        MyReviewsRestaurantActivity.MyReviewsRestaurantActivity.finish();
+
+                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurantActivity.class);
                     startActivity(invokeMyReviewsRestaurant);
-                    finish();
                 }
                 break;
 
             case R.id.action_edit_profile:
                 if(!getClass().equals(EditProfileRestaurateurActivity.class))
                 {
+                    // finish the EditProfileRestaurateurActivity if is not finished
+                    if(EditProfileRestaurateurActivity.EditProfileRestaurateurActivity != null)
+                        EditProfileRestaurateurActivity.EditProfileRestaurateurActivity.finish();
+
                     //Start EditProfileActivity
                     Intent invokeEditProfile = new Intent(this, EditProfileRestaurateurActivity.class);
                     startActivity(invokeEditProfile);
-                    finish();
                 }
                 break;
 
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
-                    Toast.makeText(HomeRestaurateurActivity.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.not_logged,Toast.LENGTH_SHORT).show();
                 }else {
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
@@ -252,6 +301,9 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     protected void onResume()
     {
         super.onResume();
+
+
+        navigationView.getMenu().findItem(R.id.home_restaurateur_activity).setChecked(true);
 
         //adapter.notifyDataSetChanged();
         TextView tv = (TextView) findViewById(R.id.home_title_day);

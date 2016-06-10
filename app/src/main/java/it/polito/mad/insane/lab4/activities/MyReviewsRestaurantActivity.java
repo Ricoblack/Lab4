@@ -1,10 +1,10 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,15 +19,25 @@ import android.widget.Toast;
 
 import it.polito.mad.insane.lab4.R;
 
-public class MyReviewsRestaurant extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+public class MyReviewsRestaurantActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+{
+    public static Activity MyReviewsRestaurantActivity = null;
+    static final String PREF_LOGIN = "loginPref";
+    private SharedPreferences mPrefs = null;
+    private static String rid;
+    private NavigationView navigationView;
+
+    @Override
+    public void finish()
     {
-        static final String PREF_LOGIN = "loginPref";
-        private SharedPreferences mPrefs = null;
-        private static String rid;
+        super.finish();
+        MyReviewsRestaurantActivity = null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyReviewsRestaurantActivity = this;
         setContentView(R.layout.my_reviews_restaurant_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,7 +67,7 @@ public class MyReviewsRestaurant extends AppCompatActivity implements Navigation
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
         TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
@@ -66,6 +76,15 @@ public class MyReviewsRestaurant extends AppCompatActivity implements Navigation
         }
         navigationView.setNavigationItemSelectedListener(this);
         /*******************************************************/
+    }
+
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        navigationView.getMenu().findItem(R.id.my_reviews_restaurant).setChecked(true);
     }
 
     @Override
@@ -112,36 +131,49 @@ public class MyReviewsRestaurant extends AppCompatActivity implements Navigation
             case R.id.home_restaurateur_activity:
                 if(!getClass().equals(HomeRestaurateurActivity.class))
                 {
+                    // finish the HomeRestaurateurActivity if is not finished
+                    if(HomeRestaurateurActivity.HomeRestaurateurActivity != null)
+                        HomeRestaurateurActivity.HomeRestaurateurActivity.finish();
+
                     Intent i = new Intent(this, HomeRestaurateurActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
             case R.id.action_daily_menu:
                 if(!getClass().equals(DailyMenuActivity.class))
                 {
+                    // finish the DailyMenuActivity if is not finished
+                    if(DailyMenuActivity.DailyMenuActivity != null)
+                        DailyMenuActivity.DailyMenuActivity.finish();
+
                     // Start DailyMenuActivity activity
                     Intent invokeDailyMenu = new Intent(this, DailyMenuActivity.class);
                     startActivity(invokeDailyMenu);
-                    finish();
                     break;
                 }
 
             case R.id.my_reviews_restaurant:
-                if(!getClass().equals(MyReviewsRestaurant.class)) {
-                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurant.class);
+                if(!getClass().equals(MyReviewsRestaurantActivity.class))
+                {
+                    // finish the MyReviewsRestaurantActivity if is not finished
+                    if(MyReviewsRestaurantActivity != null)
+                        MyReviewsRestaurantActivity.finish();
+
+                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurantActivity.class);
                     startActivity(invokeMyReviewsRestaurant);
-                    finish();
                 }
                 break;
 
             case R.id.action_edit_profile:
                 if(!getClass().equals(EditProfileRestaurateurActivity.class))
                 {
+                    // finish the EditProfileRestaurateurActivity if is not finished
+                    if(EditProfileRestaurateurActivity.EditProfileRestaurateurActivity != null)
+                        EditProfileRestaurateurActivity.EditProfileRestaurateurActivity.finish();
+
                     //Start EditProfileActivity
                     Intent invokeEditProfile = new Intent(this, EditProfileRestaurateurActivity.class);
                     startActivity(invokeEditProfile);
-                    finish();
                 }
                 break;
 

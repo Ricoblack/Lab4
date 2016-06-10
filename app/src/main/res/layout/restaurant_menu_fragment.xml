@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:padding="10dp"
-        android:text="@string/no_offers_available"
+        android:text="@string/no_dishes_available"
         android:textSize="18sp"
         android:gravity="center"
         android:visibility="gone"/>
