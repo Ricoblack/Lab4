@@ -5,6 +5,8 @@ package it.polito.mad.insane.lab4.activities;
         import android.annotation.TargetApi;
         import android.content.Intent;
         import android.content.SharedPreferences;
+        import android.content.pm.ActivityInfo;
+        import android.content.res.Configuration;
         import android.support.design.widget.NavigationView;
         import android.support.v4.view.GravityCompat;
         import android.support.v4.widget.DrawerLayout;
@@ -157,6 +159,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //        title_drawer.setText("NO LOG");
 //        navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
+        // Fix Portrait Mode
+        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+        {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     //    private void populateAutoComplete() {

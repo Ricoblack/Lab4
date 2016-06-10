@@ -1,6 +1,8 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -41,7 +43,8 @@ public class DisplayReservationActivity extends AppCompatActivity {
     private Context context;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
 
 
         super.onCreate(savedInstanceState);
@@ -117,6 +120,12 @@ public class DisplayReservationActivity extends AppCompatActivity {
 
         if(currentBooking.getNotes() != null){
             note.setText(currentBooking.getNotes());
+        }
+        // Fix Portrait Mode
+        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+        {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 

@@ -281,6 +281,7 @@
                         android:drawableStart="@drawable/ic_mode_edit_black_24dp"
                         android:drawablePadding="5dp"
                         android:textSize="16sp"
+                        android:inputType="textMultiLine"
                         android:hint="@string/add_review_text"
                         />
 

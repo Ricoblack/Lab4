@@ -96,10 +96,13 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     public void onBackPressed() {
         /**********************DRAWER***************************/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (drawer != null)
+        {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
         /*************************************************/
         finish();
@@ -115,7 +118,8 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         //DailyMenuActivity.manager = RestaurateurJsonManager.getInstance(this);
         DailyMenuActivity = this;
@@ -180,12 +184,20 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                 switch(position)
                 {
                     case 0:
-                        dishFab.setVisibility(View.GONE);
-                        offerFab.setVisibility(View.VISIBLE);
+                        if (dishFab != null)
+                            dishFab.setVisibility(View.GONE);
+
+                        if (offerFab != null)
+                            offerFab.setVisibility(View.VISIBLE);
+
                         break;
                     case 1:
-                        dishFab.setVisibility(View.VISIBLE);
-                        offerFab.setVisibility(View.GONE);
+                        if (dishFab != null)
+                            dishFab.setVisibility(View.VISIBLE);
+
+                        if (offerFab != null)
+                            offerFab.setVisibility(View.GONE);
+
                         break;
                 }
             }
@@ -216,7 +228,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        if (drawer != null)
+            drawer.setDrawerListener(toggle);
+
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -308,7 +322,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null)
+            drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
     /*************************************************/
@@ -359,12 +375,14 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
 
                 }else
                 {
-                    if (noDishesTextView != null && dishesList.isEmpty()) // crasha
+                    if (noDishesTextView != null && dishesList.isEmpty())
                         noDishesTextView.setVisibility(View.VISIBLE);
 
                     if(dishesList.isEmpty()){
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
-                        recyclerView.setVisibility(View.GONE);
+                        if (recyclerView != null)
+                            recyclerView.setVisibility(View.GONE);
+
                     }
                 }
 
@@ -412,9 +430,12 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                     if (noOffersTextView != null && offersList.isEmpty())
                         noOffersTextView.setVisibility(View.VISIBLE);
 
-                    if(offersList.isEmpty()) {
+                    if(offersList.isEmpty())
+                    {
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.daily_offers_recycler_view);
-                        recyclerView.setVisibility(View.GONE);
+                        if (recyclerView != null)
+                            recyclerView.setVisibility(View.GONE);
+
                     }
                 }
             }
@@ -519,8 +540,6 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         {
             final View rootView = inflater.inflate(R.layout.restaurant_menu_fragment, container, false);
             noDishesTextView = (TextView) rootView.findViewById(R.id.dish_fragment_no_dishes);
-
-//            manager = RestaurateurJsonManager.getInstance(getActivity());
 
             // remove the cart textview
             TextView cartText = (TextView) rootView.findViewById(R.id.show_reservation_button);
@@ -629,9 +648,6 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         {
             final View rootView = inflater.inflate(R.layout.daily_offer_fragment, container, false);
             noOffersTextView = (TextView) rootView.findViewById(R.id.offer_fragment_no_offers);
-
-            // take istance of the manager
-//            manager = RestaurateurJsonManager.getInstance(getActivity());
 
             // take data from Firebase
             FirebaseDatabase database = FirebaseDatabase.getInstance();

@@ -74,6 +74,7 @@
                         android:layout_toRightOf="@id/price_text"
                         android:layout_centerVertical="true"
                         android:layout_width="80dp"
+                        android:inputType="numberDecimal"
                         android:layout_height="wrap_content" />
 
                     <TextView

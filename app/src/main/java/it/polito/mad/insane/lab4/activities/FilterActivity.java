@@ -26,8 +26,10 @@ public class FilterActivity extends AppCompatActivity
     static final String PREF_NAME = "myPrefFilter";
     private SharedPreferences mPrefs = null;
 
+    // TODO: i filtri andrebbero caricati dinamicamente in base ai valori contenuti nel DB (Michele)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter_activity);
 

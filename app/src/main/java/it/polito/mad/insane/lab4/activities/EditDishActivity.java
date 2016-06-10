@@ -73,7 +73,8 @@ public class EditDishActivity extends AppCompatActivity
      * Standard Methods
      **/
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         // initialize manager
 //        EditDishActivity.manager = RestaurateurJsonManager.getInstance(this);

@@ -109,6 +109,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/add_addtional_notes"
+                        android:inputType="textMultiLine"
                         android:textSize="14sp"
                         android:drawableLeft="@drawable/ic_assignment_black_24dp"
                         android:drawablePadding="5dp"/>

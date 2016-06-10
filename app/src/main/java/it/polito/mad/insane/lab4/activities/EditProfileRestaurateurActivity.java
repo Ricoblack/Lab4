@@ -95,14 +95,14 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         }
 
         final ImageView img = (ImageView) findViewById(R.id.coverPhoto);
-        if(img != null) {
-            img.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    takePhotoFromGallery();
-                }
-            });
-        }
+//        if(img != null) {
+//            img.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    takePhotoFromGallery();
+//                }
+//            });
+//        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null){

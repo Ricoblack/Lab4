@@ -3,6 +3,7 @@ package it.polito.mad.insane.lab4.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -63,7 +64,8 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         MyReviewsRestaurantActivity = this;
         setContentView(R.layout.my_reviews_restaurant_activity);
@@ -173,6 +175,13 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
         }
         navigationView.setNavigationItemSelectedListener(this);
         /*******************************************************/
+
+        // Fix Portrait Mode
+        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+        {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
 
