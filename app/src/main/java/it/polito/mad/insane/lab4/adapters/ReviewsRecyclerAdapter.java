@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -80,9 +81,10 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
         private int position;
         private boolean first = true;
         private boolean expandable = true;
-        private ImageView expandArrow;
-        private LinearLayout hiddenScoresLayout;
-        private LinearLayout headerLayout;
+//        private LinearLayout hiddenScoresLayout;
+        private TextView firstScore;
+        private TextView secondScore;
+        private TextView thirdScore;
 
         public ReviewsViewHolder(View itemView) {
             super(itemView);
@@ -94,8 +96,10 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
             this.expandableText = (TextView) itemView.findViewById(R.id.review_extendable_text);
             this.btnSeeMore = (TextView) itemView.findViewById(R.id.review_btn_see_more);
             this.date = (TextView) itemView.findViewById(R.id.review_date);
-            this.headerLayout = (LinearLayout) itemView.findViewById(R.id.review_header_layout);
-
+//            this.headerLayout = (LinearLayout) itemView.findViewById(R.id.review_header_layout);
+            this.firstScore = (TextView) itemView.findViewById(R.id.cardview_review_score_1);
+            this.secondScore = (TextView) itemView.findViewById(R.id.cardview_review_score_2);
+            this.thirdScore = (TextView) itemView.findViewById(R.id.cardview_review_score_3);
             //T-ODO: add the userPic instead of the left drawable of userName in the cardView
         }
 
@@ -142,6 +146,13 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
 
             DecimalFormat df = new DecimalFormat("0.0");
             this.score.setText(String.valueOf(df.format(current.getAvgFinalScore())));
+            this.firstScore.setText(MessageFormat.format("{0}/10",
+                    String.valueOf(df.format(current.getScoresMap().get(this.cardView.getResources().getString(R.string.first_score))))));
+            this.secondScore.setText(MessageFormat.format("{0}/10",
+                    String.valueOf(df.format(current.getScoresMap().get(this.cardView.getResources().getString(R.string.second_score))))));
+            this.thirdScore.setText(MessageFormat.format("{0}/10",
+                    String.valueOf(df.format(current.getScoresMap().get(this.cardView.getResources().getString(R.string.third_score))))));
+
         }
 
 //        public double roundToHalf(double d) {

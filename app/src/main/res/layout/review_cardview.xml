@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
-            android:id="@+id/review_header_layout">
+            android:id="@+id/review_header_layout"
+            android:layout_marginBottom="5dp">
 
             <TextView
                 android:id="@+id/review_user_name"
@@ -24,6 +25,7 @@
                 android:layout_height="match_parent"
                 android:text="@string/user_name"
                 android:drawableLeft="@drawable/ic_account_circle_black_24dp"
+                android:textSize="16sp"
                 android:drawablePadding="5dp"
                 android:layout_weight="1"/>
 
@@ -47,6 +49,76 @@
             android:layout_height="2dp"
             android:background="@color/colorPrimary"
             />
+
+        <LinearLayout
+            android:id="@+id/cardview_review_scores_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/punctuality"
+                    android:textColor="@color/colorPrimary"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location"
+                    android:textColor="@color/colorPrimary"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                >
+
+                <TextView
+                    android:id="@+id/cardview_review_score_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/cardview_review_score_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/cardview_review_score_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textColor="@color/colorPrimary"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/review_title"
