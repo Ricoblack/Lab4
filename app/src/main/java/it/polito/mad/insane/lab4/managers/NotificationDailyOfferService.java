@@ -299,6 +299,7 @@ public class NotificationDailyOfferService extends Service {
         ArrayList<Object> list=db.getListObject("notification",DailyOfferSimple.class);
         if(list==null) list=new ArrayList<>();
         list.add(offer);
+        db.putListObject("notification",list);
     }
 }
 

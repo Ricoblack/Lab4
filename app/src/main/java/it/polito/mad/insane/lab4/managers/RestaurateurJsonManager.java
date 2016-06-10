@@ -52,7 +52,7 @@ public class RestaurateurJsonManager
     //private static DbApp dbApp;
     private DbAppReset dbAppReset;
     public Context myContext;
-    private Location location;  //setto il polito come location dove cercare i ristoranti
+    //private Location location;  //setto il polito come location dove cercare i ristoranti
     public SimpleLocation simpleLocation;
     public List<Restaurant> listaFiltrata;
 
@@ -72,9 +72,9 @@ public class RestaurateurJsonManager
         this.myContext = myContext;
 
         //set fake location
-        this.location = new Location("me");
-        location.setLatitude(45.064480);
-        location.setLongitude(7.660290);
+        //this.location = new Location("me");
+        //location.setLatitude(45.064480);
+        //location.setLongitude(7.660290);
 
         //Se l'app è aperta per la prima volta non c'è un json di reset, qui lo creo e lo riempio con dati random per il reset
         //Altrimenti recupero il json salvato
@@ -198,8 +198,10 @@ public class RestaurateurJsonManager
         String subString=distanceValue.substring(0,distanceValue.length()-1);
         float distance=Float.parseFloat(subString);
 
-
-        if(r.location.distanceTo(this.location)<=distance) return true;
+        Location loc=new Location("me");
+        loc.setLatitude(this.simpleLocation.getLatitude());
+        loc.setLongitude(this.simpleLocation.getLongitude());
+        if(r.location.distanceTo(loc)<=distance) return true;
 
 
 
@@ -231,9 +233,9 @@ public class RestaurateurJsonManager
 //        Calendar cal = Calendar.getInstance();
 //        cal.setTime(sdf.parse(r.getInfo().getOpeningHour()));
 
-        //TODO trasformare le date in calendar ed eliminare i dati deprecated (Renato)
+
         if(sdf.parse(r.getInfo().getOpeningHour()).getHours()<=startTimeDate.getHours() &&
-                sdf.parse(r.getInfo().getOpeningHour()).getHours()>=endTimeDate.getHours()) return true;
+                sdf.parse(r.getInfo().getClosingHour()).getHours()>=endTimeDate.getHours()) return true;
 
         return false;
     }
@@ -285,7 +287,10 @@ public class RestaurateurJsonManager
                 Collections.sort(lista, new Comparator<Restaurant>() {
                 @Override
                 public int compare(Restaurant lhs, Restaurant rhs) {
-                    return (int)(location.distanceTo(lhs.location)-location.distanceTo(rhs.location));
+                    Location loc=new Location("me");
+                    loc.setLatitude(simpleLocation.getLatitude());
+                    loc.setLongitude(simpleLocation.getLongitude());
+                    return (int)(loc.distanceTo(lhs.location)-loc.distanceTo(rhs.location));
                 }
             });
             }
@@ -301,9 +306,7 @@ public class RestaurateurJsonManager
         return lista;
     }
 
-    public Location getLocation(){
-        return this.location;
-    }
+
 
     private boolean timeIsBefore(Date d1, Date d2) {
         DateFormat f = new SimpleDateFormat("HH:mm");

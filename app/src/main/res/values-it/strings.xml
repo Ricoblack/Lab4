@@ -248,4 +248,5 @@
     <string name="no_reviews_available">Non ci sono recensioni disponibili per questo ristorante. Aggiungi per primo una recensione!</string>
     <string name="user">User</string>
     <string name="cannotFilterLocalization">Impossibile filtrare per distanza</string>
+    <string name="selectOrdering">Seleziona un ordinamento</string>
 </resources>
