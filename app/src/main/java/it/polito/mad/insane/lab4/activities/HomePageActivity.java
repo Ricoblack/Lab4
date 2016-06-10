@@ -591,12 +591,15 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                         editor.clear();
                         editor.apply();
 
-                        //stop service and clear notifications
-                        stopService(new Intent(this, NotificationDailyOfferService.class));
-                        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                        notificationManager.cancel(001);
+
                         //Toast.makeText(this,"Service stopped",Toast.LENGTH_SHORT);
                     }
+
+                    //stop service and clear notifications
+                    stopService(new Intent(this, NotificationDailyOfferService.class));
+                    NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(001);
+
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
                     finish();
