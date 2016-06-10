@@ -207,7 +207,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         {
             TextView reservationMessage = (TextView) findViewById(R.id.no_reservation_message);
             reservationMessage.setVisibility(View.GONE);
-            myRef.removeEventListener(listener);
+            //myRef.removeEventListener(listener);
             ReservationsRecyclerAdapter adapter = new ReservationsRecyclerAdapter(this, bookingList, listener, myRef);
             rv.setAdapter(adapter);
 

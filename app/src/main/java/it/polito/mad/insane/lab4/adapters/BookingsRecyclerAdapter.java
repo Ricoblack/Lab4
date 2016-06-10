@@ -10,6 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -91,35 +96,42 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
             @Override
             public void onClick(View v)
             {
-                //TODO sistemare l'onclick della cardview
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                 builder.setTitle(R.string.dialog_dialog_delete);
                 // Add the buttons
                 builder.setPositiveButton(R.string.ok_delete_dialog, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-//                        RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(myContext);
-//
-//                        for(Booking b: manager.getBookings()){
-//                            if(b.getID().equals(currentBooking.getID())){
-//                                //Toast.makeText(v.getContext(),v.getResources().getString(R.string.confirm_delete_booking)+" #"+currentBooking.getID(), Toast.LENGTH_LONG).show();
-//                                manager.getBookings().remove(b);
-//                                BookingsRecyclerAdapter.this.mData.remove(b);
-//                                notifyItemRemoved(position);
-//                                notifyItemRangeRemoved(position, getItemCount());
-//                                break;
-//                            }
-//                        }
-//                        manager.saveDbApp();
-//                        //Intent intent = new Intent(myContext,HomeRestaurateurActivity.class);
-//                        //intent.putExtra("flag_delete",1);
-//                        //myContext.startActivity(intent);
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        //final DatabaseReference myRefadapter = database.getReference("/bookings/");
+                        DatabaseReference myRefadapter = database.getReference("/bookings/users/"+currentBooking.getUserId()+"/"+currentBooking.getID());
+
+                        myRefadapter.setValue(null, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            }
+                        });
+
+                        FirebaseDatabase database2 = FirebaseDatabase.getInstance();
+                        //final DatabaseReference myRefadapter = database.getReference("/bookings/");
+                        DatabaseReference myRefadapter2 = database.getReference("/bookings/restaurants/"+currentBooking.getRestaurantId()+"/"+currentBooking.getID());
+
+                        myRefadapter2.setValue(null, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            }
+                        });
+
+                        mData.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, mData.size());
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_delete_dialog, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
+                        dialog.dismiss();
                     }
                 });
 

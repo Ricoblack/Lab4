@@ -68,6 +68,10 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     private SharedPreferences mPrefs = null;
     private static String rid;
     private  ArrayList<Booking> bookings = new ArrayList<>();
+    private ValueEventListener listenerHour = null;
+    private ValueEventListener listenerDay = null;
+    private DatabaseReference myRefHour = null;
+    private DatabaseReference myRefDay = null;
 
     // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
 
@@ -167,7 +171,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
-                    Toast.makeText(this, R.string.not_logged, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomeRestaurateurActivity.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
                 }else {
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
@@ -251,6 +255,9 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         TextView tv = (TextView) findViewById(R.id.home_title_day);
         if(tv != null)
             tv.setText(String.format("  %s  ", convertDateToString(globalDate.getTime())));
+        if(myRefHour != null){
+            myRefHour.removeEventListener(listenerHour);
+        }
         updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         tv = (TextView) findViewById(R.id.home_title_hour);
@@ -260,6 +267,9 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
                 tv.setText(R.string.all_hours);
             else {
                 tv.setText(String.format("  %d:00  ", globalHour));
+                if(myRefDay != null){
+                    myRefDay.removeEventListener(listenerDay);
+                }
                 updateBookingsHour(globalHour);
             }
         }
@@ -387,17 +397,12 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
     private void updateBookingsHour(final int hour){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/bookings/restaurants/"+rid);
+        myRefHour = database.getReference("/bookings/restaurants/"+rid);
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        listenerHour = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,Booking> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
-                    @Override
-                    protected Object clone() throws CloneNotSupportedException {
-                        return super.clone();
-                    }
-                });
+                HashMap<String,Booking> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {});
 
                 bookings = new ArrayList<>(r.values());
                 setUpRecyclerHour(hour);
@@ -406,22 +411,21 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        myRefHour.addValueEventListener(listenerHour);
     }
 
     private void updateBookingsDay(final int year, final int month, final int day){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("/bookings/restaurants/"+rid);
+        myRefDay = database.getReference("/bookings/restaurants/"+rid);
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+        listenerDay = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,Booking> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
-                    @Override
-                    protected Object clone() throws CloneNotSupportedException {
-                        return super.clone();
-                    }
-                });
+                HashMap<String,Booking> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {});
 
                 bookings = new ArrayList<>(r.values());
                 setUpRecyclerDay(year,month,day);
@@ -429,7 +433,9 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-        });
+        };
+
+        myRefDay.addValueEventListener(listenerDay);
     }
 
 
@@ -689,5 +695,16 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             else
                 return "0" + String.valueOf(c);
         }
+    }
+
+    protected void onPause() {
+        if(myRefHour != null) {
+            myRefHour.removeEventListener(listenerHour);
+        }
+
+        if(myRefDay != null) {
+            myRefDay.removeEventListener(listenerDay);
+        }
+        super.onPause();
     }
 }

@@ -137,6 +137,16 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                                         }
                                     });
 
+                                    FirebaseDatabase database2 = FirebaseDatabase.getInstance();
+                                    //final DatabaseReference myRefadapter = database.getReference("/bookings/");
+                                    DatabaseReference myRefadapter2 = database.getReference("/bookings/restaurants/"+currentBooking.getRestaurantId()+"/"+currentBooking.getID());
+
+                                    myRefadapter2.setValue(null, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        }
+                                    });
+
 
 //                                    myRef.setValue(null, new DatabaseReference.CompletionListener() {
 //                                        @Override
