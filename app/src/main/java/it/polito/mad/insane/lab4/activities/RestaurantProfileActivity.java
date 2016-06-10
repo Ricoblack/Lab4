@@ -55,9 +55,8 @@ import it.polito.mad.insane.lab4.data.RestaurantInfo;
 import it.polito.mad.insane.lab4.data.Review;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
-//TODO x Michele se non ci sono dailyOffers far comparire una scritta che dice nessuna offerta attiva (Renato)
 
-//TODO cambiare logica di aggiunta prenotazione (Renato da fare insieme a Federico)
+//T_ODO cambiare logica di aggiunta prenotazione (Renato da fare insieme a Federico)
 
 public class RestaurantProfileActivity extends AppCompatActivity {
 
@@ -746,7 +745,6 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         private View reviewsLayout(LayoutInflater inflater, ViewGroup container) {
             final View rootView = inflater.inflate(R.layout.restaurant_reviews_fragment, container, false);
 
-            //TODO: controllare che sia online (che vuol dire? chi l'ha scritto? by Renato)
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
 //            tv.setVisibility(View.GONE);
 

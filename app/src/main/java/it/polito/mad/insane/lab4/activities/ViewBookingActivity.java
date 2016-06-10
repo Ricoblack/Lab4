@@ -44,7 +44,7 @@ public class ViewBookingActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO - per Federico/Michele - implementare evasione(cancellazione) booking (Renato)
+                    // TODO - per Federico/Michele - implementare evasione(cancellazione) booking (Renato)
                 }
             });
         }

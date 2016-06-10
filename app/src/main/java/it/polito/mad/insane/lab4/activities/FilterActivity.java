@@ -26,7 +26,7 @@ public class FilterActivity extends AppCompatActivity
     static final String PREF_NAME = "myPrefFilter";
     private SharedPreferences mPrefs = null;
 
-    // TODO: i filtri andrebbero caricati dinamicamente in base ai valori contenuti nel DB (Michele)
+    // T-ODO: i filtri andrebbero caricati dinamicamente in base ai valori contenuti nel DB (Michele)
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

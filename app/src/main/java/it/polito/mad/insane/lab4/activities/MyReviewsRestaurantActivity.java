@@ -148,7 +148,7 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
 //                            new ArrayList<>(data.values()));
 //                    rv.setAdapter(adapter);
 //                    rv.setItemAnimator(new DefaultItemAnimator());
-                    setupReviewsRecyclerView(new ArrayList<Review>(data.values()));
+                    setupReviewsRecyclerView(new ArrayList<>(data.values()));
                 }
             }
 

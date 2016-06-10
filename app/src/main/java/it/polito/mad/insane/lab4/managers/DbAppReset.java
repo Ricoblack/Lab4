@@ -63,7 +63,6 @@ public class DbAppReset
 
 
 //        Date dClose = new Date();  //Debug date to test if time constraints on reservations work
-//        // TODO: convertire oggetti calendar in string e modifcare classe RestaurantInfo (Renato)
 //        dClose.setHours(23);  //tutti i ristoranti sono aperti dalle 7.05 fino alle 23.55
 //        dClose.setMinutes(55);
 //        Date dStart=new Date();
@@ -90,8 +89,6 @@ public class DbAppReset
 //        Restaurant r1 = new Restaurant();
 //        r1.setUsername("rest1");
 //        r1.setPassword("pass1");
-////        r1.setLocation(); // TODO: inserire anche queste (michele)
-////        r1.setAvgScores(); // TODO: inserire anche queste (michele)
 //        RestaurantInfo profile1 =new RestaurantInfo("Pizza-Pazza","Corso Duca Degli Abruzzi, 10","PoliTo","Pizza","Venite a provare la pizza più gustosa di Torino",dStart,dClose,"Chiusi la domenica","Bancomat","Wifi-free");
 //        r1.setInfo(profile1);
 //
@@ -131,8 +128,6 @@ public class DbAppReset
 //        Restaurant r2 = new Restaurant();
 //        r2.setUsername("rest2");
 //        r2.setPassword("pass2");
-////        r2.setLocation(); // TODO: inserire anche queste (michele)
-////        r2.setAvgScores(); // TODO: inserire anche queste (michele)
 //        RestaurantInfo profile2=new RestaurantInfo("Just Pasta", "Via Roma, 55", "UniTo","Pasta","Pasta per tutti i gusti",dStart,dClose,"Aperti tutta la settimana","Bancomat,carta","Privo di barriere architettoniche");
 //        r2.setInfo(profile2);
 //
@@ -287,7 +282,6 @@ public class DbAppReset
 ////        User u1=new User("0001","cacca", "Pinco","Pallino",rev1Ids,booking1Ids,null);
 //
 //
-//        //TODO: rendere coerente il DB; nelle daily offer di un ristorante ci devono essere solo piatti che il ristorante effettivamente ha (Michele)
 //
 //        // CARICAMENTO DATI DAILY OFFERS
 //        DailyOffer dailyOffer1 = new DailyOffer();

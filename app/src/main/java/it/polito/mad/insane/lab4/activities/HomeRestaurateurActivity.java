@@ -77,13 +77,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     private DatabaseReference myRefHour = null;
     private DatabaseReference myRefDay = null;
 
-    // FIXME: su smartphone cone android 4.1.2 non viene settato lo sfondo dei tasti nella home
-
-    // TODO: sistemare le dimensioni delle immagini per adattarle ai vari tipi di schermo
-
-    // TODO: mettere un colore/tema di background dell'app che non sia bianco come tutti gli altri colori di sfondo
-
-    //FIXME sistemare il grafico e la scelta delle ore (Renato)
 
     /** Standard methods **/
 
@@ -308,7 +301,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         updateBookingsDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         tv = (TextView) findViewById(R.id.home_title_hour);
-        //TODO risolvere bug filtro orario (Federico)
         if (tv != null){
             if(globalHour == -1)
                 tv.setText(R.string.all_hours);

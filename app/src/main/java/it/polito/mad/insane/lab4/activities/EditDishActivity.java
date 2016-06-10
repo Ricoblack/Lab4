@@ -111,11 +111,11 @@ public class EditDishActivity extends AppCompatActivity
 //                    else
 
 
-//                    takePhotoFromGallery(); // TODO: da scommentare se si implementa gestione immagini (Michele)
+//                    takePhotoFromGallery();
                 }
             });
         }
-        //TODO: da commentare se si implementa gestione immagini (Michele)
+        //T-ODO: da commentare se si implementa gestione immagini (Michele)
         TextView rL = (TextView) findViewById(R.id.editDish);
         rL.setVisibility(View.GONE);
 
@@ -154,7 +154,7 @@ public class EditDishActivity extends AppCompatActivity
                         currentDish.setName(dishName.getText().toString());
                         currentDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
                         currentDish.setDescription(dishDesc.getText().toString());
-//                        currentDish.setPhotoPath(); //TODO: da scommentare se si implementa gestione immagini (Michele)
+//                        currentDish.setPhotoPath();
                         currentDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
 //                        currentDish.setID(dishID.getText().toString()); // not needed; id already set
                         addDishInFirebase(currentDish);
@@ -164,7 +164,7 @@ public class EditDishActivity extends AppCompatActivity
                         newDish.setName(dishName.getText().toString());
                         newDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
                         newDish.setDescription(dishDesc.getText().toString());
-//                        newDish.setPhotoPath(); //TODO: da scommentare se si implementa gestione immagini (Michele)
+//                        newDish.setPhotoPath();
                         newDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
                         newDish.setID(null);
                         addDishInFirebase(newDish);
@@ -227,7 +227,7 @@ public class EditDishActivity extends AppCompatActivity
 //                        // Move to first row
 //                        cursor.moveToFirst();
 //                        int columnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-//                        imgPath = cursor.getString(columnIndex); // FIXME: errore su YotaPhone: "Invalid input parameters". Probabilmente è perché serve la richiesta dei permessi essendo Android 6.0
+//                        imgPath = cursor.getString(columnIndex);
 //                        cursor.close();
 //                    }
 //
@@ -263,7 +263,6 @@ public class EditDishActivity extends AppCompatActivity
      */
 //    private String processImg(String imgPath) throws Exception
 //    {
-    //TODO rivedere gestione immagini (Michele)
 //        String resultString;
 //        String imgName1;
 //        String imgName2;
@@ -454,30 +453,6 @@ public class EditDishActivity extends AppCompatActivity
         // start the image gallery intent
         startActivityForResult(imageGalleryIntent, REQUEST_IMAGE_GALLERY);
     }
-
-//    /**
-//     * Method that get the max ID used in the input list and return the next ID to use (maxID +1)
-//     * @param dishes
-//     * @return next ID to use
-//     * @throws NumberFormatException
-//     */
-    // TODO da aggiustare in base alla nuova logica di firebase (Michele)
-//    private String getNextDishID(List<Dish> dishes) throws Exception
-//    {
-//        int maxID = 0;
-//
-//        if(!dishes.isEmpty())
-//            for(Dish d: dishes)
-//            {
-//                int tempID = Integer.parseInt(d.getID());
-//                if(tempID > maxID)
-//                    maxID = tempID;
-//            }
-//
-//        maxID ++;
-//        return Integer.toString(maxID);
-//
-//    }
 
     /**
      * Method that check if all the field of the activity are filled

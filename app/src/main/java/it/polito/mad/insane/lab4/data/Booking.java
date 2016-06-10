@@ -22,7 +22,7 @@ public class Booking implements Serializable, Comparable<Booking>
 //    private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
     private HashMap<String, Integer>  dishesIdMap; // <ID, Qty>
     private String notes;
-    private double totalDiscount; // it is the sum of the discounts of each (optional) daily offer in the booking // TODO: gestire questo attributo
+    private double totalDiscount; // it is the sum of the discounts of each (optional) daily offer in the booking
     private double totalPrice;
     private int totalDishesQty;
     private String dateTime;

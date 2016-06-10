@@ -170,7 +170,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                                     currentQty -= repeater * tempOffer.getDishesIdMap().get(d.getID());
                                     copyDishesMap.put(d, currentQty);
                                     if(!applyedOffers.contains(tempOffer))
-                                        applyedOffers.add(tempOffer); // TODO: in applyedOffers c'è la lista delle offerte che sono state applicate per calcolare lo sconto, si possono mostrare nell'activity volendo (Michele)
+                                        applyedOffers.add(tempOffer); // T-ODO: in applyedOffers c'è la lista delle offerte che sono state applicate per calcolare lo sconto, si possono mostrare nell'activity volendo (Michele)
 
                                 }
                             }

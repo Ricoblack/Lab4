@@ -166,7 +166,6 @@ public class AddReviewActivity extends AppCompatActivity {
                                     finish();
                                     clearStaticVariables();
                                     Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
-                                    //FIXME se si fa in tempo creare activity MyReviews (Renato)
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -294,7 +293,6 @@ public class AddReviewActivity extends AppCompatActivity {
         DatabaseReference userBookingRef = addReviewRef.child("users").child(r.getUserId()).child(key);
         userBookingRef.setValue(r);
 
-        //TODO aggiornare i punteggi del ristorante
         DatabaseReference restaurantRef = database.getReference("/restaurants/" + restaurantId);
 
         restaurantRef.child("avgFinalScore").setValue(finalUpdateScore);

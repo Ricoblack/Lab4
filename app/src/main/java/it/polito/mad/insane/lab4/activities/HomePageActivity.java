@@ -89,8 +89,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         HomePageActivity = this;
 
-        //TODO i dati delle cardView non si aggiornano (ad esempio quando aggiungo una review) (Renato)
-
         //controllo se l'utente è loggato come ristoratore o come consumer
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         if (mPrefs != null) {

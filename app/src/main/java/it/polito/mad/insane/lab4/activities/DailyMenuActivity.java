@@ -86,7 +86,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
     private NavigationView navigationView;
     //static private RestaurateurJsonManager manager = null;
 
-    //TODO: sarebbe da sostituire la logica dei listener usando "addValueEventListener(listener)" che rende l'app piu interattiva (guarda MyReservationUserActivity) - (Michele)
+    //T-ODO: sarebbe da sostituire la logica dei listener usando "addValueEventListener(listener)" che rende l'app piu interattiva (guarda MyReservationUserActivity) - (Michele)
 
     /**
      * Standard Methods

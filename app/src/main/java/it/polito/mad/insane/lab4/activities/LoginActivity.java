@@ -299,12 +299,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isUserValid(String email) {
-        //TODO: Replace this with your own logic
+        //T-ODO: Replace this with your own logic
         return true;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+        //T-ODO: Replace this with your own logic
         return true;
     }
 

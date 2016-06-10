@@ -18,9 +18,6 @@ public class RestaurantInfo {
     private String restaurantName;
     private String timeInfo;
 
-    //TODO aggiungerlo via codice (Renato)
-    //private String imagePath;
-
 
 
     public RestaurantInfo(String restaurantName, String address, String nearbyUniversity, String cuisineType,

@@ -58,7 +58,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         MyReservationsUserActivity = null;
     }
 
-    //FIXME: se non ci sono prenotazioni, il cerchietto di attesa loopa all'infinito (Michele)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,9 +93,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 //                        }
 //                    });
                     if(bookings != null) {
-                        //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
                         findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
-                        //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a michele(Federico)
                         setUpView(new ArrayList<Booking>(bookings.values()), rv);
                     }
                 }

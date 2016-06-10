@@ -233,7 +233,7 @@ public class RestaurateurJsonManager
 //        Calendar cal = Calendar.getInstance();
 //        cal.setTime(sdf.parse(r.getInfo().getOpeningHour()));
 
-
+        //T-ODO trasformare le date in calendar ed eliminare i dati deprecated (Renato)
         if(sdf.parse(r.getInfo().getOpeningHour()).getHours()<=startTimeDate.getHours() &&
                 sdf.parse(r.getInfo().getClosingHour()).getHours()>=endTimeDate.getHours()) return true;
 
@@ -372,21 +372,6 @@ public class RestaurateurJsonManager
 
         return false;
     }
-    //TODO: da scommentare successivamente (Renato)
-//    public static void deleteReservationByID(List<Booking> mData, String id)
-//    {
-//        ArrayList<Booking> bookings= (ArrayList<Booking>) mData;
-//        for(int i=0; i<bookings.size();i++)
-//        {
-//            Booking b = bookings.get(i);
-//            if(b.getID().equals(id))
-//            {
-//                bookings.remove(i);
-//                return;
-//            }
-//        }
-//        return;
-//    }
 
     public Restaurant getRestaurant(String restaurantID){
         for(Restaurant r : this.listaFiltrata)

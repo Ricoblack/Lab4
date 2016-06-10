@@ -13,11 +13,6 @@ import it.polito.mad.insane.lab4.managers.Cryptography;
  * Created by carlocaramia on 28/04/16.
  */
 public class Restaurant {
-//    private static final int N_SCORES = 3;
-//    private Map<String,String> bookingsIdList;
-//    private Map<String,String> reviewsIdList;
-//    TODO aggiungerlo via codice nel db (Michele)
-//    private Location location;
     private String ID;
     private Map<String,Dish> dishMap;
     private Map<String,DailyOffer> dailyOfferMap;

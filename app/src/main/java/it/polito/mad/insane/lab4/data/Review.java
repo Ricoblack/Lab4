@@ -18,7 +18,7 @@ public class Review {
     private String username;
     private Map<String,Double> scoresMap; // <Parameter, score>
     private double avgFinalScore;
-//    private String photoPath; // TODO: campo da aggiungere nel DB (michele)
+//    private String photoPath;
 
 
     /*

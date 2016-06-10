@@ -30,15 +30,11 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
     private List<Review> mData; //actual data to be displayed
     private LayoutInflater mInflater;
     private Context context;
-    private int[] popupsVisibility;
 
     public ReviewsRecyclerAdapter(Context context, List<Review> data){
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
-
-        popupsVisibility = new int[data.size()];
-        Arrays.fill(popupsVisibility, View.GONE);
     }
 
     /**
@@ -93,7 +89,7 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
 
         public ReviewsViewHolder(View itemView) {
             super(itemView);
-            this.cardView = itemView;  // non dovrebbe servire
+            this.cardView = itemView;
 //            this.userPic = (ImageView) itemView.findViewById(R.id.user_pic);
             this.userName = (TextView) itemView.findViewById(R.id.review_user_name);
             this.score = (TextView) itemView.findViewById(R.id.review_score);
@@ -105,7 +101,6 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
             this.firstScore = (TextView) itemView.findViewById(R.id.cardview_review_score_1);
             this.secondScore = (TextView) itemView.findViewById(R.id.cardview_review_score_2);
             this.thirdScore = (TextView) itemView.findViewById(R.id.cardview_review_score_3);
-            //T-ODO: add the userPic instead of the left drawable of userName in the cardView
         }
 
 
@@ -114,34 +109,13 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
             this.position = position;
             this.userName.setText(current.getUsername());
             this.date.setText(current.getDateTime());
+
             if(current.getText().equals("")){
                 hiddenScoresLayout.setVisibility(View.VISIBLE);
                 title.setVisibility(View.GONE);
                 expandableText.setVisibility(View.GONE);
                 btnSeeMore.setVisibility(View.GONE);
             }
-            else
-                popupsVisibility[position] = View.VISIBLE;
-//
-//            this.btnSeeMore.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (popupsVisibility[position] == View.GONE){
-//                        popupsVisibility[position] = View.VISIBLE;
-//                        hiddenScoresLayout.setVisibility(View.VISIBLE);
-//                        ObjectAnimator animation = ObjectAnimator.ofInt(expandableText, "maxLines", 40);
-//                        animation.setDuration(200).start();
-//                        btnSeeMore.setText(R.string.see_less);
-//                    }
-//                    else{
-//                        popupsVisibility[position] = View.GONE;
-//                        hiddenScoresLayout.setVisibility(View.GONE);
-//                        ObjectAnimator animation = ObjectAnimator.ofInt(expandableText, "maxLines", 3);
-//                        animation.setDuration(200).start();
-//                        btnSeeMore.setText(R.string.see_more);
-//                    }
-//                }
-//            });
 
             this.expandableText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -185,8 +159,6 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
             this.expandableText.setText(current.getText());
             this.title.setText(current.getTitle());
 
-//            this.userName.setText(users.getUser(current.getUserID())); /**da implementare**/
-
             DecimalFormat df = new DecimalFormat("0.0");
             this.score.setText(String.valueOf(df.format(current.getAvgFinalScore())));
             this.firstScore.setText(MessageFormat.format("{0}/10",
@@ -197,9 +169,5 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
                     String.valueOf(df.format(current.getScoresMap().get(this.cardView.getResources().getString(R.string.third_score))))));
 
         }
-
-//        public double roundToHalf(double d) {
-//            return Math.round(d * 2) / 2.0;
-//        }
     }
 }

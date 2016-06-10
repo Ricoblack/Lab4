@@ -126,10 +126,11 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
             else
                 this.avgFinalScore.setText(df.format(current.getAvgFinalScore()));
             this.numReview.setText(String.valueOf(current.getReviewsNumber()));
-            //TODO calcolare la distanza
-            float distance=3;
+
+            //T-ODO calcolare la distanza
 //            float distance = current.getLocation().distanceTo(manager.getLocation());
-            this.distance.setText(String.format("%.0f",distance)+"m");
+//            this.distance.setText(String.format("%.0f",distance)+"m");
+            this.distance.setVisibility(View.GONE);
         }
     }
 }
