@@ -244,13 +244,6 @@ public class MakeReservationActivity extends AppCompatActivity {
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     saveReservation(selectedQuantities);
-                                    //FIXME queste operazioni andrebbero gestite nell'onComplete della transaction, che non funziona (Renato)
-                                    Toast.makeText(getApplicationContext(), "Reservation done successfully",
-                                            Toast.LENGTH_SHORT).show();
-                                    clearStaticVariables();
-                                    finish(); // finish() the current activity
-                                    Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
-                                    startActivity(intent); // start the new activity
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -340,39 +333,35 @@ public class MakeReservationActivity extends AppCompatActivity {
                 final Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
 
                 final DatabaseReference addBookingRef = database.getReference("/bookings");
-                addBookingRef.runTransaction(new Transaction.Handler() {
-                    @Override
-                    public Transaction.Result doTransaction(MutableData mutableData) {
-                        DatabaseReference restaurantRef = addBookingRef.child("restaurants").child(restaurantId);
-                        DatabaseReference pushRef = restaurantRef.push();
-                        String key = pushRef.getKey();
-                        b.setID(key);
-                        pushRef.setValue(b);
+                DatabaseReference restaurantRef = addBookingRef.child("restaurants").child(restaurantId);
+                DatabaseReference pushRef = restaurantRef.push();
+                String key = pushRef.getKey();
+                b.setID(key);
+                pushRef.setValue(b);
 
-                        DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
-                        userRef.setValue(b);
+                DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
+                userRef.setValue(b);
 
-                        //TODO Fede copia da qua
-                        HashMap<String, Dish> updateMap = (HashMap<String, Dish>) restaurant.getDishMap();
-                        for (Map.Entry<Dish, Integer> selectedDishEntry : selectedQuantities.entrySet()) {
-                            for (Map.Entry<String, Dish> menuDishEntry : updateMap.entrySet()) {
-                                if (selectedDishEntry.getKey().getID().equals(menuDishEntry.getKey())){
-                                    int updateQuantity = menuDishEntry.getValue().getAvailabilityQty() - selectedDishEntry.getValue();
-                                    menuDishEntry.getValue().setAvailabilityQty(updateQuantity);
-                                    updateMap.put(menuDishEntry.getKey(), menuDishEntry.getValue());
-                                }
-                            }
+                HashMap<String, Dish> updateMap = (HashMap<String, Dish>) restaurant.getDishMap();
+                for (Map.Entry<Dish, Integer> selectedDishEntry : selectedQuantities.entrySet()) {
+                    for (Map.Entry<String, Dish> menuDishEntry : updateMap.entrySet()) {
+                        if (selectedDishEntry.getKey().getID().equals(menuDishEntry.getKey())){
+                            int updateQuantity = menuDishEntry.getValue().getAvailabilityQty() - selectedDishEntry.getValue();
+                            menuDishEntry.getValue().setAvailabilityQty(updateQuantity);
+                            updateMap.put(menuDishEntry.getKey(), menuDishEntry.getValue());
                         }
-                        DatabaseReference dishMapRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
-                        dishMapRef.setValue(updateMap);
-                        return Transaction.success(mutableData);
                     }
+                }
 
-                    @Override
-                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                DatabaseReference dishMapRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
+                dishMapRef.setValue(updateMap);
 
-                    }
-                });
+                Toast.makeText(getApplicationContext(), "Reservation done successfully",
+                        Toast.LENGTH_SHORT).show();
+                clearStaticVariables();
+                finish(); // finish() the current activity
+                Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
+                startActivity(intent); // start the new activity
             }
 
             @Override

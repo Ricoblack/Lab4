@@ -966,8 +966,4 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 return "0" + String.valueOf(c);
         }
     }
-
-
-
-
 }

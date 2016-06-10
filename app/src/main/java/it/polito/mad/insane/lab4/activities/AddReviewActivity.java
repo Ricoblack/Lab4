@@ -280,36 +280,20 @@ public class AddReviewActivity extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference addReviewRef = database.getReference("/reviews");
 
-        addReviewRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
+        DatabaseReference restaurantBookingsRef = addReviewRef.child("restaurants").child(restaurantId);
+        DatabaseReference pushRef = restaurantBookingsRef.push();
+        String key = pushRef.getKey();
+        r.setID(key);
+        pushRef.setValue(r);
 
-                DatabaseReference restaurantBookingsRef = addReviewRef.child("restaurants").child(restaurantId);
-                DatabaseReference pushRef = restaurantBookingsRef.push();
-                String key = pushRef.getKey();
-                r.setID(key);
-                pushRef.setValue(r);
+        DatabaseReference userBookingRef = addReviewRef.child("users").child(r.getUserId()).child(key);
+        userBookingRef.setValue(r);
 
-                DatabaseReference userBookingRef = addReviewRef.child("users").child(r.getUserId()).child(key);
-                userBookingRef.setValue(r);
+        //TODO aggiornare i punteggi del ristorante
+        DatabaseReference restaurantRef = database.getReference("/restaurants/" + restaurantId);
 
-                //TODO aggiornare i punteggi del ristorante
-                DatabaseReference restaurantRef = database.getReference("/restaurants/" + restaurantId);
-
-                restaurantRef.child("avgFinalScore").setValue(finalUpdateScore);
-                restaurantRef.child("avgScores").setValue(finalUpdateMap);
-                restaurantRef.child("reviewsNumber").setValue(reviewsNumber + 1);
-
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-                // FIXME non entra qui dentro anche se ha salvato tutte le modifiche sul DB
-//                finish();
-//                clearStaticVariables();
-//                Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
-            }
-        });
+        restaurantRef.child("avgFinalScore").setValue(finalUpdateScore);
+        restaurantRef.child("avgScores").setValue(finalUpdateMap);
+        restaurantRef.child("reviewsNumber").setValue(reviewsNumber + 1);
     }
 }

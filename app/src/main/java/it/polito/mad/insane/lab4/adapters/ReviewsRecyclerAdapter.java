@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
@@ -29,11 +30,15 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
     private List<Review> mData; //actual data to be displayed
     private LayoutInflater mInflater;
     private Context context;
+    private int[] popupsVisibility;
 
     public ReviewsRecyclerAdapter(Context context, List<Review> data){
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
+
+        popupsVisibility = new int[data.size()];
+        Arrays.fill(popupsVisibility, View.GONE);
     }
 
     /**
@@ -105,10 +110,37 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
 
 
 
-        public void setData(Review current, int position){
+        public void setData(Review current, final int position){
             this.position = position;
             this.userName.setText(current.getUsername());
             this.date.setText(current.getDateTime());
+            if(current.getText().equals("")){
+                hiddenScoresLayout.setVisibility(View.VISIBLE);
+                title.setVisibility(View.GONE);
+                expandableText.setVisibility(View.GONE);
+                btnSeeMore.setVisibility(View.GONE);
+            }
+
+            this.btnSeeMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (popupsVisibility[position] == View.GONE){
+                        popupsVisibility[position] = View.VISIBLE;
+                        hiddenScoresLayout.setVisibility(View.VISIBLE);
+                        ObjectAnimator animation = ObjectAnimator.ofInt(expandableText, "maxLines", 40);
+                        animation.setDuration(200).start();
+                        btnSeeMore.setText(R.string.see_less);
+                    }
+                    else{
+                        popupsVisibility[position] = View.GONE;
+                        hiddenScoresLayout.setVisibility(View.GONE);
+                        ObjectAnimator animation = ObjectAnimator.ofInt(expandableText, "maxLines", 3);
+                        animation.setDuration(200).start();
+                        btnSeeMore.setText(R.string.see_more);
+                    }
+                }
+            });
+
             this.expandableText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
