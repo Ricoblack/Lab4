@@ -71,8 +71,12 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login"
+            android:parentActivityName=".activities.HomePageActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
         <activity
             android:name=".activities.MakeReservationActivity"
             android:label="@string/title_activity_make_reservation"

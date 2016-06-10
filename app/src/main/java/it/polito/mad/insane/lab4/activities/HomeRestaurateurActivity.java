@@ -154,12 +154,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         if(MyReviewsRestaurantActivity.MyReviewsRestaurantActivity != null)
             MyReviewsRestaurantActivity.MyReviewsRestaurantActivity.finish();
 
-//        // clean navigation drawer selection
-//        if (navigationView != null) {
-//            for(int i = 0; i < navigationView.getMenu().size(); i++)
-//                navigationView.getMenu().getItem(i).setChecked(false);
-//        }
-
     }
     /********************DRAWER*****************************/
     @SuppressWarnings("StatementWithEmptyBody")

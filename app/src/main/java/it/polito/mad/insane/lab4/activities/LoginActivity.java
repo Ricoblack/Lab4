@@ -53,7 +53,8 @@ package it.polito.mad.insane.lab4.activities;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener{
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>//, NavigationView.OnNavigationItemSelectedListener
+{
 
 
 //    /**
@@ -85,6 +86,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Set up the login form.
         mUserView = (EditText) findViewById(R.id.user);
 //        populateAutoComplete();
@@ -139,19 +144,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
         /**********************DRAWER****************************/
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
-        TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
-        title_drawer.setText("NO LOG");
-        navigationView.setNavigationItemSelectedListener(this);
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState();
+//
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+//        TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+//        title_drawer.setText("NO LOG");
+//        navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
     }
 
@@ -197,41 +201,42 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //            }
 //        }
 //    }
-    @Override
-    public void onBackPressed() {
+//    @Override
+//    public void onBackPressed() {
         /**********************DRAWER***************************/
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-        /*************************************************/
-    }
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
+//        /*************************************************/
+//    }
     /********************DRAWER*****************************/
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        switch (id)
-        {
-            case R.id.home_activity:
-                if(!getClass().equals(HomePageActivity.class))
-                {
-                    Intent i = new Intent(this, HomePageActivity.class);
-                    startActivity(i);
-                    finish();
-                }
-                break;
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
+//    @SuppressWarnings("StatementWithEmptyBody")
+//    @Override
+//    public boolean onNavigationItemSelected(MenuItem item) {
+//        // Handle navigation view item clicks here.
+//        int id = item.getItemId();
+//
+//        switch (id)
+//        {
+//            case R.id.home_activity:
+//                if(!getClass().equals(HomePageActivity.class))
+//                {
+//                    Intent i = new Intent(this, HomePageActivity.class);
+//                    startActivity(i);
+//                    finish();
+//                }
+//                break;
+//        }
+//
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+//        drawer.closeDrawer(GravityCompat.START);
+//        return true;
+//    }
     /*************************************************/
+
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -539,6 +544,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Intent intent = new Intent(LoginActivity.this, HomeRestaurateurActivity.class);
                     startActivity(intent);
                 }
+
+                if(HomePageActivity.HomePageActivity != null)
+                    HomePageActivity.HomePageActivity.finish();
+
                 finish();
             } else
             { // return false

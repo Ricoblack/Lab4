@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -46,11 +47,22 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 
     private DatabaseReference myRef = null;
     private ValueEventListener listener = null;
+    private NavigationView navigationView;
 
+    public static Activity MyReservationsUserActivity = null; // attribute used to finish() the current activity from another activity
+
+    @Override
+    public void finish()
+    {
+        super.finish();
+        MyReservationsUserActivity = null;
+    }
+
+    //FIXME: se non ci sono prenotazioni, il cerchietto di attesa loopa all'infinito (Michele)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        MyReservationsUserActivity = this;
 
         // finish the RestaurantProfile activity if is not finished
         if(RestaurantProfileActivity.RestaurantProfileActivity != null)
@@ -115,7 +127,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
@@ -141,16 +153,23 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             case R.id.home_drawer_item:
                 if(!getClass().equals(HomePageActivity.class))
                 {
+                    // finish the HomePageActivity if is not finished
+                    if(HomePageActivity.HomePageActivity != null)
+                        HomePageActivity.HomePageActivity.finish();
+
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
             case R.id.reservation_drawer_item:
-                if(!getClass().equals(MyReservationsUserActivity.class)) {
+                if(!getClass().equals(MyReservationsUserActivity.class))
+                {
+                    // finish the HomePageActivity if is not finished
+                    if(MyReservationsUserActivity != null)
+                        MyReservationsUserActivity.finish();
+
                     Intent i = new Intent(this, MyReservationsUserActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
             case R.id.logout_drawer:
@@ -199,6 +218,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     protected void onResume() {
 //        myRef.addValueEventListener(listener);
         super.onResume();
+        navigationView.getMenu().findItem(R.id.reservation_drawer_item).setChecked(true);
     }
 
     private void setUpView(List<Booking> bookingList, RecyclerView rv){

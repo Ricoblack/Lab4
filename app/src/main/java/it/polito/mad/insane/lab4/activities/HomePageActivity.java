@@ -1,5 +1,6 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -70,12 +71,23 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private String rid;
     private DatabaseReference restaurantsRef;
     private ValueEventListener listener;
+    private NavigationView navigationView;
 
+
+    public static Activity HomePageActivity = null; // attribute used to finish() the current activity from another activity
+
+    @Override
+    public void finish()
+    {
+        super.finish();
+        HomePageActivity = null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        HomePageActivity = this;
 
         //TODO i dati delle cardView non si aggiornano (ad esempio quando aggiungo una review) (Renato)
 
@@ -105,7 +117,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             }
         }
 
-        HomePageActivity.manager = RestaurateurJsonManager.getInstance(this);
+        manager = RestaurateurJsonManager.getInstance(this);
         setContentView(R.layout.home_page_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -240,7 +252,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         toggle.syncState();
 
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         //controllo se l'utente è loggato come ristoratore o come consumer
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
 
@@ -288,14 +300,19 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
 
 
         //localization
-
         startLocalization();
 
         //notification listener
 
 
+        closeOtherActivities();
 
-
+    }
+    private void closeOtherActivities()
+    {
+        // close other activities
+        if(MyReservationsUserActivity.MyReservationsUserActivity != null)
+            MyReservationsUserActivity.MyReservationsUserActivity.finish();
 
     }
 
@@ -372,10 +389,16 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         super.onPause();
     }
 
+
+
+
     @Override
     protected void onResume()
     {
         super.onResume();
+
+        navigationView.getMenu().findItem(R.id.home_drawer_item).setChecked(true);
+
         // check login
         this.mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
@@ -415,7 +438,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         if(id == R.id.activity_login){
             Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.LoginActivity.class);
             startActivity(i);
-            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -518,26 +540,32 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        //TODO : risolvere il problema che ogni volta che si passa da una parte all'altra del drawer si crea una nuova istanza dell'activity (Michele)
         switch (id)
         {
             case R.id.home_drawer_item:
 
                 if(!getClass().equals(HomePageActivity.class))
                 {
+                    // finish the HomePageActivity if is not finished
+                    if(HomePageActivity != null)
+                        HomePageActivity.finish();
+
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
-                    finish();
                 }
                 break;
 
             case R.id.reservation_drawer_item:
 
-                 if (!getClass().equals(MyReservationsUserActivity.class)) {
+                 if (!getClass().equals(MyReservationsUserActivity.class))
+                 {
+                     // finish the HomePageActivity if is not finished
+                     if(MyReservationsUserActivity.MyReservationsUserActivity != null)
+                         MyReservationsUserActivity.MyReservationsUserActivity.finish();
+
                         Intent i = new Intent(this, MyReservationsUserActivity.class);
                         startActivity(i);
-                        finish();
-                    }
+                 }
                 break;
 
             case R.id.logout_drawer:
@@ -546,7 +574,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     //user no logged, insert login
                     Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.LoginActivity.class);
                     startActivity(i);
-                    finish();
 
                 }else {
                     //LOGOUT
