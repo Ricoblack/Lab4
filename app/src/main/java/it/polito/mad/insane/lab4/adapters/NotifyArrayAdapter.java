@@ -50,7 +50,7 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         holder.restaurantName = (TextView) row.findViewById(R.id.notify_item_restaurant_name);
         holder.description = (TextView) row.findViewById(R.id.notify_item_description);
         holder.notificationID = (TextView) row.findViewById(R.id.notify_item_notify_id);
-        holder.cardview = (CardView) row.findViewById(R.id.notify_item_card_view);
+        holder.cardview = (CardView) row.findViewById(R.id.notify_card_view);
 
         holder.restaurantName.setText(((DailyOfferSimple) data.get(position)).getRestaurantName());
         holder.description.setText(((DailyOfferSimple) data.get(position)).getDescription());

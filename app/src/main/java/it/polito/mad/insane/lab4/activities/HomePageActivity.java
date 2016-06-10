@@ -440,6 +440,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             startActivity(i);
         }
 
+        if(id == R.id.notifications){
+            Intent i = new Intent(this, it.polito.mad.insane.lab4.activities.NotificationsActivity.class);
+            startActivity(i);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
