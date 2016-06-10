@@ -31,6 +31,8 @@
 
         </android.support.design.widget.AppBarLayout>
 
+
+
         <ListView
             android:id="@+id/notification_list_view"
             android:layout_width="match_parent"
@@ -44,13 +46,14 @@
 
             <TextView
                 android:id="@+id/no_notification_textview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/no_notifications_to_read"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="100dp"
-                android:textSize="18sp"
+                android:textSize="25sp"
+                android:textStyle="bold"
                 android:visibility="gone"/>
 
         </RelativeLayout>

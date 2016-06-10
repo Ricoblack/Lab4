@@ -25,7 +25,8 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp">
 
                 <ImageView
                     android:id="@+id/error_icon"
@@ -41,7 +42,10 @@
                     android:layout_height="wrap_content"
                     android:text="@string/restaurant_name"
                     android:textSize="18sp"
-                    android:layout_margin="5dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:textColor="@color/colorAccent"
                     android:layout_toRightOf="@id/error_icon"/>
 
@@ -56,14 +60,16 @@
                 android:layout_height="1dp"
                 android:layout_below="@id/header_daily_offer_cardview"
                 android:background="@color/colorAccent"
-                android:layout_margin="12dp"/>
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                />
 
             <TextView
             android:id="@+id/notify_item_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/description"
-                android:layout_margin="8dp"
+                android:layout_margin="10dp"
                 android:textSize="16sp"/>
 
         </LinearLayout>
