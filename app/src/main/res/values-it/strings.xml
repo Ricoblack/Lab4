@@ -36,8 +36,43 @@
         <item>15.00-19.00</item>
         <item>19.00-23.00</item>
     </string-array>
+    <string-array name="university_array">
+        <item> <i>Scegli un campus... </i> </item>
+        <item>PoliTo</item>
+        <item>UniTo</item>
+    </string-array>
 
+    <string-array name="cuisine_array">
+        <item> <i>Scegli un tipo... </i></item>
+        <item>Italian</item>
+        <item>Pizza</item>
+        <item>Sandwiches</item>
+        <item>Ethnic</item>
+    </string-array>
 
+    <string-array name="scores_array">
+        <item> <i>Seleziona un punteggio...</i> </item>
+        <item>10</item>
+        <item>9.5</item>
+        <item>9.0</item>
+        <item>8.5</item>
+        <item>8.0</item>
+        <item>7.5</item>
+        <item>7.0</item>
+        <item>6.5</item>
+        <item>6.0</item>
+        <item>5.5</item>
+        <item>5.0</item>
+        <item>4.5</item>
+        <item>4.0</item>
+        <item>3.5</item>
+        <item>3.0</item>
+        <item>2.5</item>
+        <item>2.0</item>
+        <item>1.5</item>
+        <item>1.0</item>
+        <item>0.5</item>
+    </string-array>
     <string name="app_name">Lab4</string>
     <string name="quantity_available">Disponibilità:</string>
     <string name="action_settings">Impostazioni</string>
@@ -45,10 +80,10 @@
     <string name="title_activity_restaurant_profile">RestaurantProfile</string>
     <string name="title_activity_my_scrolling">MyScrollingActivity</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="see_more">VEDI DI PIU\'</string>
+    <string name="see_more">ESPANDI</string>
     <string name="user_name">Nome Utente</string>
     <string name="date_sample">dd/MM/yy</string>
-    <string name="see_less">VEDI DI MENO</string>
+    <string name="see_less">RIDUCI</string>
     <string name="review_title">\"Lorem ipsum\"</string>
     <string name="title_tab_menu">Menu</string>
     <string name="title_tab_reviews">Recensioni</string>
@@ -122,5 +157,6 @@
     <string name="dishes">piatti</string>
     <string name="distance">DISTANZA</string>
     <string name="score">PUNTEGGIO</string>
+    <string name="notifications">Notifiche</string>
 
 </resources>

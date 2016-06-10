@@ -261,6 +261,7 @@
                         android:drawableLeft="@drawable/ic_mode_edit_black_24dp"
                         android:drawableStart="@drawable/ic_mode_edit_black_24dp"
                         android:drawablePadding="5dp"
+                        android:inputType="text"
                         android:textSize="16sp"
                         android:hint="@string/add_review_title"
                         />
