@@ -8,11 +8,15 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -47,7 +52,7 @@ import it.polito.mad.insane.lab4.data.Dish;
 /**
  * Created by Federico on 02/06/2016.
  */
-public class DailyMenuActivity extends AppCompatActivity {
+public class DailyMenuActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -83,7 +88,14 @@ public class DailyMenuActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        /**********************DRAWER***************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+        /*************************************************/
         finish();
     }
 
@@ -192,7 +204,94 @@ public class DailyMenuActivity extends AppCompatActivity {
                 (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+
+        /**********************DRAWER****************************/
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_drawer);
+        TextView title_drawer = (TextView) headerView.findViewById(R.id.title_drawer);
+        if(mPrefs != null) {
+            title_drawer.setText(mPrefs.getString("rUser", null));
+        }
+        navigationView.setNavigationItemSelectedListener(this);
+        /**************************************************/
     }
+
+    /********************DRAWER*****************************/
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        switch (id)
+        {
+            case R.id.home_restaurateur_activity:
+                if(!getClass().equals(HomeRestaurateurActivity.class))
+                {
+                    Intent i = new Intent(this, HomeRestaurateurActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+            case R.id.action_daily_menu:
+                if(!getClass().equals(DailyMenuActivity.class))
+                {
+                    // Start DailyMenuActivity activity
+                    Intent invokeDailyMenu = new Intent(this, DailyMenuActivity.class);
+                    startActivity(invokeDailyMenu);
+                    finish();
+                    break;
+                }
+
+            case R.id.my_reviews_restaurant:
+                if(!getClass().equals(MyReviewsRestaurant.class)) {
+                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurant.class);
+                    startActivity(invokeMyReviewsRestaurant);
+                    finish();
+                }
+                break;
+
+            case R.id.action_edit_profile:
+                if(!getClass().equals(EditProfileRestaurateurActivity.class))
+                {
+                    //Start EditProfileActivity
+                    Intent invokeEditProfile = new Intent(this, EditProfileRestaurateurActivity.class);
+                    startActivity(invokeEditProfile);
+                    finish();
+                }
+                break;
+
+            case R.id.logout_restaurateur_drawer:
+                if(rid == null){
+                    Toast.makeText(this, R.string.not_logged,Toast.LENGTH_SHORT).show();
+                }else {
+                    this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
+                    if (mPrefs != null) {
+                        rid = null;
+                        SharedPreferences.Editor editor = this.mPrefs.edit();
+                        editor.clear();
+                        editor.apply();
+                    }
+                    Intent i = new Intent(this, HomePageActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+                break;
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.home_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    /*************************************************/
 
     @Override
     protected void onResume() {

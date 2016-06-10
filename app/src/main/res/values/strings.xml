@@ -283,4 +283,7 @@
     <string name="map">Map</string>
     <string name="reservation_details">Reservation details</string>
     <string name="add_review_activity_title">Add your review</string>
+    <string name="action_myReviews_restaurant">My Review</string>
+    <string name="title_activity_my_reviews_restaurant">MyReviewsRestaurant</string>
+    <string name="not_logged">You are not logged in</string>
 </resources>

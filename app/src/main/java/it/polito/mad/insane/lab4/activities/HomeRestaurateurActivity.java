@@ -138,14 +138,36 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
                 }
                 break;
             case R.id.action_daily_menu:
-                // Start DailyMenuActivity activity
-                Intent invokeDailyMenu = new Intent(HomeRestaurateurActivity.this, DailyMenuActivity.class);
-                startActivity(invokeDailyMenu);
+                if(!getClass().equals(DailyMenuActivity.class))
+                {
+                    // Start DailyMenuActivity activity
+                    Intent invokeDailyMenu = new Intent(this, DailyMenuActivity.class);
+                    startActivity(invokeDailyMenu);
+                    finish();
+                    break;
+                }
+
+            case R.id.my_reviews_restaurant:
+                if(!getClass().equals(MyReviewsRestaurant.class)) {
+                    Intent invokeMyReviewsRestaurant = new Intent(this, MyReviewsRestaurant.class);
+                    startActivity(invokeMyReviewsRestaurant);
+                    finish();
+                }
+                break;
+
+            case R.id.action_edit_profile:
+                if(!getClass().equals(EditProfileRestaurateurActivity.class))
+                {
+                    //Start EditProfileActivity
+                    Intent invokeEditProfile = new Intent(this, EditProfileRestaurateurActivity.class);
+                    startActivity(invokeEditProfile);
+                    finish();
+                }
                 break;
 
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
-                    Toast.makeText(HomeRestaurateurActivity.this, "Non sei loggato",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.not_logged, Toast.LENGTH_SHORT).show();
                 }else {
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
@@ -197,7 +219,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_restaurateur_menu, menu);
+//        getMenuInflater().inflate(R.menu.home_restaurateur_menu, menu);
         return true;
     }
 

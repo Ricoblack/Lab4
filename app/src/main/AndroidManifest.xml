@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.polito.mad.insane.lab4">
+    package="it.polito.mad.insane.lab4" >
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -16,16 +16,13 @@
         android:icon="@mipmap/icona_mad"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         >
-
         <service
             android:name=".managers.NotificationDailyOfferService"
             android:exported="false" />
-
             android:name="it.polito.mad.insane.lab4.managers.NotificationDailyOfferService"
             android:exported="false"/>
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAMqM-5pRyY6bjudE8HVYuhzCYh6VMbt4o" />
@@ -34,7 +31,7 @@
             android:name=".activities.HomePageActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,7 +43,7 @@
             android:label="@string/title_activity_filter"
             android:parentActivityName=".activities.HomePageActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
@@ -56,7 +53,7 @@
             android:label="@string/title_activity_my_reservation"
             android:parentActivityName=".activities.HomePageActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
@@ -66,7 +63,7 @@
             android:label="@string/title_activity_restaurant_profile"
             android:parentActivityName=".activities.HomePageActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
@@ -81,7 +78,7 @@
             android:label="@string/title_activity_make_reservation"
             android:parentActivityName=".activities.RestaurantProfileActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
@@ -91,7 +88,7 @@
             android:label="@string/title_activity_daily_menu"
             android:parentActivityName=".activities.HomeRestaurateurActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.HomeRestaurateurActivity" />
@@ -101,7 +98,7 @@
             android:label="@string/title_activity_display_reservation"
             android:parentActivityName=".activities.MyReservationsUserActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MyReservationsUserActivity" />
@@ -110,18 +107,18 @@
             android:name=".activities.HomeRestaurateurActivity"
             android:label="@string/title_activity_home_restaurateur"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.ViewBookingActivity"
             android:label="@string/title_activity_view_booking"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.LocationActivity"
             android:label="@string/title_activity_location"
             android:parentActivityName=".activities.HomePageActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
@@ -131,7 +128,7 @@
             android:label="@string/title_activity_edit_dish"
             android:parentActivityName=".activities.DailyMenuActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.DailyMenuActivity" />
@@ -141,7 +138,7 @@
             android:label="@string/title_activity_edit_offer"
             android:parentActivityName=".activities.DailyMenuActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.DailyMenuActivity" />
@@ -151,7 +148,7 @@
             android:label="@string/title_activity_add_review_activity_layout"
             android:parentActivityName=".activities.RestaurantProfileActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.RestaurantProfileActivity" />
@@ -161,10 +158,15 @@
             android:label="@string/title_activity_edit_profile_restaurateur"
             android:parentActivityName=".activities.HomeRestaurateurActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.polito.mad.insane.lab4.activities.HomeRestaurateurActivity" />
+        </activity>
+        <activity
+            android:name=".activities.MyReviewsRestaurant"
+            android:label="@string/title_activity_my_reviews_restaurant"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
 

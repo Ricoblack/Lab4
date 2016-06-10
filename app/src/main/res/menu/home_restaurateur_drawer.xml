@@ -5,25 +5,35 @@
         <item android:id="@+id/home_restaurateur_activity"
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home_name"/>
-
         <item
             android:id="@+id/action_daily_menu"
             android:icon="@drawable/ic_local_dining_black_24dp"
             android:title="@string/action_daily_menu" />
 
+        <item
+            android:id="@+id/my_reviews_restaurant"
+            android:icon="@drawable/ic_rate_review_black_24dp"
+            android:title = "@string/action_myReviews_restaurant"/>
+
     </group>
+
 
 
     <item android:title="Peronal Area">
         <menu>
+            <item
+                android:id="@+id/action_edit_profile"
+                android:title="@string/action_edit_profile"
+                android:icon="@drawable/ic_account_circle_black_24dp"
+                />
 
             <item
                 android:id="@+id/logout_restaurateur_drawer"
                 android:icon="@android:drawable/ic_lock_power_off"
                 android:title="@string/logout"
                 />
-
         </menu>
+
     </item>
 
 </menu>
