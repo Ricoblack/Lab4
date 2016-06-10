@@ -235,10 +235,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                         return;
                     }
 
-                    //Verifico che i costraint per la prenotazione siano rispettati: in orario di lavoro e tra almeno un ora
-                    //TODO implementare questo metodi sul manager, preferibilmente chi li ha fatti la scorsa volta, se non sbaglio
-                    //TODO Carlo e/o Michele (Renato)
-                    if(manager.reservationRespectsTimeContraints(reservationDate,restaurantId) == false){
+                    if(!manager.reservationRespectsTimeContraints(reservationDate, restaurantId)){
                         Toast.makeText(MakeReservationActivity.this, getString(R.string.respect_time_contraints), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -355,6 +352,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                         DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
                         userRef.setValue(b);
 
+                        //TODO Fede copia da qua
                         HashMap<String, Dish> updateMap = (HashMap<String, Dish>) restaurant.getDishMap();
                         for (Map.Entry<Dish, Integer> selectedDishEntry : selectedQuantities.entrySet()) {
                             for (Map.Entry<String, Dish> menuDishEntry : updateMap.entrySet()) {
