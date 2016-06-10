@@ -84,6 +84,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     private static DishesRecyclerAdapter dishesAdapter = null;
     private static HashMap<String, Review> reviewsMap = new HashMap<>();
     private static Restaurant restaurant;
+    private static TextView noOffersTextView;
+    private static TextView noDishesTextView;
     private static int reviewsNumber;
 
     public static Activity RestaurantProfileActivity = null; // attribute used to finish() the current activity from another activity
@@ -250,13 +252,15 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         super.onResume();
         if(dishesAdapter != null)
             editShowButton(dishesAdapter.getReservationQty(), dishesAdapter.getReservationPrice());
-
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         // get restaurant in order to get his avg final score
         final DatabaseReference restaurantRef = database.getReference("restaurants/" + restaurantId);
         restaurantRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+
                 restaurant = dataSnapshot.getValue(Restaurant.class);
 
                 if (restaurant != null) {
@@ -485,9 +489,11 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         private View dailyOfferLayout(LayoutInflater inflater, ViewGroup container)
         {
             final View rootView = inflater.inflate(R.layout.daily_offer_fragment, container, false);
+            noOffersTextView = (TextView) rootView.findViewById(R.id.offer_fragment_no_offers);
 
             // take istance of the manager
             manager = RestaurateurJsonManager.getInstance(getActivity());
+
 
             // take data from Firebase
             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -508,7 +514,10 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                         setupDailyOfferRecyclerView(rootView, new ArrayList<>(r.values()));
                     else
                     {
-                        //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
+
+                        if (noOffersTextView != null) {
+                            noOffersTextView.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
                 @Override
@@ -680,7 +689,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             final View rootView = inflater.inflate(R.layout.restaurant_menu_fragment, container, false);
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
 //            tv.setVisibility(View.VISIBLE);
-
+            noDishesTextView = (TextView) rootView.findViewById(R.id.dish_fragment_no_dishes);
             // take the list of dishes from manager
             manager = RestaurateurJsonManager.getInstance(getActivity());
 
@@ -698,6 +707,12 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     });
                     if (r!=null)
                         setupDishesRecyclerView(rootView, new ArrayList<>(r.values()));
+                    else
+                    {
+                        if (noDishesTextView != null) {
+                            noDishesTextView.setVisibility(View.VISIBLE);
+                        }
+                    }
 
                 }
                 @Override

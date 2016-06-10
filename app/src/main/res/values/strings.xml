@@ -268,6 +268,7 @@
     <string name="alert_title_review_notext">Are you sure you want to add the review without a comment?</string>
     <string name="hint_review_title">You should add a title if you want to insert a comment</string>
     <string name="no_reviews_available">No reviews available for this restaurant. Be the first to add a new one!</string>
+    <string name="no_offers_available">No offers available for this restaurant.</string>
     <string name="new_offer">New offer available</string>
     <string name="offer_edited">Offer changed</string>
     <string name="cant_delete_offer">The offer you are trying to delete  doesn\'t exists yet</string>
@@ -368,5 +369,6 @@
     <string name="alert_title_delete_offer">Are you sure to delete this offer?</string>
     <string name="error_no_dishes">There are no available dishes in menu. Please add a dish before adding a new offer.</string>
     <string name="dependecies_dish_error">This dish can\'t be removed because it is used at least in one daily offer.</string>
+    <string name="map">Map</string>
     <string name="reservation_details">Reservation details</string>
 </resources>

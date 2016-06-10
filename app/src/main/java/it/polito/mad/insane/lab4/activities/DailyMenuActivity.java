@@ -75,6 +75,8 @@ public class DailyMenuActivity extends AppCompatActivity {
     private static String rid; // restaurant id
     //static private RestaurateurJsonManager manager = null;
 
+    //TODO: sarebbe da sostituire la logica dei listener usando "addValueEventListener(listener)" che rende l'app piu interattiva (guarda MyReservationUserActivity) - (Michele)
+
     /**
      * Standard Methods
      **/
@@ -92,7 +94,6 @@ public class DailyMenuActivity extends AppCompatActivity {
         dishesLocalCache.clear();
     }
 
-    // FIXME: quando cancelli l'ultima offerta della lista, non viene svuotato l'adapter e si vede ancora l'elemento
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,9 +236,10 @@ public class DailyMenuActivity extends AppCompatActivity {
 
                 }else
                 {
-                    if(dishesList == null)
-                        dishesList = new ArrayList<>();
-                    dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, dishesList, rid, 1);
+                    if(dishesList.isEmpty()){
+                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
+                        recyclerView.setVisibility(View.GONE);
+                    }
                 }
 
             }
@@ -281,9 +283,10 @@ public class DailyMenuActivity extends AppCompatActivity {
                 else
                 {
                     //TODO: far uscire un messaggio che indica che non ci sono recensioni disponibili (Michele)
-                    if(offersList == null)
-                        offersList = new ArrayList<>();
-                    offersAdapter = new DailyOfferRecyclerAdapter(DailyMenuActivity.this, offersList, rid, 1);
+                    if(offersList.isEmpty()) {
+                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.daily_offers_recycler_view);
+                        recyclerView.setVisibility(View.GONE);
+                    }
                 }
             }
             @Override

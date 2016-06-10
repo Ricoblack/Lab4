@@ -7,6 +7,17 @@
     tools:context=".activities.MakeReservationActivity"
     >
 
+    <TextView
+        android:id="@+id/offer_fragment_no_offers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:padding="10dp"
+        android:text="@string/no_offers_available"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:visibility="gone"/>
+
     <android.support.v7.widget.RecyclerView
             android:id="@+id/daily_offers_recycler_view"
             android:layout_width="match_parent"
