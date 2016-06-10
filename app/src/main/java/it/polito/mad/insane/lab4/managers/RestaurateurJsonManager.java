@@ -425,9 +425,11 @@ public class RestaurateurJsonManager
                 //check if respects distance contraint
                 if(r.location==null || simpleLocation.getLatitude()==0) {
                     Toast.makeText(myContext,myContext.getResources().getText(R.string.cannotFilterLocalization),Toast.LENGTH_SHORT).show();
-                    continue;
+
                 }
-                if(checkIfRespectsDistanceConstraint(r,distanceValue)==false) continue;
+                else {
+                    if (checkIfRespectsDistanceConstraint(r, distanceValue) == false) continue;
+                }
             }
 
             if(priceValue.equals("")==false){

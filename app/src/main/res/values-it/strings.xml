@@ -122,4 +122,5 @@
     <string name="dishes">piatti</string>
     <string name="distance">DISTANZA</string>
     <string name="score">PUNTEGGIO</string>
+    <string name="cannotFilterLocalization">Impossibile filtrare per distanza</string>
 </resources>
