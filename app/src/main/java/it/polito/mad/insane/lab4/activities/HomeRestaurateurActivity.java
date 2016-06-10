@@ -329,6 +329,16 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     {
         RecyclerView rV = (RecyclerView) findViewById(R.id.BookingRecyclerView);
 
+        TextView noBookingTextView = (TextView) findViewById(R.id.home_restaurateur_no_booking);
+        if(getBookingsOfDay(year,month,day) == null ||  getBookingsOfDay(year,month,day).isEmpty())
+        {
+            if (noBookingTextView != null )
+                noBookingTextView.setVisibility(View.VISIBLE);
+        }else {
+            if (noBookingTextView != null)
+                noBookingTextView.setVisibility(View.GONE);
+        }
+
         adapter = new BookingsRecyclerAdapter(this, getBookingsOfDay(year,month,day));
         rV.setAdapter(adapter);
 
@@ -387,6 +397,16 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     {
         RecyclerView rV = (RecyclerView) findViewById(R.id.BookingRecyclerView);
 
+        TextView noBookingTextView = (TextView) findViewById(R.id.home_restaurateur_no_booking);
+        if(getBookingsOfHour(hour) == null ||  getBookingsOfHour(hour).isEmpty())
+        {
+            if (noBookingTextView != null )
+                noBookingTextView.setVisibility(View.VISIBLE);
+        }else {
+            if (noBookingTextView != null)
+                noBookingTextView.setVisibility(View.GONE);
+        }
+
         BookingsRecyclerAdapter adapter = new BookingsRecyclerAdapter(this, getBookingsOfHour(hour));
         rV.setAdapter(adapter);
 
@@ -426,8 +446,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     private List<Booking> getBookingsOfHour(int hour)
     {
         ArrayList<Booking> hourBookings = new ArrayList<>();
-        ArrayList<Booking> dayBookings = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR),
-                globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
+        ArrayList<Booking> dayBookings = (ArrayList<Booking>) getBookingsOfDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
 
         for(Booking b : dayBookings){
             SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -450,10 +469,16 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         listenerHour = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String,Booking> r=dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {});
+                HashMap<String,Booking> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {});
 
-                bookings = new ArrayList<>(r.values());
-                setUpRecyclerHour(hour);
+
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+                if(r != null)
+                {
+                    bookings = new ArrayList<>(r.values());
+                    setUpRecyclerHour(hour);
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -468,15 +493,19 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRefDay = database.getReference("/bookings/restaurants/"+rid);
 
-
-
         listenerDay = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String,Booking> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {});
 
-                bookings = new ArrayList<>(r.values());
-                setUpRecyclerDay(year,month,day);
+
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+                if(r!=null)
+                {
+                    bookings = new ArrayList<>(r.values());
+                    setUpRecyclerDay(year, month, day);
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

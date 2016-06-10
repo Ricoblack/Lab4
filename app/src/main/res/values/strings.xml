@@ -270,6 +270,7 @@
     <string name="no_reviews_available">No reviews available for this restaurant. Be the first to add a new one!</string>
     <string name="no_offers_available">No offers available for this restaurant.</string>
     <string name="no_dishes_available">No dishes available for this restaurant.</string>
+    <string name="no_bookings_available">The are no booking in the selected day and hour.</string>
     <string name="new_offer">New offer available</string>
     <string name="offer_edited">Offer changed</string>
     <string name="cant_delete_offer">The offer you are trying to delete  doesn\'t exists yet</string>

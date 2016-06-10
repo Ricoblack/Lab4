@@ -538,6 +538,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                             return super.clone();
                         }
                     });
+
+                    rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
                     if (rTemp!=null)
                     {
                         dishesLocalCache.putAll(rTemp);
@@ -644,6 +647,9 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                             return super.clone();
                         }
                     });
+
+                    rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
                     // set up recycler view
                     if(rTemp!=null)
                     {

@@ -153,7 +153,29 @@
             android:layout_weight="2">
 
         </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/home_restaurateur_no_booking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/no_bookings_available"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:visibility="gone"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/loadingPanel">
 
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
     </LinearLayout>
 
     <!--***************DRAWER******************-->

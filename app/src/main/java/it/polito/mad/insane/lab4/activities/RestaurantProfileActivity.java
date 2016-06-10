@@ -512,6 +512,9 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                             return super.clone();
                         }
                     });
+
+                    rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
                     // set up recycler view
                     if(r!=null)
                         setupDailyOfferRecyclerView(rootView, new ArrayList<>(r.values()));
@@ -708,6 +711,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                             return super.clone();
                         }
                     });
+
+                    rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     if (r!=null)
                         setupDishesRecyclerView(rootView, new ArrayList<>(r.values()));
                     else
@@ -756,6 +761,9 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot)
                 {
                     restaurant = dataSnapshot.getValue(Restaurant.class);
+
+
+                    rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
                     if(restaurant != null) {
                         if (restaurant.getAvgFinalScore() == -1){

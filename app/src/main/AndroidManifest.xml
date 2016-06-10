@@ -115,8 +115,13 @@
         <activity
             android:name=".activities.ViewBookingActivity"
             android:label="@string/title_activity_view_booking"
+            android:parentActivityName=".activities.HomeRestaurateurActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.HomeRestaurateurActivity" />
+        </activity>
         <activity
             android:name=".activities.LocationActivity"
             android:label="@string/title_activity_location"
