@@ -139,7 +139,7 @@
             android:label="@string/title_activity_edit_dish"
             android:parentActivityName=".activities.DailyMenuActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.DailyMenuActivity" />

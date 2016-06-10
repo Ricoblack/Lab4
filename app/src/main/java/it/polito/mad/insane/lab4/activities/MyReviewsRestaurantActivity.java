@@ -71,6 +71,7 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
         setContentView(R.layout.my_reviews_restaurant_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle(R.string.action_myReviews_restaurant);
 
         // check login
         if(rid == null)

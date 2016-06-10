@@ -22,8 +22,8 @@ public class NotificationsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(R.string.notifications);
 
         ListView lv = (ListView) findViewById(R.id.notification_list_view);
         if (lv != null){
@@ -36,8 +36,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 }
             }
             else {
-                NotifyArrayAdapter adapter = new NotifyArrayAdapter(NotificationsActivity.this, R.layout.notify_listview_item,
-                        manager.getDailyOffersSimple());
+                NotifyArrayAdapter adapter = new NotifyArrayAdapter(NotificationsActivity.this, R.layout.notify_listview_item, manager.getDailyOffersSimple());
                 lv.setAdapter(adapter);
             }
         }

@@ -69,8 +69,6 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static double totalDiscount;
     private static int totalDishesQty;
 
-    // TODO X FEDE: mettere la listview dei piatti fissa e la pagina scrollabile in modo che scrolli l'activity e non la listview (Michele)
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

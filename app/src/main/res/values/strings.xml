@@ -297,4 +297,5 @@
     <string name="title_activity_notifications">NotificationsActivity</string>
     <string name="no_notifications_to_read">No notifications to read</string>
     <string name="general_info_offer">General info offer</string>
+    <string name="notifications">Notifications</string>
 </resources>

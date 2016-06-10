@@ -38,16 +38,18 @@ public class ViewBookingActivity extends AppCompatActivity {
         setContentView(R.layout.view_booking_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // TODO - per Federico/Michele - implementare evasione(cancellazione) booking (Renato)
-                }
-            });
-        }
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        if (fab != null) {
+//            fab.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    //T-ODO - per Federico/Michele - implementare evasione(cancellazione) booking (Renato)
+//                }
+//            });
+//        }
+
 
         setTitle(getString(R.string.reservation_details));
 
