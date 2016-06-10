@@ -252,7 +252,7 @@ public class NotificationDailyOfferService extends Service {
             //child modified
             NotificationCompat.Builder mBuilder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(myContext)
-                            .setSmallIcon(R.mipmap.icona_mad)  //TODO inventare icona notifica (carlo)
+                            .setSmallIcon(R.mipmap.icona_mad)
                             .setContentTitle(getResources().getText(R.string.offer_edited))
                             .setContentText(offer.getDescription())
                             .setAutoCancel(true);
