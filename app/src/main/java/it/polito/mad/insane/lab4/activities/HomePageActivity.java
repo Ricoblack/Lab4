@@ -232,7 +232,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             }
         };
 
-        restaurantsRef.addValueEventListener(listener);
+        restaurantsRef.addListenerForSingleValueEvent(listener);
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -418,7 +418,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         }
         // make the device update its location
         manager.simpleLocation.beginUpdates();
-        restaurantsRef.addValueEventListener(listener);
+
     }
 
     @Override
