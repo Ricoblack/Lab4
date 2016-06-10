@@ -204,7 +204,7 @@ public class NotificationDailyOfferService extends Service {
         super.onDestroy();
         offersRef.removeEventListener(changedListener);
         offersRef.removeEventListener(addedListener);
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 
     private void showNotification(DailyOfferSimple offer, int type){
