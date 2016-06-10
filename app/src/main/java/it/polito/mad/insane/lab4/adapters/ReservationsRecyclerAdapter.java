@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -42,11 +43,16 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
     private final Context context;
     private List<Booking> mData; //actual data to be displayed
     private LayoutInflater mInflater;
+    private DatabaseReference myRef;
+    private ValueEventListener listener;
 
-    public ReservationsRecyclerAdapter(Context context, List<Booking> data){
+
+    public ReservationsRecyclerAdapter(Context context, List<Booking> data, ValueEventListener listener, DatabaseReference myRef){
         this.context = context;
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
+        this.myRef = myRef;
+        this.listener = listener;
     }
 
     @Override
@@ -121,8 +127,16 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                             .setPositiveButton(v.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
 
-                                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    final DatabaseReference myRef = database.getReference("/bookings/");
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    //final DatabaseReference myRefadapter = database.getReference("/bookings/");
+                                    DatabaseReference myRefadapter = database.getReference("/bookings/users/"+currentBooking.getUserId()+"/"+currentBooking.getID());
+
+                                    myRefadapter.setValue(null, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        }
+                                    });
+
 
 //                                    myRef.setValue(null, new DatabaseReference.CompletionListener() {
 //                                        @Override
@@ -134,34 +148,54 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 //                                        }
 //                                    });
                                     /*********************************************************/
-                                    myRef.runTransaction(new Transaction.Handler() {
-
-                                        @Override
-                                        public Transaction.Result doTransaction(MutableData mutableData) {
-                                            DatabaseReference bookingRefUser = myRef.child("users").child(currentBooking.getUserId()).child(currentBooking.getID());
-                                            bookingRefUser.setValue(null);
-
-                                            DatabaseReference bookingRefRest = myRef.child("restaurants").child(currentBooking.getRestaurantId()).child(currentBooking.getID());
-                                            bookingRefRest.setValue(null);
-
-
-
-
-                                            return Transaction.success(mutableData);
-                                        }
-
-                                        @Override
-                                        public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-//                                            if (!committed){
-//                                            mData.remove(position);
-//                                              notifyItemRemoved(position);
-//                                            notifyItemRangeChanged(position, mData.size());
-//                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
-//                                            }
-//                                            else
-//                                                Toast.makeText(context, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+//                                    myRefadapter.runTransaction(new Transaction.Handler() {
+//
+//                                        @Override
+//                                        public Transaction.Result doTransaction(MutableData mutableData) {
+//                                            DatabaseReference bookingRefUser = myRefadapter.child("users").child(currentBooking.getUserId()).child(currentBooking.getID());
+//                                            bookingRefUser.setValue(null);
+//
+//
+//                                            return Transaction.success(mutableData);
+//                                        }
+//
+//                                        @Override
+//                                        public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+////                                            if (!committed){
+////                                            mData.remove(position);
+////                                              notifyItemRemoved(position);
+////                                            notifyItemRangeChanged(position, mData.size());
+////                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+////                                            }
+////                                            else
+////                                                Toast.makeText(context, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
+//
+//                                    myRefadapter.runTransaction(new Transaction.Handler() {
+//
+//                                        @Override
+//                                        public Transaction.Result doTransaction(MutableData mutableData) {
+//
+//
+//                                            DatabaseReference bookingRefRest = myRefadapter.child("restaurants").child(currentBooking.getRestaurantId()).child(currentBooking.getID());
+//                                            bookingRefRest.setValue(null);
+//
+//                                            return Transaction.success(mutableData);
+//                                        }
+//
+//                                        @Override
+//                                        public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+////                                            if (!committed){
+////                                            mData.remove(position);
+////                                              notifyItemRemoved(position);
+////                                            notifyItemRangeChanged(position, mData.size());
+////                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+////                                            }
+////                                            else
+////                                                Toast.makeText(context, R.string.error_delete_offer, Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    });
                                     /**********************************************************/
 
                                     mData.remove(position);

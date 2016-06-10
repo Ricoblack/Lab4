@@ -104,7 +104,7 @@
     <string name="title_activity_filter">Filtra</string>
     <string name="delete_reservation_alert_title">Sei sicuro di voler cancellare la prenotazione?</string>
     <string name="filter">Filtra</string>
-    <string name="reservation">Prenotazione</string>
+    <string name="reservation">Prenotazioni</string>
     <string name="no_reservation_available">Non ci sono prenotazioni disponibili</string>
     <string name="title_activity_display_reservation">Mostra prenotazione</string>
     <string name="reviews">recensioni</string>

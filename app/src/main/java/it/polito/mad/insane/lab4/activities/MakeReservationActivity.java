@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +42,10 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +68,8 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static double totalPrice = 0;
     private static double totalDiscount;
     private static int totalDishesQty;
+
+    // TODO X FEDE: mettere la listview dei piatti fissa e la pagina scrollabile in modo che scrolli l'activity e non la listview (Michele)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,28 +103,51 @@ public class MakeReservationActivity extends AppCompatActivity {
                         return super.clone();
                     }
                 });
-                // TODO: gestire il caso di offerte sovrapposte e cambiare layout in modo da visualizzare quali offerte sono state applicate (Michele)
-                // TODO: oppure implementare offerte direttamente acquistabili (Michele)
+
                 if(dailyOfferHashMap!=null)
                 {
                     totalDiscount = 0;
 
                     // check if there are some daily offers in  the reservation
                     ArrayList<DailyOffer> dailyOffers = new ArrayList<DailyOffer>(dailyOfferHashMap.values());
+
+                    // sort offers based on decreasing discount
+                    Collections.sort(dailyOffers, new Comparator<DailyOffer>() {
+                        @Override
+                        public int compare(DailyOffer lhs, DailyOffer rhs) {
+                            return Double.compare(rhs.getDiscount(), lhs.getDiscount());
+                        }
+                    });
+                    Log.d("prima:",String.valueOf(dailyOffers.get(0).getDiscount()));
+                    Log.d("seconda:",String.valueOf(dailyOffers.get(1).getDiscount()));
+
+                    // take a copy of the dishes in the reservation
+                    ArrayList<DailyOffer> applyedOffers = new ArrayList<DailyOffer>();
+                    HashMap<Dish, Integer> copyDishesMap = new HashMap<Dish, Integer>(selectedQuantities);
+                    ArrayList<Dish> dishesReservationTemp = new ArrayList<Dish>(copyDishesMap.keySet());
                     for (DailyOffer tempOffer : dailyOffers)
                     {
+                        // for each daily offer
                         ArrayList<String> idDishesOffer = new ArrayList<String>(tempOffer.getDishesIdMap().keySet());
-                        ArrayList<Dish> dishesReservation = new ArrayList<Dish>(selectedQuantities.keySet());
+//                        ArrayList<Dish> dishesReservation = new ArrayList<Dish>(selectedQuantities.keySet());
                         int numberDishes = tempOffer.getDishesIdMap().size();
                         int repeater = Integer.MAX_VALUE;
                         // for each dish in the offer, check if there is in the reservation
-                        for (String tempDishID : idDishesOffer) {
+                        for (String tempDishID : idDishesOffer)
+                        {
                             // check in the list of reserved dishes if there is tempDishID
-                            for (Dish dishReservation : dishesReservation) {
-                                if (dishReservation.getID().equals(tempDishID)) {
-                                    // there is the dish. Check the quantity
-                                    int result = selectedQuantities.get(dishReservation) / tempOffer.getDishesIdMap().get(tempDishID);
-                                    if (result > 0) {
+//                            for (Dish dishReservation : dishesReservation)
+                            for(Iterator<Dish> it = dishesReservationTemp.iterator(); it.hasNext();)
+                            {
+                                Dish dish = it.next();
+//                                if (dishReservation.getID().equals(tempDishID))
+                                if(dish.getID().equals(tempDishID))
+                                {
+                                    // there is the dish in the offer. Check the quantity
+                                    int result = copyDishesMap.get(dish) / tempOffer.getDishesIdMap().get(tempDishID);
+//                                    int result = selectedQuantities.get(dishReservation) / tempOffer.getDishesIdMap().get(tempDishID);
+                                    if (result > 0)
+                                    {
                                         numberDishes--;
                                         if(result < repeater)
                                             repeater = result;
@@ -128,10 +157,28 @@ public class MakeReservationActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        if (numberDishes == 0) {
+                        if (numberDishes == 0)
+                        {
+                            // the offer is matched
                             totalDiscount += repeater * tempOffer.getDiscount();
+                            // remove the dishes interested in this offer from the copyMap
+                            for(Iterator<Dish> it = dishesReservationTemp.iterator(); it.hasNext();)
+                            {
+                                Dish d = it.next();
+                                if(tempOffer.getDishesIdMap().containsKey(d.getID())) {
+                                    int currentQty = copyDishesMap.get(d);
+                                    currentQty -= repeater * tempOffer.getDishesIdMap().get(d.getID());
+                                    copyDishesMap.put(d, currentQty);
+                                    if(!applyedOffers.contains(tempOffer))
+                                        applyedOffers.add(tempOffer); // TODO: in applyedOffers c'è la lista delle offerte che sono state applicate per calcolare lo sconto, si possono mostrare nell'activity volendo (Michele)
+
+                                }
+                            }
                         }
                     }
+
+                    for(DailyOffer d : applyedOffers)
+                        Log.d("offerta applicata:", d.getName()+" - "+d.getDescription());
 
                     if(totalDiscount > 0)
                     {
@@ -145,6 +192,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                             DecimalFormat df = new DecimalFormat("0.00");
                             tv.setText(MessageFormat.format("{0}€", df.format(totalDiscount)));
                         }
+
                     }
 
                 }
