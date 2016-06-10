@@ -44,8 +44,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     private static HashMap<String,Booking> bookingLocalCache = new HashMap<>(); // questa è la copia locale dei dati scaricati mano a mano dal DB e dalla quale si genera offersList
     private static ArrayList<Booking> bookingList; // Questa è la lista che viene passata all'adapter sulla quale bisogna agire per modificare l'adapter
 
-    private DatabaseReference myRef;
-    private ValueEventListener listener;
+    private DatabaseReference myRef = null;
+    private ValueEventListener listener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,22 +72,20 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 
             listener=new ValueEventListener() {
 
-
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
-                        @Override
-                        protected Object clone() throws CloneNotSupportedException {
-                            return super.clone();
-                        }
-                    });
+                    HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>(){});
+//                    {
+//                        @Override
+//                        protected Object clone() throws CloneNotSupportedException {
+//                            return super.clone();
+//                        }
+//                    });
                     if(bookings != null) {
                         //FIXME non ho capito perchè la progress bar utilizzata in più posti in questo caso non appare(Federico)
                         findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
                         //TODO risolvere il problema della visualizzazione dopo la cancellazione e cambio di activity da chiedere a michele(Federico)
                         setUpView(new ArrayList<Booking>(bookings.values()), rv);
-                    }else{
-                        setUpView(new ArrayList<Booking>(), rv);
                     }
                 }
                 @Override
@@ -201,7 +199,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 
     @Override
     protected void onResume() {
-        myRef.addValueEventListener(listener);
+//        myRef.addValueEventListener(listener);
         super.onResume();
         //
     }
@@ -212,7 +210,8 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         {
             TextView reservationMessage = (TextView) findViewById(R.id.no_reservation_message);
             reservationMessage.setVisibility(View.GONE);
-            ReservationsRecyclerAdapter adapter = new ReservationsRecyclerAdapter(this, bookingList);
+            myRef.removeEventListener(listener);
+            ReservationsRecyclerAdapter adapter = new ReservationsRecyclerAdapter(this, bookingList, listener, myRef);
             rv.setAdapter(adapter);
 
             if((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE)
@@ -256,11 +255,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             }
 
             rv.setItemAnimator(new DefaultItemAnimator());
-        }else{
-            TextView reservationMessage = (TextView) findViewById(R.id.no_reservation_message);
-            reservationMessage.setVisibility(View.GONE);
-            ReservationsRecyclerAdapter adapter = new ReservationsRecyclerAdapter(this, bookingList);
-            rv.setAdapter(adapter);
         }
 
     }
