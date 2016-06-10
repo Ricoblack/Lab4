@@ -26,34 +26,22 @@
             >
 
             <TextView
-                android:id="@+id/hash"
+                android:id="@+id/home_restaurateur_username_cardview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="#"
-                android:textColor="@color/colorAccent"
+                android:text="@string/user_name"
+                android:textSize="12sp"
                 android:typeface="sans"
                 android:textStyle="bold"
-                android:textSize="22sp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"/>
+                android:textColor="@color/colorAccent"/>
 
             <TextView
-                android:id="@+id/title_card_pren"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:typeface="sans"
-                android:textStyle="bold"
-                android:textColor="@color/colorAccent"
-                android:layout_toRightOf="@id/hash"
-                android:layout_toEndOf="@id/hash"/>
-
-            <TextView
-                android:id="@+id/hour"
+                android:id="@+id/home_restaurateur_hour_cardview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="18sp"
+                android:text="@string/hh_mm"
                 android:textColor="@color/colorAccent"
                 android:layout_marginRight="12dp"
                 android:layout_marginEnd="12dp"
@@ -74,6 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
+                android:text="N"
                 android:textColor="@color/white"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"

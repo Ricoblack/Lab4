@@ -163,8 +163,8 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
             this.cardView = itemView;
             this.imageView = (ImageView) itemView.findViewById(R.id.delete_booking_button);
             //data of the booking class
-            this.bookingID = (TextView) itemView.findViewById(R.id.title_card_pren);
-            this.bookingTime = (TextView) itemView.findViewById(R.id.hour);
+            this.bookingID = (TextView) itemView.findViewById(R.id.home_restaurateur_username_cardview);
+            this.bookingTime = (TextView) itemView.findViewById(R.id.home_restaurateur_hour_cardview);
             this.bookingDishNum = (TextView) itemView.findViewById(R.id.num_booking);
 
             // set the onClickListener to the View
@@ -177,13 +177,11 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
 
         public void setData(Booking current, int position)
         {
-//            this.bookingID.setText(current.getID()); //TODO: nella cardview Inserire l'ID ma non visibile all'utente
+            this.bookingID.setText(current.getUserName());
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            //TODO scommentare una volta gestiti i calendar sul DB
-//            String date = dateFormat.format(current.getDate_time().getTime());
-            //TODO scommentare una volta gestiti i calendar sul DB
-//            this.bookingTime.setText(date);
+            String splitted[] = current.getDateTime().split(" ");
+            this.bookingTime.setText(splitted[1]);
             this.bookingDishNum.setText(Integer.toString(current.getDishesIdMap().size()));
 
             this.position = position;
