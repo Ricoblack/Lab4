@@ -79,6 +79,8 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
     // TODO: mettere un colore/tema di background dell'app che non sia bianco come tutti gli altri colori di sfondo
 
+    //FIXME sistemare il grafico e la scelta delle ore (Renato)
+    //TODO aggiungere almeno una prenotazione al giorno all'avvio dell'app altrimenti il giorno della valutazione l'home page sarà vuota (Renato)
 
     /** Standard methods **/
     @Override

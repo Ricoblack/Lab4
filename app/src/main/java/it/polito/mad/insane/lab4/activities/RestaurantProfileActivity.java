@@ -57,6 +57,7 @@ import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 //TODO x Michele se non ci sono dailyOffers far comparire una scritta che dice nessuna offerta attiva (Renato)
 
+//TODO cambiare logica di aggiunta prenotazione (Renato da fare insieme a Federico)
 
 public class RestaurantProfileActivity extends AppCompatActivity {
 
