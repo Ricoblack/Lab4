@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="it.polito.mad.insane.lab3.activities.FilterActivity">
+    tools:context="it.polito.mad.insane.lab4.activities.FilterActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -234,7 +234,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             }
         };
 
-        restaurantsRef.addListenerForSingleValueEvent(listener);
+        restaurantsRef.addValueEventListener(listener);
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
@@ -386,6 +386,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     protected void onPause() {
         // stop location updates (saves battery)
         //manager.simpleLocation.endUpdates();
+        restaurantsRef.removeEventListener(listener);
         super.onPause();
     }
 
@@ -419,6 +420,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         }
         // make the device update its location
         manager.simpleLocation.beginUpdates();
+        restaurantsRef.addValueEventListener(listener);
     }
 
     @Override
