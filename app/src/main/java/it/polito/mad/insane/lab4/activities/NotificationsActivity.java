@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.NotifyArrayAdapter;
@@ -27,9 +28,18 @@ public class NotificationsActivity extends AppCompatActivity {
         ListView lv = (ListView) findViewById(R.id.notification_list_view);
         if (lv != null){
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(NotificationsActivity.this);
-            NotifyArrayAdapter adapter = new NotifyArrayAdapter(NotificationsActivity.this, R.layout.notify_listview_item,
-                    manager.getDailyOffersSimple());
-            lv.setAdapter(adapter);
+            if(manager.getDailyOffersSimple().size() == 0){
+                lv.setVisibility(View.GONE);
+                TextView tv = (TextView) findViewById(R.id.no_notification_textview);
+                if (tv != null) {
+                    tv.setVisibility(View.VISIBLE);
+                }
+            }
+            else {
+                NotifyArrayAdapter adapter = new NotifyArrayAdapter(NotificationsActivity.this, R.layout.notify_listview_item,
+                        manager.getDailyOffersSimple());
+                lv.setAdapter(adapter);
+            }
         }
     }
 
