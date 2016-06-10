@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -77,6 +76,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        //TODO i dati delle cardView non si aggiornano (ad esempio quando aggiungo una review)
 
         //controllo se l'utente è loggato come ristoratore o come consumer
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);

@@ -121,10 +121,14 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
             }
             this.typeCausine.setText(current.getInfo().getCuisineType());
             DecimalFormat df = new DecimalFormat("0.0");
-            this.avgFinalScore.setText(df.format(current.getAvgFinalScore()));
-            //this.numReview.setText(Integer.toString(current.getReviews().size())+" ");
+            if(current.getAvgFinalScore() == -1)
+                this.avgFinalScore.setText("N/A");
+            else
+                this.avgFinalScore.setText(df.format(current.getAvgFinalScore()));
+            this.numReview.setText(String.valueOf(current.getReviewsNumber()));
+            //TODO calcolare la distanza
             float distance=3;
-            //float distance = current.getLocation().distanceTo(manager.getLocation());
+//            float distance = current.getLocation().distanceTo(manager.getLocation());
             this.distance.setText(String.format("%.0f",distance)+"m");
         }
     }

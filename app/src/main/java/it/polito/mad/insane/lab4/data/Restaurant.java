@@ -27,6 +27,7 @@ public class Restaurant {
     private Map<String,Double> avgScores;
     private double avgFinalScore;
     public Location location=null;
+    private int reviewsNumber = 0;
 
 
     public Restaurant(){}
@@ -97,6 +98,13 @@ public class Restaurant {
         this.ID = ID;
     }
 
+    public int getReviewsNumber() {
+        return reviewsNumber;
+    }
+
+    public void setReviewsNumber(int reviewsNumber) {
+        this.reviewsNumber = reviewsNumber;
+    }
 
 
 //    public Restaurant(String restaurantID, String password, RestaurantInfo profile, Map<String,String> reviewsIdList, Map<String,String> bookingsIdList, Map<String,Dish> dishMap, Location location)throws NoSuchAlgorithmException, UnsupportedEncodingException {

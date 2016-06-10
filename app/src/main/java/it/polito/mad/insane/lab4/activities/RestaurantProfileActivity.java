@@ -264,6 +264,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 restaurant = dataSnapshot.getValue(Restaurant.class);
 
                 if (restaurant != null) {
+                    reviewsNumber = restaurant.getReviewsNumber();
+
                     if (restaurant.getAvgFinalScore() == -1) {
                         TextView tv = (TextView) findViewById(R.id.review_fragment_no_reviews);
                         if (tv != null) {
@@ -338,7 +340,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     if (tv != null) {
                         tv.setText(String.format(getResources().getString(R.string.reviewsFormat), data.size()));
                     }
-                    reviewsNumber = data.size();
+//                    reviewsNumber = data.size();
                 }
             }
             @Override

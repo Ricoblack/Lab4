@@ -217,7 +217,7 @@ public class AddReviewActivity extends AppCompatActivity {
         }
     }
 
-    private void saveReview(final String restaurantId, double restaurantFinalScore, double reviewsNumber, HashMap<String, Double> restaurantScoresMap) {
+    private void saveReview(final String restaurantId, double restaurantFinalScore, final double reviewsNumber, HashMap<String, Double> restaurantScoresMap) {
 
         //CREO L'OGGETTO REVIEW
         final Review r = new Review();
@@ -298,6 +298,7 @@ public class AddReviewActivity extends AppCompatActivity {
 
                 restaurantRef.child("avgFinalScore").setValue(finalUpdateScore);
                 restaurantRef.child("avgScores").setValue(finalUpdateMap);
+                restaurantRef.child("reviewsNumber").setValue(reviewsNumber + 1);
 
                 return Transaction.success(mutableData);
             }
