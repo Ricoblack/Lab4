@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,12 +43,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MakeReservationActivity extends AppCompatActivity {
@@ -254,7 +257,7 @@ public class MakeReservationActivity extends AppCompatActivity {
         MakeReservationActivity.totalPrice = 0;
     }
 
-    public void saveReservation(HashMap<Dish, Integer> selectedQuantities) {
+    public void saveReservation(final HashMap<Dish, Integer> selectedQuantities) {
         final Booking b = new Booking();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         b.setDateTime(sdf.format(reservationDate.getTime()));
@@ -284,46 +287,51 @@ public class MakeReservationActivity extends AppCompatActivity {
             b.setUserName(mPrefs.getString("uName",null));
         }
 
-        //TODO implementare meccanismo di decremento quantita' disponibili dei piatti (Renato)
-//        for(int i = 0; i < manager.getRestaurant(restaurantId).getDishes().size(); i++){
-//            int quantity = manager.getRestaurant(restaurantId).getDishes().get(i).getAvailabilityQty();
-////            int newQuantity = quantity - quantities[i];
-//            manager.getRestaurant(restaurantId).getDishes().get(i).setAvailabilityQty(quantity - quantities[i]);
-//            manager.saveDbApp();
-//        }
-//
-//        manager.getBookings().add(b);
-//        manager.saveDbApp();
-
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference addBookingRef = database.getReference("/bookings");
-
-        addBookingRef.runTransaction(new Transaction.Handler() {
-
+        DatabaseReference restaurantRef = database.getReference("/restaurants/" + restaurantId);
+        restaurantRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                DatabaseReference restaurantRef = addBookingRef.child("restaurants").child(restaurantId);
-                DatabaseReference pushRef = restaurantRef.push();
-                String key = pushRef.getKey();
-                b.setID(key);
-                pushRef.setValue(b);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
 
-                DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
-                userRef.setValue(b);
+                final DatabaseReference addBookingRef = database.getReference("/bookings");
+                addBookingRef.runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        DatabaseReference restaurantRef = addBookingRef.child("restaurants").child(restaurantId);
+                        DatabaseReference pushRef = restaurantRef.push();
+                        String key = pushRef.getKey();
+                        b.setID(key);
+                        pushRef.setValue(b);
 
-                return Transaction.success(mutableData);
+                        DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
+                        userRef.setValue(b);
+
+                        HashMap<String, Dish> updateMap = (HashMap<String, Dish>) restaurant.getDishMap();
+                        for (Map.Entry<Dish, Integer> selectedDishEntry : selectedQuantities.entrySet()) {
+                            for (Map.Entry<String, Dish> menuDishEntry : updateMap.entrySet()) {
+                                if (selectedDishEntry.getKey().getID().equals(menuDishEntry.getKey())){
+                                    int updateQuantity = menuDishEntry.getValue().getAvailabilityQty() - selectedDishEntry.getValue();
+                                    menuDishEntry.getValue().setAvailabilityQty(updateQuantity);
+                                    updateMap.put(menuDishEntry.getKey(), menuDishEntry.getValue());
+                                }
+                            }
+                        }
+                        DatabaseReference dishMapRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
+                        dishMapRef.setValue(updateMap);
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                    }
+                });
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
-                //FIXME non entra mai in questo metodo anche se la transazione va a buon fine nel DB (Renato)
-//                Toast.makeText(getApplicationContext(), "Reservation done successfully",
-//                        Toast.LENGTH_SHORT).show();
-//                clearStaticVariables();
-//                finish(); // finish() the current activity
-//                RestaurantProfileActivity.clearStaticVariables();
-//                Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
-//                startActivity(intent); // start the new activity
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

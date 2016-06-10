@@ -530,7 +530,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
     private void fillGraphWithBookings(BookingsRecyclerAdapter adapter)
     {
-
         //creo un vettore in cui gli indici corrispondono alle ore del giorno e i valori al numero di prenotazioni in quell'ora
         int hours[] = new int[24];
 
@@ -601,7 +600,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         }
         setUpRecyclerDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
         setUpRecyclerHour(hourOfDay);
-
     }
 
 
@@ -628,7 +626,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     }
 
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {

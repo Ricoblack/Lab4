@@ -51,14 +51,15 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*
+
         // finish the RestaurantProfile activity if is not finished
-        if(RestaurantProfile.RestaurantProfileActivity != null)
-            RestaurantProfile.RestaurantProfileActivity.finish();
-        */
+        if(RestaurantProfileActivity.RestaurantProfileActivity != null)
+            RestaurantProfileActivity.RestaurantProfileActivity.finish();
+
         setContentView(R.layout.my_reservations_user_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         if (mPrefs != null) {
@@ -71,8 +72,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(this);
 
             listener=new ValueEventListener() {
-
-
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     HashMap<String,Booking> bookings = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
@@ -97,9 +96,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             myRef = database.getReference("/bookings/users/"+uid);
 
-
             myRef.addValueEventListener(listener);
-
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

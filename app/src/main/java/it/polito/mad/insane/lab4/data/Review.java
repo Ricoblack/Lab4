@@ -15,6 +15,7 @@ public class Review {
     private String dateTime;
     private String title;
     private String text;
+    private String username;
     private Map<String,Double> scoresMap; // <Parameter, score>
     private double avgFinalScore;
 //    private String photoPath; // TODO: campo da aggiungere nel DB (michele)
@@ -98,5 +99,13 @@ public class Review {
 
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

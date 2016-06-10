@@ -103,6 +103,7 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
 
         public void setData(Review current, int position){
             this.position = position;
+            this.userName.setText(current.getUsername());
             this.date.setText(current.getDateTime());
             this.expandableText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override

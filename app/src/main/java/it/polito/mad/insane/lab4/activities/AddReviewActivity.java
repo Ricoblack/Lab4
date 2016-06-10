@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ public class AddReviewActivity extends AppCompatActivity {
         setContentView(R.layout.add_review_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle(getString(R.string.add_review_activity_title));
 
         Bundle bundle = getIntent().getExtras();
         final String restaurantId = bundle.getString("ID");
@@ -190,7 +192,7 @@ public class AddReviewActivity extends AppCompatActivity {
     }
 
     private void checkAllVotes(){
-        int total = 0;
+        double total = 0;
         for(double d : reviewScores){
             if(d == -1){
                 total = -1;
@@ -208,7 +210,8 @@ public class AddReviewActivity extends AppCompatActivity {
             if (tvHint != null && ll != null && tvScore != null) {
                 tvHint.setVisibility(View.GONE);
                 ll.setVisibility(View.VISIBLE);
-                tvScore.setText(String.valueOf(reviewFinalScore));
+                DecimalFormat df = new DecimalFormat("0.0");
+                tvScore.setText(String.valueOf(df.format(reviewFinalScore)));
             }
 
         }
@@ -244,6 +247,7 @@ public class AddReviewActivity extends AppCompatActivity {
         SharedPreferences mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
         if (mPrefs != null) {
             r.setUserId(mPrefs.getString("uid", null));
+            r.setUsername(mPrefs.getString("uName", null));
         }
 
         //AGGIORNO L'OGGETTO RISTORANTE

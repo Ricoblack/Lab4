@@ -20,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
@@ -74,10 +76,13 @@ public class ViewBookingActivity extends AppCompatActivity {
 
         tv = (TextView) findViewById(R.id.view_booking_items_number);
         if(tv != null)
-            tv.setText(String.valueOf(currentBooking.getTotalDishesQty()));
+            tv.setText(MessageFormat.format("{0} ITEMS", String.valueOf(currentBooking.getTotalDishesQty())));
         tv = (TextView) findViewById(R.id.view_booking_price);
-        if(tv != null)
-            tv.setText(String.valueOf(currentBooking.getTotalPrice()));
+        if(tv != null){
+            DecimalFormat df = new DecimalFormat("0.00");
+            tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()))));
+        }
+
 
         final ListView lv = (ListView) findViewById(R.id.view_booking_list_view);
         if (lv != null){

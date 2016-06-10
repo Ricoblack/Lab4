@@ -129,7 +129,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/no_notes"
-                        android:textSize="14sp"
+                        android:textSize="18sp"
                         android:drawableLeft="@drawable/ic_assignment_black_24dp"
                         android:drawablePadding="5dp"/>
 
