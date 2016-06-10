@@ -38,6 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/no_notifications_to_read"
+        android:layout_marginTop="100dp"
+        android:textSize="18sp"
         android:visibility="gone"/>
 
 </android.support.design.widget.CoordinatorLayout>
