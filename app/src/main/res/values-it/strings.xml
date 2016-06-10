@@ -282,5 +282,12 @@
     <string name="no_reviews_available_restaurant">Non ci sono recensioni disponibili per questo ristorante</string>
     <string name="no_reviews_available">Non ci sono recensioni disponibili per questo ristorante. Aggiungi per primo una recensione!</string>
     <string name="user">User</string>
+    <string name="cannotFilterLocalization">Non posso filtrare per distanza</string>
+    <string name="description_daily_offer">Descrizione</string>
+    <string name="general_info_offer">Info generali offerta</string>
+    <string name="no_dishes_available">Non ci sono piatti disponibili per questo ristorante</string>
+    <string name="no_notifications_to_read">Nessuna notifica da leggere</string>
+    <string name="offer_name">Nome dell\'offerta</string>
+    <string name="selectOrdering">Scegliere un criterio per l\'ordinamento</string>
 
 </resources>
