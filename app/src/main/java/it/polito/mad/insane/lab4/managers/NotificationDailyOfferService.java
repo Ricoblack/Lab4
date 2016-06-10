@@ -85,7 +85,11 @@ public class NotificationDailyOfferService extends Service {
                     //nuova offerta aggiunta
                     mPrefs.edit().putString("lastAddedId",offer.getID()).commit();
                     showNotification(offer, CHILD_ADDED);
+                    addOfferToSharedPreferences(offer);
                 }
+
+
+
             }
 
             @Override
@@ -168,7 +172,7 @@ public class NotificationDailyOfferService extends Service {
                 }
                 */
                 showNotification(offer, CHILD_MODIFIED);
-
+                addOfferToSharedPreferences(offer);
 
             }
 
@@ -192,6 +196,8 @@ public class NotificationDailyOfferService extends Service {
         offersRef.limitToLast(1).addChildEventListener(addedListener);
         offersRef.addChildEventListener(changedListener);
     }
+
+
 
     @Override
     public void onDestroy() {
@@ -281,12 +287,18 @@ public class NotificationDailyOfferService extends Service {
             mNotifyMgr.notify(mNotificationId, notif);
 
 
+
         }
 
 
 
-
-
+    }
+    private void addOfferToSharedPreferences(DailyOfferSimple offer) {
+        //add notification to shared pref
+        TinyDB db=new TinyDB(myContext);
+        ArrayList<Object> list=db.getListObject("notification",DailyOfferSimple.class);
+        if(list==null) list=new ArrayList<>();
+        list.add(offer);
     }
 }
 

@@ -198,8 +198,9 @@ public class RestaurateurJsonManager
         String subString=distanceValue.substring(0,distanceValue.length()-1);
         float distance=Float.parseFloat(subString);
 
-        //TODO bisogna implementare il funzionamento della geolocalizzazione (Michele)
-//        if(r.getLocation().distanceTo(this.location)<=distance) return true;
+
+        if(r.location.distanceTo(this.location)<=distance) return true;
+
 
 
         return false;
@@ -349,7 +350,18 @@ public class RestaurateurJsonManager
     private boolean checkIfRespectsPriceConstraint(Restaurant r, String priceValue) {
 
         //check if exists at least one dish that costs less that price
-        String subString=priceValue.substring(0,priceValue.length()-1);
+        String subString="1000";
+        if(priceValue.equals("€")){
+            subString="5";
+        }
+        else if(priceValue.equals("€€")){
+            subString="10";
+        }
+        else if(priceValue.equals("€€€")){
+            subString="20";
+        }
+        //String subString=priceValue.substring(0,priceValue.length()-1);
+
         int price=Integer.parseInt(subString);
         for(Dish d : r.getDishMap().values()){
             if(d.getPrice()<=price) return true;
@@ -411,8 +423,13 @@ public class RestaurateurJsonManager
 
             if(distanceValue.equals("")==false){
                 //check if respects distance contraint
+                if(r.location==null || simpleLocation.getLatitude()==0) {
+                    Toast.makeText(myContext,myContext.getResources().getText(R.string.cannotFilterLocalization),Toast.LENGTH_SHORT).show();
 
-                if(checkIfRespectsDistanceConstraint(r,distanceValue)==false) continue;
+                }
+                else {
+                    if (checkIfRespectsDistanceConstraint(r, distanceValue) == false) continue;
+                }
             }
 
             if(priceValue.equals("")==false){
