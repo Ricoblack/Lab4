@@ -104,13 +104,13 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             else {
                 //loggato come user, attivo service
                 if(isServiceStarted()==false) {
-                    Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this,"service started",Toast.LENGTH_SHORT).show();
                     Intent mServiceIntent = new Intent(this, NotificationDailyOfferService.class);
                     startService(mServiceIntent);
 
                 }
                 else {
-                    Toast.makeText(this,"service gia attivo",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this,"service gia attivo",Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -595,7 +595,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                         stopService(new Intent(this, NotificationDailyOfferService.class));
                         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
                         notificationManager.cancel(123456789);
-                        Toast.makeText(this,"Service stopped",Toast.LENGTH_SHORT);
+                        //Toast.makeText(this,"Service stopped",Toast.LENGTH_SHORT);
                     }
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);

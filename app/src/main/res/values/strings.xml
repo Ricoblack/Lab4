@@ -178,7 +178,7 @@
     <string name="title_activity_view_booking">ViewBooking</string>
     <string name="take_photo">Take a photo</string>
     <string name="gallery_image">Choose from gallery</string>
-    <string name="error_save_dish">Ops! something goes wrong: dish info not saved</string>
+    <string name="error_save_dish">Ops! Something goes wrong: dish info not saved</string>
     <string name="error_some_empty_fill">All field must be filled</string>
     <string name="error_processing_img">Ops! something goes wrong while process img</string>
     <string name="confirm_save_dishPhoto">Photo changed</string>
