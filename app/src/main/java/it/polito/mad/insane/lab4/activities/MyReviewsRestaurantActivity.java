@@ -86,6 +86,7 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
                 if(restaurant != null) {
                     if (restaurant.getAvgFinalScore() == -1 || restaurant.getReviewsNumber() == 0){
