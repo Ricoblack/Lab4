@@ -81,7 +81,7 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
         private int position;
         private boolean first = true;
         private boolean expandable = true;
-//        private LinearLayout hiddenScoresLayout;
+        private LinearLayout hiddenScoresLayout;
         private TextView firstScore;
         private TextView secondScore;
         private TextView thirdScore;
@@ -96,7 +96,7 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
             this.expandableText = (TextView) itemView.findViewById(R.id.review_extendable_text);
             this.btnSeeMore = (TextView) itemView.findViewById(R.id.review_btn_see_more);
             this.date = (TextView) itemView.findViewById(R.id.review_date);
-//            this.headerLayout = (LinearLayout) itemView.findViewById(R.id.review_header_layout);
+            this.hiddenScoresLayout = (LinearLayout) itemView.findViewById(R.id.cardview_review_scores_layout);
             this.firstScore = (TextView) itemView.findViewById(R.id.cardview_review_score_1);
             this.secondScore = (TextView) itemView.findViewById(R.id.cardview_review_score_2);
             this.thirdScore = (TextView) itemView.findViewById(R.id.cardview_review_score_3);
@@ -115,19 +115,28 @@ public class ReviewsRecyclerAdapter extends RecyclerView.Adapter<ReviewsRecycler
                     if(first){ // here we check if the text is longer than the textview space for the first time. If not, don't need
                         // the button "see more"
                         first = false;
-                        if(expandableText.getLineCount() < TextViewCompat.getMaxLines(expandableText))
-                            btnSeeMore.setVisibility(View.INVISIBLE);
+//                        if(expandableText.getLineCount() < TextViewCompat.getMaxLines(expandableText))
+//                            btnSeeMore.setVisibility(View.INVISIBLE);
+                        if(expandableText.getText().equals("")){
+                            hiddenScoresLayout.setVisibility(View.VISIBLE);
+                            title.setVisibility(View.GONE);
+                            expandableText.setVisibility(View.GONE);
+                            btnSeeMore.setVisibility(View.GONE);
+                        }
+
                     }
                     if(btnSeeMore.getVisibility() != View.INVISIBLE){ //if the text is expandable I set a listener to the button
                         btnSeeMore.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
                                 if (!expandable) { // the textview is large, I want to compress it
                                     expandable = true;
+                                    hiddenScoresLayout.setVisibility(View.GONE);
                                     ObjectAnimator animation = ObjectAnimator.ofInt(expandableText, "maxLines", 3);
                                     animation.setDuration(200).start();
                                     btnSeeMore.setText(R.string.see_more);
                                 } else { //the textview is compressed, I want to expand it
                                     expandable = false;
+                                    hiddenScoresLayout.setVisibility(View.VISIBLE);
                                     ObjectAnimator animation = ObjectAnimator.ofInt(expandableText, "maxLines", 40);
                                     animation.setDuration(200).start();
                                     btnSeeMore.setText(R.string.see_less);
