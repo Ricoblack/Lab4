@@ -177,8 +177,16 @@
         <activity
             android:name=".activities.MyReviewsRestaurantActivity"
             android:label="@string/title_activity_my_reviews_restaurant"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activities.NotificationsActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.NotificationsActivity"
+            android:label="@string/title_activity_notifications"
+            android:parentActivityName=".activities.HomePageActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.polito.mad.insane.lab4.activities.HomePageActivity" />
+        </activity>
     </application>
 
 </manifest>

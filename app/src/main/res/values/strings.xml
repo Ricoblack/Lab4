@@ -294,4 +294,5 @@
     <string name="selectOrdering">Select an ordering criteria</string>
     <string name="offer_name">Offer name</string>
     <string name="description_daily_offer">Description</string>
+    <string name="title_activity_notifications">NotificationsActivity</string>
 </resources>

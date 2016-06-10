@@ -12,7 +12,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
-import it.polito.mad.insane.lab4.activities.MakeReservationActivity;
 import it.polito.mad.insane.lab4.activities.NotificationsActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.DailyOfferSimple;
