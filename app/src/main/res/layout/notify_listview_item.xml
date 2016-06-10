@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/notify_item_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notify_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation = "vertical"
+    card_view:cardCornerRadius="@dimen/radius_cardView"
+    android:clickable="true"
+    android:layout_marginBottom="@dimen/margin_between_cardView"
+    android:layout_margin="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,38 +23,51 @@
                 android:text="ID"
                 android:visibility="gone"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/error_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_error_black_24dp"
+                    android:layout_centerVertical="true"
+                    android:padding="2dp"/>
 
                 <TextView
                     android:id="@+id/notify_item_restaurant_name"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/restaurant_name"/>
+                    android:text="@string/restaurant_name"
+                    android:textSize="20sp"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:layout_toRightOf="@id/error_icon"/>
 
-                <TextView
-                    android:id="@+id/notify_item_offer_name"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/offer_name"
-                    />
 
-            </LinearLayout>
+            </RelativeLayout>
 
+
+
+            <View
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/header_daily_offer_cardview"
+                android:background="@color/colorAccent"
+                android:layout_margin="2dp"/>
 
             <TextView
-                android:id="@+id/notify_item_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/description"/>
+            android:id="@+id/notify_item_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/description"
+                android:layout_margin="8dp"
+                android:textSize="16sp"/>
 
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
 
-</LinearLayout>
