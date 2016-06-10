@@ -61,14 +61,15 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
                 RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(context);
                 manager.removeDailyOffer(((DailyOfferSimple) data.get(position)).getID());
 
-                Intent resultIntent = new Intent(context, RestaurantProfileActivity.class);
-                resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(position)).getID());
-                resultIntent.putExtra("Name",((DailyOfferSimple) data.get(position)).getRestaurantName());
+//                Intent resultIntent = new Intent(context, RestaurantProfileActivity.class);
+//                resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(position)).getID());
+//                resultIntent.putExtra("Name",((DailyOfferSimple) data.get(position)).getRestaurantName());
+//                getContext().startActivity(resultIntent);
 
                 data.remove(position);
                 notifyDataSetChanged();
 
-                context.startActivity(resultIntent);
+
 
 
             }
