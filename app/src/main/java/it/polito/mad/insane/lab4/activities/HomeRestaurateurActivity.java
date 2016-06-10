@@ -84,8 +84,6 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     // TODO: mettere un colore/tema di background dell'app che non sia bianco come tutti gli altri colori di sfondo
 
     //FIXME sistemare il grafico e la scelta delle ore (Renato)
-    //TODO aggiungere almeno una prenotazione al giorno all'avvio dell'app altrimenti il giorno della valutazione l'home page sarà vuota (Renato)
-
 
     /** Standard methods **/
 
@@ -95,6 +93,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         super.finish();
         HomeRestaurateurActivity = null;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -389,7 +388,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         RecyclerView.ItemAnimator ia = new DefaultItemAnimator();
         rV.setItemAnimator(ia); // If you don't apply other animations it uses the default one
 
-        fillGraphWithBookings(adapter);
+        fillGraphWithBookings(adapter.getMData());
 
     }
 
@@ -417,6 +416,8 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         // Set animation
         RecyclerView.ItemAnimator ia = new DefaultItemAnimator();  // If you don't apply other animations it uses the default one
         rV.setItemAnimator(ia);
+
+        fillGraphWithBookings(getBookingsOfDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH), globalDate.get(Calendar.DAY_OF_MONTH)));
     }
 
 
@@ -456,7 +457,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if (cal.get(Calendar.HOUR_OF_DAY) >= hour)
+            if (cal.get(Calendar.HOUR_OF_DAY) == hour)
                 hourBookings.add(b);
         }
         return hourBookings;
@@ -535,7 +536,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         TextView tv = (TextView) findViewById(R.id.home_title_hour);
         if(tv != null)
             tv.setText(R.string.all_hours);
-        setUpRecyclerDay(globalDate.get(Calendar.YEAR), globalDate.get(Calendar.MONTH), globalDate.get(Calendar.DAY_OF_MONTH));
+        setUpRecyclerDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
     }
 
     private void editGraph(BarGraphSeries<DataPoint> series)
@@ -633,7 +634,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     }
 
 
-    private void fillGraphWithBookings(BookingsRecyclerAdapter adapter)
+    private void fillGraphWithBookings(List<Booking> tempBookings)
     {
         //creo un vettore in cui gli indici corrispondono alle ore del giorno e i valori al numero di prenotazioni in quell'ora
         int hours[] = new int[24];
@@ -642,10 +643,9 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
         for(int i=0; i<24; i++)
             hours[i] = 0;
 
-        //List<Booking> bookings = null;
 
         // aggiungo all'i-esimo posto (che corrisponde all'i-esima ora) il numero di piatti prenotati
-        for(Booking b : bookings) {
+        for(Booking b : tempBookings) {
             SimpleDateFormat parser = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             Calendar cal = Calendar.getInstance();
             try {
@@ -704,7 +704,11 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             tv.setText(new StringBuilder().append(pad(hourOfDay)).append(":").append("00"));
         }
         setUpRecyclerDay(globalDate.get(Calendar.YEAR),globalDate.get(Calendar.MONTH),globalDate.get(Calendar.DAY_OF_MONTH));
-        setUpRecyclerHour(hourOfDay);
+        if(myRefDay != null){
+            myRefDay.removeEventListener(listenerDay);
+        }
+        updateBookingsHour(globalHour);
+        //setUpRecyclerHour(hourOfDay);
     }
 
 
