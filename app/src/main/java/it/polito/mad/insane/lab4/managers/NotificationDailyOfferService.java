@@ -214,7 +214,7 @@ public class NotificationDailyOfferService extends Service {
             //child added
             NotificationCompat.Builder mBuilder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(myContext)
-                            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark_pressed)  //TODO inventare icona notifica (carlo)
+                            .setSmallIcon(R.mipmap.icona_mad)  //TODO inventare icona notifica (carlo)
                             .setContentTitle(getResources().getText(R.string.new_offer))
                             .setContentText(offer.getDescription())
                             .setAutoCancel(true);
@@ -252,7 +252,7 @@ public class NotificationDailyOfferService extends Service {
             //child modified
             NotificationCompat.Builder mBuilder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(myContext)
-                            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark_pressed)  //TODO inventare icona notifica (carlo)
+                            .setSmallIcon(R.mipmap.icona_mad)  //TODO inventare icona notifica (carlo)
                             .setContentTitle(getResources().getText(R.string.offer_edited))
                             .setContentText(offer.getDescription())
                             .setAutoCancel(true);

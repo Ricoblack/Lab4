@@ -36,6 +36,7 @@ import java.util.List;
 import im.delight.android.location.SimpleLocation;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.data.DailyOfferSimple;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.data.RestaurantInfo;
@@ -445,6 +446,27 @@ public class RestaurateurJsonManager
 
     }
 
+
+    public ArrayList<Object> getDailyOffersSimple(){
+
+        TinyDB db=new TinyDB(myContext);
+        ArrayList<Object> listTmp=db.getListObject("notification",DailyOfferSimple.class);
+
+        return listTmp;
+    }
+
+    public void removeDailyOffer(String offerId){
+        TinyDB db=new TinyDB(myContext);
+        ArrayList<Object> listTmp=db.getListObject("notification",DailyOfferSimple.class);
+
+        for(int i=0;i<listTmp.size();i++){
+            DailyOfferSimple offer= (DailyOfferSimple) listTmp.get(i);
+            if(offer.getID().equals(offerId)) listTmp.remove(i);
+        }
+
+        db.putListObject("notification",listTmp);
+
+    }
     /**
      * Created by carlocaramia on 09/04/16.
      */
