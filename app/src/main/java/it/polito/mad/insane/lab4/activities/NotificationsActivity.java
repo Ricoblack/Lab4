@@ -13,5 +13,6 @@ public class NotificationsActivity extends AppCompatActivity {
         setContentView(R.layout.notifications_activity);
 
 
+
     }
 }
