@@ -72,6 +72,12 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         return row;
     }
 
+    @Override
+    public int getCount() {
+        return this.data.size();
+
+    }
+
     static class NotifyHolder
     {
         private TextView restaurantName;
