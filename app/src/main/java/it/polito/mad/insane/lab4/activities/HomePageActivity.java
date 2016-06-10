@@ -300,7 +300,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         //localization
         startLocalization();
 
-        //notification listener
+
 
 
         closeOtherActivities();
@@ -594,7 +594,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                         //stop service and clear notifications
                         stopService(new Intent(this, NotificationDailyOfferService.class));
                         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                        notificationManager.cancel(123456789);
+                        notificationManager.cancel(001);
                         //Toast.makeText(this,"Service stopped",Toast.LENGTH_SHORT);
                     }
                     Intent i = new Intent(this, HomePageActivity.class);

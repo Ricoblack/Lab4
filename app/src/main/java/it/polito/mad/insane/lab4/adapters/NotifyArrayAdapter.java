@@ -65,11 +65,22 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
                 resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(position)).getID());
                 resultIntent.putExtra("Name",((DailyOfferSimple) data.get(position)).getRestaurantName());
 
+                data.remove(position);
+                notifyDataSetChanged();
+
                 context.startActivity(resultIntent);
+
+
             }
         });
 
         return row;
+    }
+
+    @Override
+    public int getCount() {
+        return this.data.size();
+
     }
 
     static class NotifyHolder

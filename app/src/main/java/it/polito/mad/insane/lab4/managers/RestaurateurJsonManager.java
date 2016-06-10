@@ -451,7 +451,7 @@ public class RestaurateurJsonManager
 
         TinyDB db=new TinyDB(myContext);
         ArrayList<Object> listTmp=db.getListObject("notification",DailyOfferSimple.class);
-
+        if(listTmp==null) listTmp=new ArrayList<>();
         return listTmp;
     }
 

@@ -275,7 +275,7 @@ public class NotificationDailyOfferService extends Service {
 
 
             // Sets an ID for the notification
-            int mNotificationId = 123456789;
+            int mNotificationId = 001;
             // Gets an instance of the NotificationManager service
             NotificationManager mNotifyMgr =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
