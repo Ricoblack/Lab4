@@ -1,6 +1,7 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,6 +50,7 @@ import it.polito.mad.insane.lab4.adapters.DailyOfferRecyclerAdapter;
 import it.polito.mad.insane.lab4.adapters.DishesRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.managers.NotificationDailyOfferService;
 
 /**
  * Created by Federico on 02/06/2016.
@@ -304,7 +306,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
 
             case R.id.logout_restaurateur_drawer:
                 if(rid == null){
-                    Toast.makeText(this, R.string.not_logged,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, R.string.not_logged,Toast.LENGTH_SHORT).show();
                 }else {
                     this.mPrefs = getSharedPreferences(PREF_LOGIN, MODE_PRIVATE);
                     if (mPrefs != null) {
@@ -313,6 +315,12 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                         editor.clear();
                         editor.apply();
                     }
+
+                    //stop service and clear notifications
+                    stopService(new Intent(this, NotificationDailyOfferService.class));
+                    NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(001);
+
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
                     finish();

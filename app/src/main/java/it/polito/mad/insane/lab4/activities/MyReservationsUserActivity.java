@@ -1,6 +1,8 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -35,6 +37,7 @@ import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.ReservationsRecyclerAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyOffer;
+import it.polito.mad.insane.lab4.managers.NotificationDailyOfferService;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class MyReservationsUserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -177,6 +180,11 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
                     editor.clear();
                     editor.apply();
                 }
+
+                //stop service and clear notifications
+                stopService(new Intent(this, NotificationDailyOfferService.class));
+                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(001);
                 Intent i = new Intent(this, HomePageActivity.class);
                 startActivity(i);
                 finish();
