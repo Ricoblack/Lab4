@@ -18,10 +18,9 @@
 
     <string-array name="price_array">
         <item> <i>PREZZO</i> </item>
-        <item>5€</item>
-        <item>10€</item>
-        <item>20€</item>
-        <item>50€</item>
+        <item>€</item>
+        <item>€€</item>
+        <item>€€€</item>
     </string-array>
 
     <string-array name="type_array">
