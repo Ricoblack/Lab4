@@ -28,12 +28,14 @@
 
         </android.support.design.widget.AppBarLayout>
 
+
         <android.support.v7.widget.CardView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:card_view = "http://schemas.android.com/apk/res-auto"
-            android:id="@+id/dailyOfferGeneralInfo"
+            android:id="@+id/restaurantGeneralInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation = "horizontal"
             card_view:cardCornerRadius="2dp"
             android:layout_margin="10dp"
             >
@@ -41,95 +43,113 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/general_info_offer"
+                    android:textSize="16sp"
+                    android:drawablePadding="5dp"
+                    android:textColor="@color/colorAccent"
+                    android:paddingBottom="10dp"
+                    android:drawableStart="@drawable/ic_room_black_24dp"
+                    android:drawableLeft="@drawable/ic_room_black_24dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offer_name"
+                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/daily_text_name_offer"
+                    <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="@string/name_dailyoffer_edit"
-                        android:layout_margin="5dp"/>
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_mode_edit_black_24dp"/>
 
                     <EditText
                         android:id="@+id/daily_offer_name"
                         android:textColorHint="@color/colorAccent"
-                        android:layout_margin="5dp"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/daily_text_name_offer"
-                        />
-
-                </LinearLayout>
-
-
-
-                <LinearLayout
-                    android:id="@+id/daily_offer_total_price_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="4dp"
-                    >
-
-                    <TextView
-                        android:id="@+id/price_text"
-                        android:text="@string/price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:textSize="20sp"
+                        android:inputType="text"
+                        android:textSize="14sp"
                         />
 
                     <EditText
-                        android:id="@+id/daily_offer_price"
-                        android:layout_width="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:layout_height="wrap_content" />
+                        android:id="@+id/restaurateur_profile_editName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="14sp"/>
+                </LinearLayout>
 
-                    <TextView
-                        android:text="€"
-                        android:layout_margin="4dp"
-                        android:textSize="20sp"
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/price"
+                    android:textSize="14sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
                         android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_mode_edit_black_24dp"/>
+
+                    <EditText
+                        android:id="@+id/daily_offer_price"
+                        android:layout_width="match_parent"
+                        android:inputType="numberDecimal"
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+
 
                 <TextView
-                    android:id="@+id/description_daily_offer_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
                     android:text="@string/description_daily_offer"
-                    android:layout_margin="5dp"
-                    android:layout_centerVertical="true"/>
+                    android:textSize="14sp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_mode_edit_black_24dp"/>
 
                 <EditText
                     android:id="@+id/daily_offer_description_text"
-                    android:textColorHint="@color/colorAccent"
-                    android:inputType="textMultiLine"
-                    android:layout_margin="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/description_daily_offer_text"
-                    />
-
-               </RelativeLayout>
+                    android:layout_width="match_parent"
+                    android:inputType="text"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
+            </LinearLayout>
         </android.support.v7.widget.CardView>
+
 
         <ListView
             android:layout_width="match_parent"
