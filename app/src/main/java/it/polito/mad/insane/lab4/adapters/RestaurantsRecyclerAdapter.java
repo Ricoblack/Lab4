@@ -2,13 +2,22 @@ package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.firebase.client.FirebaseException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -131,6 +140,33 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 //            float distance = current.getLocation().distanceTo(manager.getLocation());
 //            this.distance.setText(String.format("%.0f",distance)+"m");
             this.distance.setVisibility(View.GONE);
+
+            //set restaurants image with picasso
+            //set up restaurant images (DEBUG)
+
+            // Create a storage reference from our app
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/prova/foto_piccolo.jpg");
+            // Create a reference with an initial file path and name
+            //start download of image
+            final long ONE_MEGABYTE = 1024 * 1024;
+            storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    // Data for "images/island.jpg" is returns, use this as needed
+
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), true);
+                    img.setImageBitmap(bmpimg);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    FirebaseException fbe=(FirebaseException) exception;
+
+                }
+            });
         }
     }
 }

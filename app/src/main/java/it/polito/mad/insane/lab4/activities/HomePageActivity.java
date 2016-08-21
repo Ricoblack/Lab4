@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -52,6 +53,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -252,8 +254,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                             // Data for "images/island.jpg" is returns, use this as needed
                             ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, imgViewer.getWidth(), imgViewer.getHeight(), true);
-                            imgViewer.setImageBitmap(bmpimg);
+                            //Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, imgViewer.getWidth(), imgViewer.getHeight(), true);
+                            //imgViewer.setImageBitmap(bmpimg);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -264,6 +266,27 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                         }
                     });
 
+                    //test con picasso
+                    /*
+                    final ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
+                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            // Got the download URL for 'users/me/profile.png'
+                            // Pass it to Picasso to download, show in ImageView and caching
+                            Picasso.with(myContext)
+                                    .load(uri.toString())
+                                    .placeholder(R.drawable.default_img_rest_1)
+                                    .error(R.drawable.wa_background)
+                                    .into(imgViewer);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+                    */
                     /*********DEBUG*/
 
                 }
