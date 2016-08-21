@@ -11,7 +11,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +27,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,8 +39,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseException;
 import com.firebase.geofire.GeoFire;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,6 +51,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -200,7 +208,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // set up ordering spinner
         setUpSpinner();
 
-        
+
 
         // set up clean Recycler
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -227,6 +235,37 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
                     manager.fillRestaurantLocations(geoFire,listaFiltrata);
 
+                /**************DEBUG*/
+                    //set up restaurant images (DEBUG)
+
+                    // Create a storage reference from our app
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/prova/foto_piccolo.jpg");
+                    // Create a reference with an initial file path and name
+
+
+                    //start download of image
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            // Data for "images/island.jpg" is returns, use this as needed
+                            ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, imgViewer.getWidth(), imgViewer.getHeight(), true);
+                            imgViewer.setImageBitmap(bmpimg);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            FirebaseException fbe=(FirebaseException) exception;
+
+                        }
+                    });
+
+                    /*********DEBUG*/
+
                 }
             }
             @Override
@@ -243,6 +282,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+
 
 
         /**********************DRAWER****************************/
