@@ -17,6 +17,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -33,15 +34,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -61,6 +69,7 @@ public class EditDishActivity extends AppCompatActivity
     private SharedPreferences mPrefs = null;
     private static final int REQUEST_IMAGE_GALLERY = 157;
     private Dish currentDish = null;
+    private static Bitmap tempCoverPhoto = null;
     private EditText dishID;
     private EditText dishName;
     private EditText dishDesc;
@@ -110,14 +119,13 @@ public class EditDishActivity extends AppCompatActivity
 //                        checkAndRequestPermissions(PERMS_REQUEST_CODE_CAMERA);
 //                    else
 
-
-//                    takePhotoFromGallery();
+                    takePhotoFromGallery();
                 }
             });
         }
-        //T-ODO: da commentare se si implementa gestione immagini (Michele)
-        TextView rL = (TextView) findViewById(R.id.editDish);
-        rL.setVisibility(View.GONE);
+        //TODO: da commentare se si implementa gestione immagini (Michele)
+//        TextView rL = (TextView) findViewById(R.id.editDish);
+//        rL.setVisibility(View.GONE);
 
         this.currentDish = (Dish) getIntent().getSerializableExtra("dish");
         if (this.currentDish != null) {
@@ -128,9 +136,30 @@ public class EditDishActivity extends AppCompatActivity
             this.dishDesc.setText(this.currentDish.getDescription());
             this.dishQty.setText(Integer.toString(this.currentDish.getAvailabilityQty()));
             this.dishPrice.setText(Double.toString(this.currentDish.getPrice()));
-//            String imgPath = this.currentDish.getPhotoPath();
-//            if(imgPath != null)
-//                this.dishPhoto.setImageURI(Uri.parse(imgPath));
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid +
+                    "/dishes/" + this.currentDish.getID() + "/dish.jpg");
+
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
+                    // Pass it to Glide to download, show in ImageView and caching
+                    Glide.with(getApplicationContext())
+                            .load(uri.toString())
+                            .placeholder(R.drawable.dish_default_red_5)
+                            .error(R.drawable.wa_background)
+                            .into(dishPhoto);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    //TODO gesire errore
+//                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
+                }
+            });
 
         } else
             setTitle(R.string.new_dish);
@@ -154,7 +183,9 @@ public class EditDishActivity extends AppCompatActivity
                         currentDish.setName(dishName.getText().toString());
                         currentDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
                         currentDish.setDescription(dishDesc.getText().toString());
-//                        currentDish.setPhotoPath();
+//
+
+
                         currentDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
 //                        currentDish.setID(dishID.getText().toString()); // not needed; id already set
                         addDishInFirebase(currentDish);
@@ -210,49 +241,76 @@ public class EditDishActivity extends AppCompatActivity
 
         switch (requestCode) {
             case REQUEST_IMAGE_GALLERY:
-//                if(resultCode == RESULT_OK)
-//                {
-//                    if (data == null)
-//                        break;
-//                    // Get the Image from data
-//                    Uri selectedImage = data.getData();
-//                    if (selectedImage == null)
-//                        break;
-//
-//                    // Get the cursor
-//                    Cursor cursor = getContentResolver().query(selectedImage, null, null, null, null);
-//                    if (cursor == null) {
-//                        imgPath = selectedImage.getPath();
-//                    } else {
-//                        // Move to first row
-//                        cursor.moveToFirst();
-//                        int columnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-//                        imgPath = cursor.getString(columnIndex);
-//                        cursor.close();
-//                    }
-//
-//
-//                    try
-//                    {
-//                        String processedImgPath = processImg(imgPath);
+                if(resultCode == RESULT_OK)
+                {
+                    if (data == null)
+                        break;
+                    // Get the Image from data
+                    Uri selectedImage = data.getData();
+                    if (selectedImage == null)
+                        break;
+
+                    // Get the cursor
+                    Cursor cursor = getContentResolver().query(selectedImage, null, null, null, null);
+                    if (cursor == null) {
+                        imgPath = selectedImage.getPath();
+                    } else {
+                        // Move to first row
+                        cursor.moveToFirst();
+                        int columnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                        imgPath = cursor.getString(columnIndex);
+                        cursor.close();
+                    }
+                    try
+                    {
+                        tempCoverPhoto = processImg(imgPath);
+                        ImageView iv = (ImageView) findViewById(R.id.dishPhoto);
+                        if (iv != null){
+                            iv.setImageBitmap(tempCoverPhoto);
+                        }
 //                        this.dishPhoto.setImageURI(Uri.parse(processedImgPath));
-//                        //set tag in photo
-//                        //this.dishPhoto.setTag(processedImgPath);
-//                        //update info in activity
+                        //set tag in photo
+                        //this.dishPhoto.setTag(processedImgPath);
+                        //update info in activity
 //                        this.currentDish.setPhotoPath(processedImgPath);
 //                        finish();
 //                        startActivity(getIntent());
-//                    }
-//                    catch (Exception e)
-//                    {
-//                        Toast.makeText(EditDishActivity.this, R.string.error_processing_img, Toast.LENGTH_SHORT).show();
-//                        e.printStackTrace();
-//                    }
-//                }
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(EditDishActivity.this, R.string.error_processing_img, Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * Method that copy the original img in the app internal directory and compress it
+     * @param imgPath
+     * @return the URI of the new Img
+     * @throws Exception
+     */
+    private Bitmap processImg(String imgPath) throws Exception
+    {
+        Bitmap rotatedBitmapImg = rotateImg(imgPath);
+
+        /** scale photo **/ // In teoria non dovrebbe servire
+        int imgHeight = rotatedBitmapImg.getHeight();
+        int imgWidth = rotatedBitmapImg.getWidth();
+        int newImgHeight = imgHeight;
+        int newImgWidth = imgWidth;
+        int maxValue = Math.max(imgHeight,imgWidth);
+        if(maxValue > MY_GL_MAX_TEXTURE_SIZE){
+            double scaleFactor = (double) maxValue / (double) MY_GL_MAX_TEXTURE_SIZE;
+            newImgHeight = (int) (imgHeight / scaleFactor);
+            newImgWidth = (int) (imgWidth / scaleFactor);
+        }
+
+        return Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
     }
 
     /**
@@ -498,7 +556,43 @@ public class EditDishActivity extends AppCompatActivity
             });
         }
 
+        saveImageOnStorage(dish.getID());
+
         DailyMenuActivity.notifyNewDish(EditDishActivity.this, dish);
+    }
+
+    private void saveImageOnStorage(String dishID){
+
+        if (tempCoverPhoto != null) {
+            // Create a storage reference from our app
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference imageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid + "/dishes/" +
+                    dishID + "/dish.jpg");
+            // Create a reference with an initial file path and name
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            //TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine
+            tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+            byte[] data = baos.toByteArray();
+
+            UploadTask uploadTask = imageRef.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Uri imageDownloadUrl = taskSnapshot.getDownloadUrl(); //TODO può essere utile usare questo parametro?
+                    tempCoverPhoto = null;
+                    Toast.makeText(getApplicationContext(), R.string.cover_photo_update_success, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void tryDeleteDish(final Dish dish) {
@@ -575,9 +669,26 @@ public class EditDishActivity extends AppCompatActivity
         disheRef.setValue(null, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
             }
         });
+
+        //remove dish image from storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference imageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid +
+                "/dishes/" + dish.getID() + "/dish.jpg");
+        imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(EditDishActivity.this, R.string.confirm_delete_dish, Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                //TODO gestire errore
+            }
+        });
+
 
         finish();
     }
