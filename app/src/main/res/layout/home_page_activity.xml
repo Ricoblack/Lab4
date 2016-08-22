@@ -62,7 +62,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:queryHint="search restaurant"
+                            android:queryHint="@string/search_restaurant"
                             />
                         <ImageView
                             android:id="@+id/localize_me"

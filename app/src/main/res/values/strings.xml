@@ -299,4 +299,5 @@
     <string name="general_info_offer">General info offer</string>
     <string name="notifications">Notifications</string>
     <string name="cover_photo_update_success">Cover photo updated succesfully</string>
+    <string name="search_restaurant">Search restaurant</string>
 </resources>

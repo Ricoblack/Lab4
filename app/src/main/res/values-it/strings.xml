@@ -289,5 +289,6 @@
     <string name="no_notifications_to_read">Nessuna notifica da leggere</string>
     <string name="offer_name">Nome dell\'offerta</string>
     <string name="selectOrdering">Scegliere un criterio per l\'ordinamento</string>
+    <string name="search_restaurant">Cerca ristorante</string>
 
 </resources>
