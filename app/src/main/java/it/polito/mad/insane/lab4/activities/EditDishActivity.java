@@ -572,7 +572,7 @@ public class EditDishActivity extends AppCompatActivity
             // Create a reference with an initial file path and name
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            //TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine
+            //TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine, questo fa abbastanza schifo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 int size = tempCoverPhoto.getAllocationByteCount();
                 int ratio = size/(1024*1024);
