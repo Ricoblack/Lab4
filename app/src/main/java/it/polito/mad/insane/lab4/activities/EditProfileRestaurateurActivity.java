@@ -18,6 +18,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
@@ -37,12 +38,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.client.FirebaseException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -97,14 +107,14 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         }
 
         final ImageView img = (ImageView) findViewById(R.id.coverPhoto);
-//        if(img != null) {
-//            img.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    takePhotoFromGallery();
-//                }
-//            });
-//        }
+        if(img != null) {
+            img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    takePhotoFromGallery();
+                }
+            });
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null){
@@ -332,6 +342,10 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
 
                     try {
                         tempCoverPhoto = processImg(imgPath);
+                        ImageView iv = (ImageView) findViewById(R.id.coverPhoto);
+                        if (iv != null) {
+                            iv.setImageBitmap(tempCoverPhoto);
+                        }
                     } catch (Exception e) {
                         Toast.makeText(EditProfileRestaurateurActivity.this, R.string.error_processing_img,
                                 Toast.LENGTH_LONG).show();
@@ -369,14 +383,7 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
             newImgWidth = (int) (imgWidth / scaleFactor);
         }
 
-        Bitmap bitmapImgScaled = Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
-
-        ImageView iv = (ImageView) findViewById(R.id.coverPhoto);
-        if (iv != null) {
-            iv.setImageBitmap(bitmapImgScaled);
-        }
-
-        return bitmapImgScaled;
+        return Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
     }
 
     /**
@@ -472,46 +479,84 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
 
     private void loadImageFromStorage()
     {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference imageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid + "/cover.jpg");
 
-        try {
-            File f = new File(directory, "restaurant_cover.jpg");
-            if(!f.exists()){
-                throw new FileNotFoundException();
+        // Create a reference with an initial file path and name
+
+        //start download of image
+//        final long FIVE_MEGABYTE = 1024 * 1024 * 5;
+//        imageRef.getBytes(FIVE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//            @Override
+//            public void onSuccess(byte[] bytes) {
+//                // Data for "images/island.jpg" is returns, use this as needed
+//                ImageView img = (ImageView)findViewById(R.id.coverPhoto);
+//                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                bmp = Bitmap.createScaledBitmap(bmp, img.getWidth(), img.getHeight(), true);
+//                img.setImageBitmap(bmp);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//                Toast.makeText(EditProfileRestaurateurActivity, exception.toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+        //test con picasso/glide
+
+        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                // Pass it to Picasso to download, show in ImageView and caching
+
+                ImageView img = (ImageView)findViewById(R.id.coverPhoto);
+
+//                Picasso.with(getApplicationContext())
+//                        .load(uri.toString())
+//                        .into(img);
+
+                Glide.with(getApplicationContext())
+                        .load(uri.toString())
+                        .placeholder(R.drawable.default_img_rest_1)
+                        .into(img);
             }
-            ImageView img = (ImageView)findViewById(R.id.coverPhoto);
-            if (img != null)
-                img.setImageURI(Uri.parse(f.getPath()));
-        }
-        catch (FileNotFoundException e)
-        {
-            TextView tv = (TextView) findViewById(R.id.editCover);
-            if (tv != null) {
-                tv.setVisibility(View.GONE);
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT).show();
             }
-        }
+        });
     }
 
     private void saveImageOnStorage(){
-        /** save bitmap into App Internal directory creating a compressed copy of it **/
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
 
-        // path: /data/data/<my_app>/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create a storage reference from our app
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference imageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid + "/cover.jpg");
+        // Create a reference with an initial file path and name
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
 
-        // Compress and create img in: /data/data/<my_app>/app_data/imageDir/<imgName>
-        File myImg = new File(directory, "restaurant_cover.jpg");
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(myImg);
-            tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.close();
-            tempCoverPhoto = null;
-        } catch (java.io.IOException e) {
-            Toast.makeText(EditProfileRestaurateurActivity.this, R.string.error_save_image, Toast.LENGTH_LONG).show();
-        }
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Toast.makeText(EditProfileRestaurateurActivity, exception.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri imageDownloadUrl = taskSnapshot.getDownloadUrl(); //TODO può essere utile usare questo parametro?
+                tempCoverPhoto = null;
+                Toast.makeText(getApplicationContext(), R.string.cover_photo_update_success, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void showTimePickerDialog(View view) {

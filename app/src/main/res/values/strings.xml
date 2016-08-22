@@ -298,4 +298,5 @@
     <string name="no_notifications_to_read">No notifications to read</string>
     <string name="general_info_offer">General info offer</string>
     <string name="notifications">Notifications</string>
+    <string name="cover_photo_update_success">Cover photo updated succesfully</string>
 </resources>
