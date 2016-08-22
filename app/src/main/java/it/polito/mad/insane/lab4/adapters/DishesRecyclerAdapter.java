@@ -7,6 +7,8 @@ package it.polito.mad.insane.lab4.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +18,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -120,7 +128,7 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
 
     public class DishesViewHolder extends RecyclerView.ViewHolder
     {
-        //        private ImageView dishPhoto;
+        private ImageView dishPhoto;
         private TextView dishID;
         private TextView dishName;
         private TextView dishDesc;
@@ -139,7 +147,7 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
         public DishesViewHolder(View itemView)
         {
             super(itemView);
-//            this.dishPhoto = (ImageView) itemView.findViewById(R.id.dish_photo);
+            this.dishPhoto = (ImageView) itemView.findViewById(R.id.dish_photo);
             this.dishID = (TextView) itemView.findViewById(R.id.dish_ID);
             this.dishName = (TextView) itemView.findViewById(R.id.dish_name);
             this.dishDesc =  (TextView) itemView.findViewById(R.id.dish_description);
@@ -170,6 +178,31 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                 this.expandArrow.setVisibility(View.GONE);
                 popupsVisibility[position] = View.GONE;             // mostrare solo quando non e' disponibile
             }
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + ridAdapter +
+                    "/dishes/" + current.getID() + "/dish.jpg");
+
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
+                    // Pass it to Glide to download, show in ImageView and caching
+                    Glide.with(context)
+                            .load(uri.toString())
+                            .placeholder(R.drawable.dish_default_green_5)
+                            .centerCrop()
+                            .error(R.drawable.wa_background)
+                            .into(dishPhoto);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    //TODO gesire errore
+//                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
+                }
+            });
 
             if(currentActivity != 1)
             {

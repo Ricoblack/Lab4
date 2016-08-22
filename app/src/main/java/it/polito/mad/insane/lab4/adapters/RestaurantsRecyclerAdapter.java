@@ -2,8 +2,6 @@ package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -16,12 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.firebase.client.FirebaseException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -145,13 +141,33 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 //            this.distance.setText(String.format("%.0f",distance)+"m");
             this.distance.setVisibility(View.GONE);
 
-            //set restaurants image with picasso
-            //set up restaurant images (DEBUG)
+            //set restaurants image with Glide
 
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + IDrestaurant +
                     "/cover.jpg");
+
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
+                    // Pass it to Glide to download, show in ImageView and caching
+                    Glide.with(manager.myContext)
+                            .load(uri.toString())
+                            .placeholder(R.drawable.default_img_rest_1)
+                            .centerCrop()
+                            .error(R.drawable.wa_background)
+                            .into(img);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    //TODO gesire errore
+//                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
+                }
+            });
 
             // Create a reference with an initial file path and name
             //start download of image
@@ -173,25 +189,6 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 //                    Toast.makeText(manager.myContext,exception.toString(),Toast.LENGTH_SHORT).show();
 //                }
 //            });
-            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    // Got the download URL for 'users/me/profile.png'
-                    // Pass it to Picasso to download, show in ImageView and caching
-                    Glide.with(manager.myContext)
-                            .load(uri.toString())
-                            .placeholder(R.drawable.default_img_rest_1)
-                            .centerCrop()
-                            .error(R.drawable.wa_background)
-                            .into(img);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 }
