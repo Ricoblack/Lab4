@@ -236,34 +236,34 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
                     manager.fillRestaurantLocations(geoFire,listaFiltrata);
 
-                /**************DEBUG*/
-                    //set up restaurant images (DEBUG)
-
-                    // Create a storage reference from our app
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/prova/foto_piccolo.jpg");
-                    // Create a reference with an initial file path and name
-
-
-                    //start download of image
-                    final long ONE_MEGABYTE = 1024 * 1024;
-                    storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            // Data for "images/island.jpg" is returns, use this as needed
-                            ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
-                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            //Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, imgViewer.getWidth(), imgViewer.getHeight(), true);
-                            //imgViewer.setImageBitmap(bmpimg);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                            FirebaseException fbe=(FirebaseException) exception;
-
-                        }
-                    });
+//                /**************DEBUG*/
+//                    //set up restaurant images (DEBUG)
+//
+//                    // Create a storage reference from our app
+//                    FirebaseStorage storage = FirebaseStorage.getInstance();
+//                    StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/prova/foto_piccolo.jpg");
+//                    // Create a reference with an initial file path and name
+//
+//
+//                    //start download of image
+//                    final long ONE_MEGABYTE = 1024 * 1024;
+//                    storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//                        @Override
+//                        public void onSuccess(byte[] bytes) {
+//                            // Data for "images/island.jpg" is returns, use this as needed
+//                            ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
+//                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                            //Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, imgViewer.getWidth(), imgViewer.getHeight(), true);
+//                            //imgViewer.setImageBitmap(bmpimg);
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception exception) {
+//                            // Handle any errors
+//                            FirebaseException fbe=(FirebaseException) exception;
+//
+//                        }
+//                    });
 
                     //test con picasso
                     /*
@@ -286,7 +286,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                         }
                     });
                     */
-                    /*********DEBUG*/
+//                    /*********DEBUG*/
 
                 }
             }
