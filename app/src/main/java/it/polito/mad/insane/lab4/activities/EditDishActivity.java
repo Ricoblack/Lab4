@@ -15,6 +15,7 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -572,7 +573,14 @@ public class EditDishActivity extends AppCompatActivity
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             //TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine
-            tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                int size = tempCoverPhoto.getAllocationByteCount();
+                int ratio = size/(1024*1024);
+                int scaleFactor = 100/ratio;
+                tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, scaleFactor, baos);
+            }
+            else
+                tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
             byte[] data = baos.toByteArray();
 
