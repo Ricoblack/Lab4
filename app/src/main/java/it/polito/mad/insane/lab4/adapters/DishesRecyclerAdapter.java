@@ -364,8 +364,8 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
-
-            this.photo.setImageBitmap(bitmap);
+            if(bitmap != null)
+                this.photo.setImageBitmap(bitmap);
         }
     }
 }
