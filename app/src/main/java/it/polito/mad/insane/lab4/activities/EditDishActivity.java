@@ -298,20 +298,21 @@ public class EditDishActivity extends AppCompatActivity
     private Bitmap processImg(String imgPath) throws Exception
     {
         Bitmap rotatedBitmapImg = rotateImg(imgPath);
+        return rotatedBitmapImg;
 
-        /** scale photo **/ // In teoria non dovrebbe servire
-        int imgHeight = rotatedBitmapImg.getHeight();
-        int imgWidth = rotatedBitmapImg.getWidth();
-        int newImgHeight = imgHeight;
-        int newImgWidth = imgWidth;
-        int maxValue = Math.max(imgHeight,imgWidth);
-        if(maxValue > MY_GL_MAX_TEXTURE_SIZE){
-            double scaleFactor = (double) maxValue / (double) MY_GL_MAX_TEXTURE_SIZE;
-            newImgHeight = (int) (imgHeight / scaleFactor);
-            newImgWidth = (int) (imgWidth / scaleFactor);
-        }
-
-        return Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
+//        /** scale photo **/ // In teoria non dovrebbe servire
+//        int imgHeight = rotatedBitmapImg.getHeight();
+//        int imgWidth = rotatedBitmapImg.getWidth();
+//        int newImgHeight = imgHeight;
+//        int newImgWidth = imgWidth;
+//        int maxValue = Math.max(imgHeight,imgWidth);
+//        if(maxValue > MY_GL_MAX_TEXTURE_SIZE){
+//            double scaleFactor = (double) maxValue / (double) MY_GL_MAX_TEXTURE_SIZE;
+//            newImgHeight = (int) (imgHeight / scaleFactor);
+//            newImgWidth = (int) (imgWidth / scaleFactor);
+//        }
+//
+//        return Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
     }
 
     /**
@@ -433,11 +434,12 @@ public class EditDishActivity extends AppCompatActivity
     /**
      * Decode the input photo in relation to the display dim
      *
-     * @param photoPath
+     * @param imagePath
      * @return
      */
-    private Bitmap decodePhoto(String photoPath) {
-        int ratio = 1;
+    private Bitmap decodePhoto(String imagePath) {
+
+        int inSampleSize = 1;
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -450,24 +452,35 @@ public class EditDishActivity extends AppCompatActivity
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;// If set to true, the decoder will return null (no bitmap), but the outX fields will still be set, allowing the caller
         // to query the bitmap without having to allocate the memory for its pixels
-        BitmapFactory.decodeFile(photoPath, options); // set outX fields
-        // get the dim of the bitmap img
-        int photoW = options.outWidth;
-        int photoH = options.outHeight;
 
-        if (photoW > displayWidth || photoH > displayHeight) {
+        BitmapFactory.decodeFile(imagePath, options); // set outX fields
+        // get the dim of the bitmap img
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+
+        if (imageHeight > displayHeight || imageWidth > displayWidth) {
+
+
             // Compute the scaling ratio to avoid distortion
-            ratio = Math.min(photoW / displayWidth, photoH / displayHeight);
+//            inSampleSize = Math.min(imageWidth / displayWidth, imageHeight / displayHeight);
+
+//            final int halfHeight = imageHeight / 2;
+//            final int halfWidth = imageWidth / 2;
+
+//             Calculate the largest inSampleSize value that is a power of 2 and keeps both
+//             height and width larger than the requested height and width.
+
+            while ((imageHeight / inSampleSize) >= displayHeight || (imageWidth / inSampleSize) >= displayWidth) {
+                inSampleSize *= 2;
+            }
         }
 
         // Set the scaling ratio
-        options.inSampleSize = ratio;
+        options.inSampleSize = inSampleSize;
         options.inJustDecodeBounds = false; // The decoder will decode the whole image and return their bitmap
-        // Decode  the file
-        Bitmap photoBitmap = BitmapFactory.decodeFile(photoPath, options);
 
-        // return Bitmap file
-        return photoBitmap;
+        // return decoded Bitmap file
+        return BitmapFactory.decodeFile(imagePath, options);
     }
 
 //    public void displayChooseDialog() { // not used in this version
@@ -573,13 +586,13 @@ public class EditDishActivity extends AppCompatActivity
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             // TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine, questo fa abbastanza schifo
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                int size = tempCoverPhoto.getAllocationByteCount();
-                int ratio = size/(1024*1024);
-                int scaleFactor = 100/ratio;
-                tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, scaleFactor, baos);
-            }
-            else
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                int size = tempCoverPhoto.getAllocationByteCount();
+//                int ratio = size/(1024*1024);
+//                int scaleFactor = 100/ratio;
+//                tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, scaleFactor, baos);
+//            }
+//            else
                 tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
             byte[] data = baos.toByteArray();

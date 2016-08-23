@@ -371,19 +371,21 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
     {
         Bitmap rotatedBitmapImg = rotateImg(imgPath);
 
-        /** scale photo **/ // In teoria non dovrebbe servire
-        int imgHeight = rotatedBitmapImg.getHeight();
-        int imgWidth = rotatedBitmapImg.getWidth();
-        int newImgHeight = imgHeight;
-        int newImgWidth = imgWidth;
-        int maxValue = Math.max(imgHeight,imgWidth);
-        if(maxValue > MY_GL_MAX_TEXTURE_SIZE){
-            double scaleFactor = (double) maxValue / (double) MY_GL_MAX_TEXTURE_SIZE;
-            newImgHeight = (int) (imgHeight / scaleFactor);
-            newImgWidth = (int) (imgWidth / scaleFactor);
-        }
+        return rotatedBitmapImg;
 
-        return Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
+//        /** scale photo **/ // In teoria non dovrebbe servire
+//        int imgHeight = rotatedBitmapImg.getHeight();
+//        int imgWidth = rotatedBitmapImg.getWidth();
+//        int newImgHeight = imgHeight;
+//        int newImgWidth = imgWidth;
+//        int maxValue = Math.max(imgHeight,imgWidth);
+//        if(maxValue > MY_GL_MAX_TEXTURE_SIZE){
+//            double scaleFactor = (double) maxValue / (double) MY_GL_MAX_TEXTURE_SIZE;
+//            newImgHeight = (int) (imgHeight / scaleFactor);
+//            newImgWidth = (int) (imgWidth / scaleFactor);
+//        }
+//
+//        return Bitmap.createScaledBitmap(rotatedBitmapImg, newImgWidth ,newImgHeight, false);
     }
 
     /**
@@ -414,7 +416,11 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         if(photoW > displayWidth || photoH > displayHeight)
         {
             // Compute the scaling ratio to avoid distortion
-            ratio = Math.min(photoW / displayWidth, photoH / displayHeight);
+//            ratio = Math.min(photoW / displayWidth, photoH / displayHeight);
+
+            while ((photoH / ratio) >= displayHeight || (photoW / ratio) >= displayWidth) {
+                ratio *= 2;
+            }
         }
 
         // Set the scaling ratio
