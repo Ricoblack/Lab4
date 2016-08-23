@@ -6,8 +6,10 @@ package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -25,15 +27,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.EditDishActivity;
-import it.polito.mad.insane.lab4.activities.EditOfferActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.Dish;
 
@@ -183,23 +186,29 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
             StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + ridAdapter +
                     "/dishes/" + current.getID() + "/dish.jpg");
 
+            String path = storageRef.getPath();
+
             storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
-                public void onSuccess(Uri uri) {
+                public void onSuccess(final Uri uri) {
                     // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
                     // Pass it to Glide to download, show in ImageView and caching
-                    Glide.with(context)
-                            .load(uri.toString())
-                            .placeholder(R.drawable.dish_default_green_5)
-                            .centerCrop()
-                            .error(R.drawable.wa_background)
-                            .into(dishPhoto);
+//                    Glide.with(context)
+//                            .load(uri.toString())
+//                            .placeholder(R.drawable.dish_default_green_5)
+//                            .centerCrop()
+//                            .error(R.drawable.wa_background)
+//                            .into(dishPhoto);
+
+
+                    DownloadImageTask dit = new DownloadImageTask();
+                    dit.execute(uri, dishPhoto);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
-                    //TODO gesire errore
+                    //TODO gestire errore
 //                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
                 }
             });
@@ -325,4 +334,39 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
             }
         }
     }
+
+    public class DownloadImageTask extends AsyncTask<Object, Void, Bitmap> {
+
+        private ImageView photo;
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+
+            this.photo = (ImageView) params[1];
+            Looper.prepare();
+            Bitmap bitmap;
+            try {
+                bitmap = Glide.
+                        with(context).
+                        load(params[0].toString()).
+                        asBitmap().
+                        into(1920,1080).
+                        get();
+            } catch (final ExecutionException e) {
+                return null;
+            } catch (final InterruptedException e) {
+                return null;
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            this.photo.setImageBitmap(bitmap);
+        }
+    }
 }
+
