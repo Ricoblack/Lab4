@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -76,7 +83,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
     public class BookingsViewHolder extends RecyclerView.ViewHolder {
 
-//        private ImageView restaurantPhoto; //T-ODO implementare selezione immagini
+        private ImageView restaurantPhoto; //T-ODO implementare selezione immagini
         private TextView restaurantName;
         private TextView ID;
         private TextView date;
@@ -115,6 +122,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             this.trash = (ImageView) itemView.findViewById(R.id.delete_reservation);
             this.view = itemView;
             this.cardView = itemView;
+            this.restaurantPhoto=(ImageView) itemView.findViewById(R.id.image_restaurant);
 
 
             this.cardView.setOnClickListener(cardViewListener);
@@ -256,6 +264,32 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     pad(calendar.get(Calendar.MONTH) + 1), pad(calendar.get(Calendar.YEAR))));
 
             currentBooking = current;
+
+            // Create a storage reference from our app
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + current.getRestaurantId() +
+                    "/cover.jpg");
+
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
+                    // Pass it to Glide to download, show in ImageView and caching
+                    Glide.with(manager.myContext)
+                            .load(uri.toString())
+                            .placeholder(R.drawable.default_img_rest_1)
+                            .centerCrop()
+                            .error(R.drawable.wa_background)
+                            .into(restaurantPhoto);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    //TODO gesire errore
+                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
 
