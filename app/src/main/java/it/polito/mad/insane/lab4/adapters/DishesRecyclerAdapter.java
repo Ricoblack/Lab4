@@ -343,7 +343,6 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
         protected Bitmap doInBackground(Object... params) {
 
             this.photo = (ImageView) params[1];
-            Looper.prepare();
             Bitmap bitmap;
             try {
                 bitmap = Glide.
