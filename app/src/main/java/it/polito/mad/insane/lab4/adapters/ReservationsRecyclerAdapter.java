@@ -275,7 +275,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 public void onSuccess(Uri uri) {
                     // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
                     // Pass it to Glide to download, show in ImageView and caching
-                    Glide.with(manager.myContext)
+                    Glide.with(context)
                             .load(uri.toString())
                             .placeholder(R.drawable.default_img_rest_1)
                             .centerCrop()

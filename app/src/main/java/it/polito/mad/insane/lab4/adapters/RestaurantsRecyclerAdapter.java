@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,12 +35,14 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
     private List<Restaurant> mData;
     private LayoutInflater mInflater;
     private RestaurateurJsonManager manager;
+    private Context context;
 
     //costruttore
     public RestaurantsRecyclerAdapter(Context context, List<Restaurant> data) {
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
         this.manager=RestaurateurJsonManager.getInstance(context);
+        this.context = context;
     }
 
     /**
@@ -153,7 +154,7 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
                 public void onSuccess(Uri uri) {
                     // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
                     // Pass it to Glide to download, show in ImageView and caching
-                    Glide.with(manager.myContext)
+                    Glide.with(context)
                             .load(uri.toString())
                             .placeholder(R.drawable.default_img_rest_1)
                             .centerCrop()

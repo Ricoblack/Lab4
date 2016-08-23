@@ -538,7 +538,7 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         StorageReference imageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid + "/cover.jpg");
         // Create a reference with an initial file path and name
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos); //TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = imageRef.putBytes(data);

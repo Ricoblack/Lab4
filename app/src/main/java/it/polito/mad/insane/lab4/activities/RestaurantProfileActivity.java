@@ -137,7 +137,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
                 ImageView img = (ImageView)findViewById(R.id.coverPhoto);
 
-                Glide.with(getApplicationContext())
+                Glide.with(RestaurantProfileActivity.this)
                         .load(uri.toString())
                         .placeholder(R.drawable.default_img_rest_1)
                         .into(img);
