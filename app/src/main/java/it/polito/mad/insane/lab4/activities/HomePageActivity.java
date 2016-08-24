@@ -664,6 +664,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     stopService(new Intent(this, NotificationDailyOfferService.class));
                     NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.cancel(001);
+                    notificationManager.cancel(002);
 
                     Intent i = new Intent(this, HomePageActivity.class);
                     startActivity(i);
