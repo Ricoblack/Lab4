@@ -304,6 +304,14 @@ public class RestaurateurJsonManager
                 }
             });
         }
+        else if(orderBy.toLowerCase().equals(myContext.getResources().getString(R.string.num_review).toLowerCase())){
+            Collections.sort(lista, new Comparator<Restaurant>() {
+                @Override
+                public int compare(Restaurant lhs, Restaurant rhs) {
+                    return (int)(rhs.getReviewsNumber()- lhs.getReviewsNumber());
+                }
+            });
+        }
         return lista;
     }
 

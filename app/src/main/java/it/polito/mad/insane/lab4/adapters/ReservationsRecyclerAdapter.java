@@ -35,6 +35,7 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -133,6 +134,34 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 @Override
                 public void onClick(View v)
                 {
+                    //check if user can delete current booking --> lo user può eliminarla entro 2 ore, sennò può solo eliminarla
+                    //il ristoratore 25/08/2016 12:39
+                    Date bookingDate;
+                    Calendar bookingCal;
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    try {
+                        bookingDate=sdf.parse(currentBooking.getDateTime());
+                        bookingCal=Calendar.getInstance();
+                        bookingCal.setTime(bookingDate);
+
+                    } catch (ParseException e) {
+                        Toast.makeText(manager.myContext,"Errore di conversione date, prenota nuovamente",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Calendar cal = Calendar.getInstance(); // creates calendar of now
+                    cal.setTime(new Date()); // sets calendar time/date
+                    cal.add(Calendar.HOUR, -2); //add two hours
+
+                    if( cal.after(bookingCal)) {
+                        //Can delete reservation, continue
+                    }
+                    else {
+                        Toast.makeText(manager.myContext,context.getResources().getText(R.string.impossible_delete_booking),Toast.LENGTH_SHORT).show();
+                        return;
+
+                    }
+
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle(context.getResources().getString(R.string.delete_reservation_alert_title))
                             .setPositiveButton(v.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
@@ -311,8 +340,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             mData.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mData.size());
-            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
-        }
+            Toast.makeText(context,"eliminato",Toast.LENGTH_SHORT).show();
+    }
 
 
     }

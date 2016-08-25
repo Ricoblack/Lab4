@@ -1,12 +1,16 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +35,8 @@ import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.data.Restaurant;
+import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 
 public class DisplayReservationActivity extends AppCompatActivity {
@@ -56,8 +62,22 @@ public class DisplayReservationActivity extends AppCompatActivity {
         this.currentBooking = (Booking) getIntent().getSerializableExtra("Booking");
 
         context = DisplayReservationActivity.this;
+        RestaurateurJsonManager manager=RestaurateurJsonManager.getInstance(this);
+        final Restaurant rest=manager.getRestaurant(currentBooking.getRestaurantId());
 
         setTitle(currentBooking.getRestaurantName());
+
+        ImageView mapsLink=(ImageView) findViewById(R.id.toolbar_img);
+        mapsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Creates an Intent that will load navigator for that restaurant
+                Uri gmmIntentUri = Uri.parse("google.navigation:q="+rest.location.getLatitude()+","+rest.location.getLongitude());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            }
+        });
 
         date = (Button) findViewById(R.id.reservation_date);
 

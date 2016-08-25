@@ -3,6 +3,7 @@
         <item> <i>ORDER BY</i> </item>
         <item>DISTANCE</item>
         <item>SCORE</item>
+        <item>REVIEW NUMBER</item>
     </string-array>
 
     <string name="distance">DISTANCE</string>
@@ -302,4 +303,6 @@
     <string name="search_restaurant">Search restaurant</string>
     <string name="do_review">Leave a review for your last booking!</string>
     <string name="alert_title">Select image</string>
+    <string name="impossible_delete_booking">Impossible to delete reservation</string>
+    <string name="num_review">Review Number</string>
 </resources>

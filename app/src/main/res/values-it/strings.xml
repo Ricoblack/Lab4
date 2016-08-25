@@ -3,6 +3,7 @@
         <item> <i>ORDINA PER</i> </item>
         <item>DISTANZA</item>
         <item>PUNTEGGIO</item>
+        <item>NUMERO RECENSIONI</item>
     </string-array>
 
 
@@ -291,5 +292,7 @@
     <string name="selectOrdering">Scegliere un criterio per l\'ordinamento</string>
     <string name="search_restaurant">Cerca ristorante</string>
     <string name="do_review">Lascia una review per la tua ultima prenotazione!</string>
+    <string name="impossible_delete_booking">Impossibile eliminare la prenotazione</string>
+    <string name="num_review">Numero Recensioni</string>
 
 </resources>

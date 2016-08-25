@@ -163,7 +163,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     }
                     else{
                         //if no just white spaces
-                        setUpRestaurantsRecycler(manager.getFilteredRestaurants(query));
+                        setUpRestaurantsRecycler(manager.getFilteredRestaurants(query),false);
 
                     }
                     return true;
@@ -172,7 +172,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     //if just white spaces
-                    if(newText.equals("")) setUpRestaurantsRecycler(manager.listaFiltrata);
+                    if(newText.equals("")) setUpRestaurantsRecycler(manager.listaFiltrata,true);
                     return true;
                 }
             });
@@ -200,7 +200,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     if (dSpinner.getSelectedItemPosition() == 0) {
                         Toast.makeText(v.getContext(), myContext.getResources().getText(R.string.selectOrdering), Toast.LENGTH_SHORT).show();
                     } else {
-                        setUpRestaurantsRecycler(manager.getOrderedRestaurants(dSpinner.getSelectedItem().toString(), listaFiltrata));
+                        setUpRestaurantsRecycler(manager.getOrderedRestaurants(dSpinner.getSelectedItem().toString(), listaFiltrata),true);
                     }
                 }
             });
@@ -231,62 +231,10 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     listaFiltrata=new ArrayList<Restaurant>(r.values());
                     manager.listaFiltrata=listaFiltrata;
-                    setUpRestaurantsRecycler(listaFiltrata);
+                    setUpRestaurantsRecycler(listaFiltrata,false);
                     Firebase.setAndroidContext(myContext);
                     GeoFire geoFire = new GeoFire(new Firebase("https://lab4-insane.firebaseio.com/locations"));
                     manager.fillRestaurantLocations(geoFire,listaFiltrata);
-
-//                /**************DEBUG*/
-//                    //set up restaurant images (DEBUG)
-//
-//                    // Create a storage reference from our app
-//                    FirebaseStorage storage = FirebaseStorage.getInstance();
-//                    StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/prova/foto_piccolo.jpg");
-//                    // Create a reference with an initial file path and name
-//
-//
-//                    //start download of image
-//                    final long ONE_MEGABYTE = 1024 * 1024;
-//                    storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//                        @Override
-//                        public void onSuccess(byte[] bytes) {
-//                            // Data for "images/island.jpg" is returns, use this as needed
-//                            ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
-//                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                            //Bitmap bmpimg = Bitmap.createScaledBitmap(bmp, imgViewer.getWidth(), imgViewer.getHeight(), true);
-//                            //imgViewer.setImageBitmap(bmpimg);
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception exception) {
-//                            // Handle any errors
-//                            FirebaseException fbe=(FirebaseException) exception;
-//
-//                        }
-//                    });
-
-                    //test con picasso
-                    /*
-                    final ImageView imgViewer = (ImageView) findViewById(R.id.localize_me);
-                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            // Got the download URL for 'users/me/profile.png'
-                            // Pass it to Picasso to download, show in ImageView and caching
-                            Picasso.with(myContext)
-                                    .load(uri.toString())
-                                    .placeholder(R.drawable.default_img_rest_1)
-                                    .error(R.drawable.wa_background)
-                                    .into(imgViewer);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                        }
-                    });
-                    */
-//                    /*********DEBUG*/
 
                 }
             }
@@ -473,13 +421,13 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 listaFiltrata = manager.getAdvancedFilteredRestaurants(this.mPrefs.getString("distanceValue", ""), this.mPrefs
                         .getString("priceValue", ""), this.mPrefs.getString("typeValue", ""), this.mPrefs.getString("timeValue", ""));
 
-                setUpRestaurantsRecycler(listaFiltrata);
+                setUpRestaurantsRecycler(listaFiltrata,false);
             }
 
         }else
         {
             //No filtering needed
-            setUpRestaurantsRecycler(manager.listaFiltrata);
+            setUpRestaurantsRecycler(manager.listaFiltrata,false);
         }
         // make the device update its location
         manager.simpleLocation.beginUpdates();
@@ -513,7 +461,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
-    private void setUpRestaurantsRecycler(List<Restaurant> restaurants)
+    private void setUpRestaurantsRecycler(List<Restaurant> restaurants, boolean singleColumn)
     {
         RecyclerView rV = (RecyclerView) findViewById(R.id.RestaurateurRecyclerView);
         RestaurantsRecyclerAdapter adapter = new RestaurantsRecyclerAdapter(this, restaurants);
@@ -569,6 +517,15 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         //RecyclerView.ItemAnimator ia = new SlideInOutLeftItemAnimator(rV);  // try animator //FIX-ME: doesn't work, pazienza
         DefaultItemAnimator ia = new DefaultItemAnimator();
         rV.setItemAnimator(ia);
+
+        //If coming from filter, indipendently from display, place in single column
+        if(singleColumn){
+            // 1 columns
+            LinearLayoutManager mLinearLayoutManagerVertical = new LinearLayoutManager(this);
+            mLinearLayoutManagerVertical.setOrientation(LinearLayoutManager.VERTICAL);
+            rV.setLayoutManager(mLinearLayoutManagerVertical);
+        }
+
     }
 
     private void setUpSpinner()
