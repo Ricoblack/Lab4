@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -34,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
@@ -275,19 +278,23 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 public void onSuccess(Uri uri) {
                     // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
                     // Pass it to Glide to download, show in ImageView and caching
-                    Glide.with(context)
-                            .load(uri.toString())
-                            .placeholder(R.drawable.default_img_rest_1)
-                            .centerCrop()
-                            .error(R.drawable.wa_background)
-                            .into(restaurantPhoto);
+//                    Glide.with(context)
+//                            .load(uri.toString())
+//                            .placeholder(R.drawable.default_img_rest_1)
+//                            .centerCrop()
+//                            .error(R.drawable.wa_background)
+//                            .into(restaurantPhoto);
+
+                    DownloadImageTask dit = new DownloadImageTask();
+                    dit.execute(uri, restaurantPhoto);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
                     //TODO gesire errore
-                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -305,8 +312,42 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mData.size());
             Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
+    public class DownloadImageTask extends AsyncTask<Object, Void, Bitmap> {
 
+        private ImageView photo;
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+
+            this.photo = (ImageView) params[1];
+            Bitmap bitmap;
+            try {
+                bitmap = Glide.
+                        with(context).
+                        load(params[0].toString()).
+                        asBitmap().
+                        into(1920,1080). //FIXME x Michele settare dimensioni schermo invece che dimensioni fisse
+                        get();
+            } catch (final ExecutionException e) {
+                return null;
+            } catch (final InterruptedException e) {
+                return null;
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if(bitmap != null)
+                this.photo.setImageBitmap(bitmap);
+        }
     }
 }

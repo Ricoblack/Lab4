@@ -1,9 +1,11 @@
 package it.polito.mad.insane.lab4.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -12,19 +14,25 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
@@ -34,6 +42,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,12 +65,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.AddReviewSpinnerAdapter;
+import it.polito.mad.insane.lab4.adapters.ArrayAdapterWithIcon;
 import it.polito.mad.insane.lab4.data.RestaurantInfo;
 import it.polito.mad.insane.lab4.managers.NotificationDailyOfferService;
 
@@ -69,12 +82,14 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
 
 
     public static Activity EditProfileRestaurateurActivity = null; // attribute used to finish() the current activity from another activity
+    private static final int REQUEST_TAKE_PHOTO = 0;
+    private static final int REQUEST_IMAGE_GALLERY = 1;
     private static int MY_GL_MAX_TEXTURE_SIZE = 1024;
-    private static final int REQUEST_IMAGE_GALLERY = 581;
     private static Bitmap tempCoverPhoto = null;
     private NavigationView navigationView;
     private String rUser;
     private String rid;
+    private String mCurrentPhotoPath;
 
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
@@ -111,7 +126,7 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    takePhotoFromGallery();
+                    dispatchTakePictureIntent();
                 }
             });
         }
@@ -176,6 +191,78 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         }
         navigationView.setNavigationItemSelectedListener(this);
         /**************************************************/
+    }
+
+    private void dispatchTakePictureIntent() {
+        Dialog dialog = onCreateDialog();
+        dialog.show();
+    }
+
+    public Dialog onCreateDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditProfileRestaurateurActivity.this);
+
+        final String [] items = new String[] {EditProfileRestaurateurActivity.this.getResources().getString(R.string.take_photo),
+                EditProfileRestaurateurActivity.this.getResources().getString(R.string.gallery_image)};
+        final Integer[] icons = new Integer[] {R.drawable.ic_camera_alt_black_24dp, R.drawable.ic_collections_black_24dp,};
+        ListAdapter adapter = new ArrayAdapterWithIcon(EditProfileRestaurateurActivity.this, items, icons);
+
+        builder.setTitle(EditProfileRestaurateurActivity.this.getResources().getString(R.string.alert_title))
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case (0):
+                                takePhotoFromCamera();
+                                break;
+                            case (1):
+                                takePhotoFromGallery();
+                                break;
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        return builder.create();
+    }
+
+    private void takePhotoFromCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Toast.makeText(this, "Impossible to create image file", Toast.LENGTH_LONG).show();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+
     }
 
     /********************DRAWER*****************************/
@@ -319,6 +406,19 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
 
         switch(requestCode)
         {
+            case REQUEST_TAKE_PHOTO:
+                if(resultCode == RESULT_OK){
+                    try {
+                        tempCoverPhoto = processImg(mCurrentPhotoPath);
+                        ImageView iv = (ImageView) findViewById(R.id.coverPhoto);
+                        if (iv != null) {
+                            iv.setImageBitmap(tempCoverPhoto);
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(EditProfileRestaurateurActivity.this, "Impossible to process image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
             case REQUEST_IMAGE_GALLERY:
                 if(resultCode == RESULT_OK) {
                     if (data == null)
@@ -415,8 +515,10 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
 
         if(photoW > displayWidth || photoH > displayHeight)
         {
-            // Compute the scaling ratio to avoid distortion
-//            ratio = Math.min(photoW / displayWidth, photoH / displayHeight);
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            // Note: A power of two value is calculated because the decoder uses a final value by rounding down
+            // to the nearest power of two, as per the inSampleSize documentation.
 
             while ((photoH / ratio) >= displayHeight || (photoW / ratio) >= displayWidth) {
                 ratio *= 2;
@@ -544,7 +646,7 @@ public class EditProfileRestaurateurActivity extends AppCompatActivity implement
         StorageReference imageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid + "/cover.jpg");
         // Create a reference with an initial file path and name
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos); //TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine
+        tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = imageRef.putBytes(data);

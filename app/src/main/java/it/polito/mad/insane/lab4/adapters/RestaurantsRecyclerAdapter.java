@@ -2,7 +2,9 @@ package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
 import it.polito.mad.insane.lab4.data.Restaurant;
@@ -154,12 +157,16 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
                 public void onSuccess(Uri uri) {
                     // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
                     // Pass it to Glide to download, show in ImageView and caching
-                    Glide.with(context)
-                            .load(uri.toString())
-                            .placeholder(R.drawable.default_img_rest_1)
-                            .centerCrop()
-                            .error(R.drawable.wa_background)
-                            .into(img);
+//                    Glide.with(context)
+//                            .load(uri.toString())
+//                            .placeholder(R.drawable.default_img_rest_1)
+//                            .centerCrop()
+//                            .error(R.drawable.wa_background)
+//                            .into(img);
+
+                    DownloadImageTask dit = new DownloadImageTask();
+                    dit.execute(uri, img);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -190,6 +197,40 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
 //                    Toast.makeText(manager.myContext,exception.toString(),Toast.LENGTH_SHORT).show();
 //                }
 //            });
+        }
+    }
+
+    public class DownloadImageTask extends AsyncTask<Object, Void, Bitmap> {
+
+        private ImageView photo;
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+
+            this.photo = (ImageView) params[1];
+            Bitmap bitmap;
+            try {
+                bitmap = Glide.
+                        with(context).
+                        load(params[0].toString()).
+                        asBitmap().
+                        into(1920,1080). //FIXME x Michele settare dimensioni schermo invece che dimensioni fisse
+                        get();
+            } catch (final ExecutionException e) {
+                return null;
+            } catch (final InterruptedException e) {
+                return null;
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if(bitmap != null)
+                this.photo.setImageBitmap(bitmap);
         }
     }
 }

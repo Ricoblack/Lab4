@@ -17,6 +17,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -53,11 +54,15 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.adapters.ArrayAdapterWithIcon;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 
@@ -65,10 +70,10 @@ public class EditDishActivity extends AppCompatActivity
 {
     private static int MY_GL_MAX_TEXTURE_SIZE = 1024; // compatible with almost all devices. To obtain the right value for each device use:   int[] maxSize = new int[1];
     // (this needs an OpenGL context)                                                       GLES10.glGetIntegerv(GL10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
-
+    private static final int REQUEST_TAKE_PHOTO = 0;
+    private static final int REQUEST_IMAGE_GALLERY = 1;
     static final String PREF_LOGIN = "loginPref";
     private SharedPreferences mPrefs = null;
-    private static final int REQUEST_IMAGE_GALLERY = 157;
     private Dish currentDish = null;
     private static Bitmap tempCoverPhoto = null;
     private EditText dishID;
@@ -78,6 +83,7 @@ public class EditDishActivity extends AppCompatActivity
     private EditText dishPrice;
     private ImageView dishPhoto;
     private static String rid;
+    private String mCurrentPhotoPath;
 
     /**
      * Standard Methods
@@ -120,7 +126,7 @@ public class EditDishActivity extends AppCompatActivity
 //                        checkAndRequestPermissions(PERMS_REQUEST_CODE_CAMERA);
 //                    else
 
-                    takePhotoFromGallery();
+                    dispatchTakePictureIntent();
                 }
             });
         }
@@ -212,6 +218,42 @@ public class EditDishActivity extends AppCompatActivity
         }
     }
 
+    private void dispatchTakePictureIntent() {
+        Dialog dialog = onCreateDialog();
+        dialog.show();
+    }
+
+    public Dialog onCreateDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditDishActivity.this);
+
+        final String [] items = new String[] {EditDishActivity.this.getResources().getString(R.string.take_photo),
+                EditDishActivity.this.getResources().getString(R.string.gallery_image)};
+        final Integer[] icons = new Integer[] {R.drawable.ic_camera_alt_black_24dp, R.drawable.ic_collections_black_24dp,};
+        ListAdapter adapter = new ArrayAdapterWithIcon(EditDishActivity.this, items, icons);
+
+        builder.setTitle(EditDishActivity.this.getResources().getString(R.string.alert_title))
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        switch (item) {
+                            case (0):
+                                takePhotoFromCamera();
+                                break;
+                            case (1):
+                                takePhotoFromGallery();
+                                break;
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        return builder.create();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -241,6 +283,19 @@ public class EditDishActivity extends AppCompatActivity
         String imgPath;
 
         switch (requestCode) {
+            case REQUEST_TAKE_PHOTO:
+                if(resultCode == RESULT_OK){
+                    try {
+                        tempCoverPhoto = processImg(mCurrentPhotoPath);
+                        ImageView iv = (ImageView) findViewById(R.id.dishPhoto);
+                        if (iv != null) {
+                            iv.setImageBitmap(tempCoverPhoto);
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(EditDishActivity.this, "Impossible to process image", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
             case REQUEST_IMAGE_GALLERY:
                 if(resultCode == RESULT_OK)
                 {
@@ -461,14 +516,10 @@ public class EditDishActivity extends AppCompatActivity
         if (imageHeight > displayHeight || imageWidth > displayWidth) {
 
 
-            // Compute the scaling ratio to avoid distortion
-//            inSampleSize = Math.min(imageWidth / displayWidth, imageHeight / displayHeight);
-
-//            final int halfHeight = imageHeight / 2;
-//            final int halfWidth = imageWidth / 2;
-
-//             Calculate the largest inSampleSize value that is a power of 2 and keeps both
-//             height and width larger than the requested height and width.
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            // Note: A power of two value is calculated because the decoder uses a final value by rounding down
+            // to the nearest power of two, as per the inSampleSize documentation.
 
             while ((imageHeight / inSampleSize) >= displayHeight || (imageWidth / inSampleSize) >= displayWidth) {
                 inSampleSize *= 2;
@@ -516,8 +567,37 @@ public class EditDishActivity extends AppCompatActivity
 //        dialog.show();
 //    }
 
-    private void takePhotoFromCamera() { // not implemented yet
-        Toast.makeText(EditDishActivity.this, "Camera", Toast.LENGTH_SHORT).show();
+    private void takePhotoFromCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Toast.makeText(this, "Impossible to create image file", Toast.LENGTH_LONG).show();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private void takePhotoFromGallery() {
