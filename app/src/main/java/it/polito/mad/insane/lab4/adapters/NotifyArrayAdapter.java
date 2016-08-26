@@ -2,6 +2,7 @@ package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
     private Context context;
     private int layoutResourceId;
     private List<Object> data;
+    private int numNotifications;
 
     public NotifyArrayAdapter(Context context, int resource, List<Object> data) {
         //costruttore
@@ -33,6 +35,7 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         this.context = context;
         this.layoutResourceId = resource;
         this.data = data;
+        this.numNotifications=data.size()-1;
 
     }
 
@@ -51,9 +54,16 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         holder.notificationID = (TextView) row.findViewById(R.id.notify_item_notify_id);
         holder.cardview = (CardView) row.findViewById(R.id.notify_card_view);
 
-        holder.restaurantName.setText(((DailyOfferSimple) data.get(position)).getRestaurantName());
-        holder.description.setText(((DailyOfferSimple) data.get(position)).getDescription());
-        holder.notificationID.setText(((DailyOfferSimple) data.get(position)).getID());
+        holder.restaurantName.setText(((DailyOfferSimple) data.get(numNotifications-position)).getRestaurantName());
+        holder.description.setText(((DailyOfferSimple) data.get(numNotifications-position)).getDescription());
+
+        //setta in grassetto corsivo quelle ancora non lette
+        if(((DailyOfferSimple) data.get(numNotifications-position)).isRead()==false){
+            holder.restaurantName.setTypeface(holder.restaurantName.getTypeface(), Typeface.BOLD_ITALIC);
+            holder.description.setTypeface(holder.description.getTypeface(),Typeface.BOLD_ITALIC);
+        }
+
+        holder.notificationID.setText(((DailyOfferSimple) data.get(numNotifications-position)).getID());
 
         holder.cardview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,13 +71,21 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
 
                 //go to the restaurant
                 Intent resultIntent = new Intent(context, RestaurantProfileActivity.class);
-                resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(position)).getRestaurantId());
-                resultIntent.putExtra("Name",((DailyOfferSimple) data.get(position)).getRestaurantName());
+                resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(numNotifications-position)).getRestaurantId());
+                resultIntent.putExtra("Name",((DailyOfferSimple) data.get(numNotifications-position)).getRestaurantName());
 
                 RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(context);
-                manager.removeDailyOffer(((DailyOfferSimple) data.get(position)).getID());
-                data.remove(position);
-                notifyDataSetChanged();
+
+
+                //non lo elimino più, notifico che è stata letta
+                  //manager.removeDailyOffer(((DailyOfferSimple) data.get(position)).getID());
+                  manager.setDailyOfferRead(((DailyOfferSimple) data.get(numNotifications-position)).getID());
+                  //data.remove(position);
+                  //notifyDataSetChanged();
+
+
+
+
 
                 getContext().startActivity(resultIntent);
 

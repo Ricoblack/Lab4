@@ -9,6 +9,7 @@ public class DailyOfferSimple {
     private String restaurantName;
     private String description;
     private String ID;
+    private boolean isRead;
 
     public DailyOfferSimple(){}
 
@@ -42,5 +43,13 @@ public class DailyOfferSimple {
 
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }

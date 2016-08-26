@@ -475,6 +475,19 @@ public class RestaurateurJsonManager
         db.putListObject("notification",listTmp);
 
     }
+
+    public void setDailyOfferRead(String id) {
+        TinyDB db=new TinyDB(myContext);
+        ArrayList<Object> listTmp=db.getListObject("notification",DailyOfferSimple.class);
+
+        for(int i=0;i<listTmp.size();i++){
+            DailyOfferSimple offer= (DailyOfferSimple) listTmp.get(i);
+            if(offer.getID().equals(id)) ((DailyOfferSimple) listTmp.get(i)).setRead(true);
+        }
+
+        db.putListObject("notification",listTmp);
+    }
+
     /**
      * Created by carlocaramia on 09/04/16.
      */

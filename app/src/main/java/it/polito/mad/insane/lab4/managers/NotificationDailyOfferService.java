@@ -50,6 +50,7 @@ public class NotificationDailyOfferService extends Service {
     private SharedPreferences mPrefs = null;
     private SharedPreferences mPrefsDelete=null;
     private final int MINUTES_SLEEP = 1; //minuti successivi al quale allo user arriva la notifica di recensione
+    //TODO: modificare il timer nell'app finale
 
     public Context myContext=this;
     private ChildEventListener addedListener;
@@ -425,9 +426,19 @@ public class NotificationDailyOfferService extends Service {
         //add notification to shared pref
         TinyDB db=new TinyDB(myContext);
         ArrayList<Object> list=db.getListObject("notification",DailyOfferSimple.class);
-        if(list==null) list=new ArrayList<>();
-        list.add(offer);
-        db.putListObject("notification",list);
+        if(list==null) {
+            list = new ArrayList<>();
+            list.add(offer);
+            db.putListObject("notification", list);
+        }
+        else {
+            //verifico se ce ne sono 10, e in quel caso rimuovo la prima e inserisco in coda
+            if(list.size()==10){
+                list.remove(0);
+            }
+            list.add(offer);
+            db.putListObject("notification",list);
+        }
     }
 }
 
