@@ -58,19 +58,20 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         holder.cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //go to the restaurant
+                Intent resultIntent = new Intent(context, RestaurantProfileActivity.class);
+                resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(position)).getRestaurantId());
+                resultIntent.putExtra("Name",((DailyOfferSimple) data.get(position)).getRestaurantName());
+
                 RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(context);
                 manager.removeDailyOffer(((DailyOfferSimple) data.get(position)).getID());
-
-//                Intent resultIntent = new Intent(context, RestaurantProfileActivity.class);
-//                resultIntent.putExtra("ID", ((DailyOfferSimple) data.get(position)).getID());
-//                resultIntent.putExtra("Name",((DailyOfferSimple) data.get(position)).getRestaurantName());
-//                getContext().startActivity(resultIntent);
-
                 data.remove(position);
                 notifyDataSetChanged();
 
+                getContext().startActivity(resultIntent);
 
-
+                ((NotificationsActivity) context).finish();
 
             }
         });

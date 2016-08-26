@@ -147,7 +147,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
                 //TODO gestire errore
-//                Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), exception.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
