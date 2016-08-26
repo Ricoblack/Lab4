@@ -482,7 +482,7 @@ public class RestaurateurJsonManager
 
         for(int i=0;i<listTmp.size();i++){
             DailyOfferSimple offer= (DailyOfferSimple) listTmp.get(i);
-            if(offer.getID().equals(id) && offer.isRead()==false) ((DailyOfferSimple) listTmp.get(i)).setRead(true);
+            if(offer.getID().equals(id) && offer.isRead()==false ) ((DailyOfferSimple) listTmp.get(i)).setRead(true);
         }
 
         db.putListObject("notification",listTmp);
