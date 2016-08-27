@@ -6,6 +6,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -14,6 +16,8 @@ import it.polito.mad.insane.lab4.adapters.NotifyArrayAdapter;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 public class NotificationsActivity extends AppCompatActivity {
+
+    RestaurateurJsonManager manager=RestaurateurJsonManager.getInstance(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +29,7 @@ public class NotificationsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(R.string.notifications);
 
-        ListView lv = (ListView) findViewById(R.id.notification_list_view);
+        final ListView lv = (ListView) findViewById(R.id.notification_list_view);
         if (lv != null){
             RestaurateurJsonManager manager = RestaurateurJsonManager.getInstance(NotificationsActivity.this);
             if(manager.getDailyOffersSimple().size() == 0){
@@ -40,6 +44,16 @@ public class NotificationsActivity extends AppCompatActivity {
                 lv.setAdapter(adapter);
             }
         }
+
+        Button readAll=(Button) findViewById(R.id.buttonRead);
+        readAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manager.setAllDailyOffersRead();
+               // ((BaseAdapter) lv.getAdapter()).notifyDataSetChanged();
+                //TODO: notificare il refresh della listview così da notare se segno tutto come letto
+            }
+        });
     }
 
 }
