@@ -52,6 +52,7 @@ import java.util.Map;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.Cart;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
@@ -79,14 +80,14 @@ public class MakeReservationActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         restaurantId = bundle.getString("ID");
         restaurantName = bundle.getString("restName");
-        final HashMap<Dish, Integer> selectedQuantities = (HashMap<Dish, Integer>) bundle.getSerializable("selectedQuantities");
+        final Cart cart = (Cart) bundle.getSerializable("cart");
 
-        if (selectedQuantities != null) {
-            totalDishesQty = selectedQuantities.size();
-            List<Dish> dishesToDisplay = new ArrayList<>(selectedQuantities.keySet());
+        if (cart != null && cart.getDishesQuantityMap() != null) {
+            totalDishesQty = cart.getDishesQuantityMap().size();
+            List<Dish> dishesToDisplay = new ArrayList<>(cart.getDishesQuantityMap().keySet());
             totalPrice = 0;
-            for(Dish d:dishesToDisplay)
-                totalPrice += d.getPrice() * selectedQuantities.get(d);
+            for (Dish d : dishesToDisplay)
+                totalPrice += d.getPrice() * cart.getDishesQuantityMap().get(d);
         }
 
         // get Daily offers from firebase
@@ -121,7 +122,7 @@ public class MakeReservationActivity extends AppCompatActivity {
 
                     // take a copy of the dishes in the reservation
                     ArrayList<DailyOffer> applyedOffers = new ArrayList<DailyOffer>();
-                    HashMap<Dish, Integer> copyDishesMap = new HashMap<Dish, Integer>(selectedQuantities);
+                    HashMap<Dish, Integer> copyDishesMap = new HashMap<Dish, Integer>(cart.getDishesQuantityMap());
                     ArrayList<Dish> dishesReservationTemp = new ArrayList<Dish>(copyDishesMap.keySet());
                     for (DailyOffer tempOffer : dailyOffers)
                     {
@@ -202,7 +203,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                     tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
                 }
 
-                DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, selectedQuantities, 0);
+                DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, cart.getDishesQuantityMap(), 0);
 
                 ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
                 if (mylist != null) {
@@ -241,7 +242,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                     builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title_booking))
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    saveReservation(selectedQuantities);
+                                    saveReservation(cart.getDishesQuantityMap());
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

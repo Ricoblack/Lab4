@@ -113,7 +113,7 @@
     <string name="reviews_string">reviews</string>
     <string name="itemsFormat"> items </string>
     <string name="reviewsFormat">Based on %d reviews</string>
-    <string name="cart_empty_alert">Cart must contain at least one dish</string>
+    <string name="cart_empty_alert">Cart must contain at least one dish or offer</string>
     <string name="food">Food</string>
     <string name="punctuality">Punctuality</string>
     <string name="location">Location</string>
@@ -305,4 +305,5 @@
     <string name="alert_title">Select image</string>
     <string name="impossible_delete_booking">Impossible to delete reservation</string>
     <string name="num_review">Review Number</string>
+    <string name="book_daily_offer">PRENOTA</string>
 </resources>

@@ -373,7 +373,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                 {
                     dishesLocalCache.putAll(rTemp);
                     dishesList = new ArrayList<>(dishesLocalCache.values());
-                    dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, dishesList, rid, 1);
+                    dishesAdapter = new DishesRecyclerAdapter(DailyMenuActivity.this, dishesList, rid, 1, null);
                     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.MenuRecyclerView);
                     if (recyclerView != null)
                     {
@@ -427,7 +427,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
                     dailyOffersLocalCache.putAll(rTemp);
                     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.daily_offers_recycler_view);
                     offersList = new ArrayList<>(dailyOffersLocalCache.values());
-                    offersAdapter = new DailyOfferRecyclerAdapter(DailyMenuActivity.this, offersList, rid, 1);
+                    offersAdapter = new DailyOfferRecyclerAdapter(DailyMenuActivity.this, offersList, rid, 1, null);
                     if(recyclerView != null) {
                         recyclerView.setAdapter(offersAdapter);
                         offersAdapter.notifyDataSetChanged();
@@ -596,7 +596,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         {
 
             // set Adapter
-            dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, rid, 1);
+            dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, rid, 1, null);
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.MenuRecyclerView);
             if (recyclerView != null)
             {
@@ -654,7 +654,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
 
         private View dailyOfferLayout(LayoutInflater inflater, ViewGroup container)
         {
-            final View rootView = inflater.inflate(R.layout.daily_offer_fragment, container, false);
+            final View rootView = inflater.inflate(R.layout.restaurant_daily_offer_fragment, container, false);
             noOffersTextView = (TextView) rootView.findViewById(R.id.offer_fragment_no_offers);
 
             // take data from Firebase
@@ -702,7 +702,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         private void setupDailyOfferRecyclerView(View rootView, List<DailyOffer> offers)
         {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.daily_offers_recycler_view);
-            offersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, rid, 1);
+            offersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, rid, 1, null);
 
             if(recyclerView != null)
             {
@@ -788,7 +788,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         dishesList.add(dish);
 
         if(dishesAdapter == null)
-            dishesAdapter = new DishesRecyclerAdapter(context, dishesList, rid, 1);
+            dishesAdapter = new DishesRecyclerAdapter(context, dishesList, rid, 1, null);
         dishesAdapter.notifyDataSetChanged();
 
     }
@@ -799,7 +799,7 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
         offersList.add(offer);
 
         if(offersAdapter == null)
-            offersAdapter = new DailyOfferRecyclerAdapter(context, offersList, rid, 1);
+            offersAdapter = new DailyOfferRecyclerAdapter(context, offersList, rid, 1, null);
         offersAdapter.notifyDataSetChanged();
     }
 

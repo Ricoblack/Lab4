@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.EditDishActivity;
 import it.polito.mad.insane.lab4.activities.RestaurantProfileActivity;
+import it.polito.mad.insane.lab4.data.Cart;
 import it.polito.mad.insane.lab4.data.Dish;
 
 public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAdapter.DishesViewHolder>
@@ -47,14 +48,12 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
     private int[] popupsVisibility; //per evitare problemi con le posizioni delle view, memorizzo qui il flag del popup, se visibile o meno
 //    private int[] selectedQuantities; //array che contiene le quantita' selezionate di ogni piatto del menu'
     private LayoutInflater mInflater;
-    private  int reservationQty; // quantita' totale di item presenti nella prenotazione in esame
-    private  double reservationPrice; //prezzo totale degli item presenti nella prenotazione in esame
-    private HashMap<Dish, Integer> quantitiesMap; //mappa che contiene le quantita' selezionate di ogni piatto del menu'
+    private Cart cart;
     private String ridAdapter;
     private int currentActivity;
 
 
-    public DishesRecyclerAdapter(Context context, List<Dish> data, String rid, int currentActivity)
+    public DishesRecyclerAdapter(Context context, List<Dish> data, String rid, int currentActivity, Cart cart)
     {
         this.mInflater = LayoutInflater.from(context);
         this.context = context;
@@ -65,9 +64,7 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
         Arrays.fill(popupsVisibility, View.GONE); // all'inizio i popup sono tutti invisibili
 //        selectedQuantities = new int[data.size()];
 //        Arrays.fill(selectedQuantities, 0);
-        quantitiesMap = new HashMap<>();
-        reservationQty = 0;
-        reservationPrice = 0;
+        this.cart = cart;
         ridAdapter = rid;
 
     }
@@ -113,20 +110,17 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
         return mData;
     }
 
-    public int getReservationQty(){
-        return reservationQty;
-    }
-
-    public double getReservationPrice(){
-        return reservationPrice;
-    }
 
 //    public int[] getSelectedQuantities(){
 //        return selectedQuantities;
 //    }
 
-    public HashMap<Dish, Integer> getQuantitiesMap(){
-        return quantitiesMap;
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     public class DishesViewHolder extends RecyclerView.ViewHolder
@@ -191,16 +185,6 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
             storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(final Uri uri) {
-                    // Got the download URL for 'restaurants/myRestaurant/cover.jpg'
-                    // Pass it to Glide to download, show in ImageView and caching
-//                    Glide.with(context)
-//                            .load(uri.toString())
-//                            .placeholder(R.drawable.dish_default_green_5)
-//                            .centerCrop()
-//                            .error(R.drawable.wa_background)
-//                            .into(dishPhoto);
-
-
                     DownloadImageTask dit = new DownloadImageTask();
                     dit.execute(uri, dishPhoto);
                 }
@@ -218,11 +202,11 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                 this.selectionLayout.setVisibility(popupsVisibility[position]); //layout del popup
                 this.separator.setVisibility(popupsVisibility[position]); //layout della linea separatrice
             }
-            if(quantitiesMap.get(current) != null){
-                this.selectedQuantity.setText(String.valueOf(quantitiesMap.get(current)));
+            if(cart.getDishesQuantityMap().get(current) != null){
+                this.selectedQuantity.setText(String.valueOf(cart.getDishesQuantityMap().get(current)));
                 df = new DecimalFormat("0.00");
                 this.selectedPrice.setText(MessageFormat.format("{0}€",
-                        String.valueOf(df.format(quantitiesMap.get(current) * current.getPrice()))));
+                        String.valueOf(df.format(cart.getDishesQuantityMap().get(current) * current.getPrice()))));
             }
             else{
                 this.selectedQuantity.setText(String.valueOf(0));
@@ -256,27 +240,32 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                     @Override
                     public void onClick(View v) {
                         int quantity = 0;
-                        if (quantitiesMap.containsKey(current)) {
-                            quantity = quantitiesMap.get(current);
+                        if (cart.getDishesQuantityMap().containsKey(current)) {
+                            quantity = cart.getDishesQuantityMap().get(current);
 
 //                        selectedQuantities[pos]--;
                             quantity--;
                             if (quantity != 0)
-                                quantitiesMap.put(current, quantity);
+                                cart.getDishesQuantityMap().put(current, quantity);
                             else
-                                quantitiesMap.remove(current);
+                                cart.getDishesQuantityMap().remove(current);
 
                             selectedQuantity.setText(String.valueOf(quantity));
                             DecimalFormat df = new DecimalFormat("0.00");
                             selectedPrice.setText(MessageFormat.format("{0}€",
                                     String.valueOf(df.format(quantity * current.getPrice()))));
 
+                            double reservationPrice = cart.getReservationPrice();
                             reservationPrice -= current.getPrice(); //decremento il prezzo totale della prenotazione
+                            cart.setReservationPrice(reservationPrice);
+
+                            int reservationQty = cart.getReservationQty();
                             reservationQty--; //decremento la quantita' di item della prenotazione
+                            cart.setReservationQty(reservationQty);
 
                             TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
                             if (tv != null) {
-                                if (reservationQty != 0)
+                                if (cart.getReservationQty() != 0)
                                     tv.setText(String.format(MessageFormat.format("%d {0} - %s€", v.getResources().getString(R.string.itemsFormat)), reservationQty, reservationPrice));
                                 else
                                     tv.setText(R.string.empty_cart);
@@ -289,28 +278,33 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                     @Override
                     public void onClick(View v) {
                         int quantity = 0;
-                        if (quantitiesMap.containsKey(current)) {
-                            quantity = quantitiesMap.get(current);
+                        if (cart.getDishesQuantityMap().containsKey(current)) {
+                            quantity = cart.getDishesQuantityMap().get(current);
                         } else
-                            quantitiesMap.put(current, 0);
+                            cart.getDishesQuantityMap().put(current, 0);
 
                         if (quantity < current.getAvailabilityQty()) {
 //                        selectedQuantities[pos]++;
                             quantity++;
-                            quantitiesMap.put(current, quantity);
+                            cart.getDishesQuantityMap().put(current, quantity);
 
                             selectedQuantity.setText(String.valueOf(quantity));
                             DecimalFormat df = new DecimalFormat("0.00");
                             selectedPrice.setText(MessageFormat.format("{0}€",
                                     String.valueOf(df.format((quantity) * current.getPrice()))));
 
-                            reservationPrice += current.getPrice(); //incremento il prezzo totale della prenotazione
-                            reservationQty++; //incremento la quantita' di item della prenotazione
+                            double reservationPrice = cart.getReservationPrice();
+                            reservationPrice += current.getPrice(); //decremento il prezzo totale della prenotazione
+                            cart.setReservationPrice(reservationPrice);
+
+                            int reservationQty = cart.getReservationQty();
+                            reservationQty++; //decremento la quantita' di item della prenotazione
+                            cart.setReservationQty(reservationQty);
 
 
                             TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
                             if (tv != null) {
-                                if (reservationQty != 0)
+                                if (cart.getReservationQty() != 0)
                                     tv.setText(String.format("%d " + v.getResources().getString(R.string.itemsFormat) + " - %s€", reservationQty, reservationPrice));
                                 else
                                     tv.setText(R.string.empty_cart);

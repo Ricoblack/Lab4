@@ -21,6 +21,7 @@ public class Booking implements Serializable, Comparable<Booking>
 //    private List<Dish> dishes = new ArrayList<>();
 //    private List<Integer> quantities = new ArrayList<>(); // quantity reserved for each dish
     private HashMap<String, Integer>  dishesIdMap; // <ID, Qty>
+    private HashMap<String, Integer> dailyOffersIdMap;
     private String notes;
     private double totalDiscount; // it is the sum of the discounts of each (optional) daily offer in the booking
     private double totalPrice;
@@ -183,5 +184,13 @@ public class Booking implements Serializable, Comparable<Booking>
 
     public void setRestaurantName(String restaurantName) {
         this.restaurantName = restaurantName;
+    }
+
+    public HashMap<String, Integer> getDailyOffersIdMap() {
+        return dailyOffersIdMap;
+    }
+
+    public void setDailyOffersIdMap(HashMap<String, Integer> dailyOffersIdMap) {
+        this.dailyOffersIdMap = dailyOffersIdMap;
     }
 }

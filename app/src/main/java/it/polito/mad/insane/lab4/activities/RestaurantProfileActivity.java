@@ -56,6 +56,7 @@ import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DailyOfferRecyclerAdapter;
 import it.polito.mad.insane.lab4.adapters.DishesRecyclerAdapter;
 import it.polito.mad.insane.lab4.adapters.ReviewsRecyclerAdapter;
+import it.polito.mad.insane.lab4.data.Cart;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
@@ -95,6 +96,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     private static TextView noOffersTextView;
     private static TextView noDishesTextView;
     private static int reviewsNumber;
+    private static Cart cart = null;
 
     public static Activity RestaurantProfileActivity = null; // attribute used to finish() the current activity from another activity
 
@@ -105,6 +107,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         RestaurantProfileActivity = null;
         clearStaticVariables();
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -154,6 +158,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 //        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.scrollView);
 //        scrollView.setFillViewport (true);
 
+        if(cart != null)
+            editShowButton(cart.getReservationQty(), cart.getReservationPrice());
 
         // set button
         menuFab = (FloatingActionButton) findViewById(R.id.fab_cart);
@@ -171,14 +177,14 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
                             getResources().getString(R.string.logged_in_booking_alert), Toast.LENGTH_LONG).show();
                 }
-                else if(dishesAdapter.getReservationQty() == 0) {
+                else if(cart.getReservationQty() == 0) {
                     Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
                             getResources().getString(R.string.cart_empty_alert), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Intent intent = new Intent(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this, MakeReservationActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("selectedQuantities", dishesAdapter.getQuantitiesMap());
+                    bundle.putSerializable("cart", cart);
                     bundle.putString("ID", restaurantId);
                     bundle.putString("restName", restaurantName);
                     intent.putExtras(bundle);
@@ -231,8 +237,13 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
                 switch(position)
                 {
+                    case 0: // DAILY OFFER fragment
+                        menuFab.setVisibility(View.VISIBLE);
+                        editShowButton(cart.getReservationQty(), cart.getReservationPrice());
+                        break;
                     case 1: // MENU fragment
                         menuFab.setVisibility(View.VISIBLE);
+                        editShowButton(cart.getReservationQty(), cart.getReservationPrice());
                         break;
                     case 3: //REVIEWS fragment
                         reviewsFab.setVisibility(View.VISIBLE);
@@ -283,16 +294,15 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(dishesAdapter != null)
-            editShowButton(dishesAdapter.getReservationQty(), dishesAdapter.getReservationPrice());
+
+        if(cart != null)
+            editShowButton(cart.getReservationQty(), cart.getReservationPrice());
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         // get restaurant in order to get his avg final score
         final DatabaseReference restaurantRef = database.getReference("restaurants/" + restaurantId);
         restaurantRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-
 
                 restaurant = dataSnapshot.getValue(Restaurant.class);
 
@@ -385,7 +395,15 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
     public void editShowButton(int quantity, double price) {
 
-        TextView tv = (TextView) findViewById(R.id.show_reservation_button);
+        TextView tv = (TextView) findViewById(R.id.daily_offer_cart);
+        if (tv != null) {
+            if (quantity != 0)
+                tv.setText(String.format("%d "+getResources().getString(R.string.itemsFormat)+" - %s€", quantity, price));
+            else
+                tv.setText(R.string.empty_cart);
+        }
+
+        tv = (TextView) findViewById(R.id.show_reservation_button);
         if (tv != null) {
             if (quantity != 0)
                 tv.setText(String.format("%d "+getResources().getString(R.string.itemsFormat)+" - %s€", quantity, price));
@@ -400,6 +418,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         switch (id) {
@@ -415,10 +434,13 @@ public class RestaurantProfileActivity extends AppCompatActivity {
     public static void clearStaticVariables()
     {
         it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.dishesAdapter = null;
+        it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.cart = null;
 //        it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.reservationList = null;
         it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.restaurantId = null;
         reviewsMap.clear();
     }
+
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -465,6 +487,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     return null;
             }
         }
+
+
     }
 
 
@@ -499,6 +523,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
         }
 
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -523,7 +549,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
         private View dailyOfferLayout(LayoutInflater inflater, ViewGroup container)
         {
-            final View rootView = inflater.inflate(R.layout.daily_offer_fragment, container, false);
+            final View rootView = inflater.inflate(R.layout.restaurant_daily_offer_fragment, container, false);
             noOffersTextView = (TextView) rootView.findViewById(R.id.offer_fragment_no_offers);
 
             // take istance of the manager
@@ -532,7 +558,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
             // take data from Firebase
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/dailyOfferMap");//
+            DatabaseReference myRef = database.getReference("/restaurants/" + restaurantId + "/dailyOfferMap");
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -548,7 +574,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
                     // set up recycler view
-                    if(r!=null)
+                    if(r != null)
                         setupDailyOfferRecyclerView(rootView, new ArrayList<>(r.values()));
                     else
                     {
@@ -563,12 +589,17 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
                 }
             });
+
+            if(cart != null)
+                editShowButton(cart.getReservationQty(), cart.getReservationPrice(), rootView);
             return rootView;
         }
         private void setupDailyOfferRecyclerView(View rootView, List<DailyOffer> offers)
         {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.daily_offers_recycler_view);
-            RecyclerView.Adapter dailyOffersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, restaurantId, 0);
+            if (cart == null)
+                cart = new Cart();
+            RecyclerView.Adapter dailyOffersAdapter = new DailyOfferRecyclerAdapter(getActivity(), offers, restaurantId, 0, cart);
 
             if(recyclerView != null)
             {
@@ -618,6 +649,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
             }
         }
+
         private View infoLayout(LayoutInflater inflater, ViewGroup container) {
             View rootView = inflater.inflate(R.layout.restaurant_info_fragment, container, false);
 //            TextView tv = (TextView) getActivity().findViewById(R.id.chart_selection);
@@ -766,11 +798,8 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             // set up dishesRecyclerView
             //final RecyclerView rv = setupDishesRecyclerView(rootView, restaurant.getDishes());
 
-            TextView tv = (TextView) rootView.findViewById((R.id.show_reservation_button));
-            if(tv != null) {
-                if(dishesAdapter != null)
-                    editShowButton(dishesAdapter.getReservationQty(), dishesAdapter.getReservationPrice(), rootView);
-            }
+            if (cart != null)
+                editShowButton(cart.getReservationQty(), cart.getReservationPrice(), rootView);
 
             return rootView;
         }
@@ -920,7 +949,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.MenuRecyclerView);
             if (recyclerView != null) {
                 if(dishesAdapter == null)
-                    dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, restaurantId, 0);
+                    dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, restaurantId, 0, cart);
                 recyclerView.setAdapter(dishesAdapter);
             }
 
