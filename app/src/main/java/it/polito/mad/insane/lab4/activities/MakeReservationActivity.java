@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.adapters.DailyOfferArrayAdapter;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.Cart;
@@ -82,13 +83,26 @@ public class MakeReservationActivity extends AppCompatActivity {
         restaurantName = bundle.getString("restName");
         final Cart cart = (Cart) bundle.getSerializable("cart");
 
-        if (cart != null && cart.getDishesQuantityMap() != null) {
-            totalDishesQty = cart.getDishesQuantityMap().size();
-            List<Dish> dishesToDisplay = new ArrayList<>(cart.getDishesQuantityMap().keySet());
-            totalPrice = 0;
-            for (Dish d : dishesToDisplay)
-                totalPrice += d.getPrice() * cart.getDishesQuantityMap().get(d);
+        if(cart != null){
+
+            if (cart.getOffersQuantityMap() != null){
+                totalDishesQty = cart.getOffersQuantityMap().size();
+                List<DailyOffer> offersToDisplay = new ArrayList<>(cart.getOffersQuantityMap().keySet());
+                totalPrice = 0;
+                for (DailyOffer d : offersToDisplay)
+                    totalPrice += d.getPrice() * cart.getOffersQuantityMap().get(d);
+            }
+
+            if (cart.getDishesQuantityMap() != null) {
+                totalDishesQty = cart.getDishesQuantityMap().size();
+                List<Dish> dishesToDisplay = new ArrayList<>(cart.getDishesQuantityMap().keySet());
+                totalPrice = 0;
+                for (Dish d : dishesToDisplay)
+                    totalPrice += d.getPrice() * cart.getDishesQuantityMap().get(d);
+            }
         }
+
+
 
         // get Daily offers from firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -203,11 +217,25 @@ public class MakeReservationActivity extends AppCompatActivity {
                     tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(totalPrice))));
                 }
 
-                DishArrayAdapter adapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item, cart.getDishesQuantityMap(), 0);
+                DailyOfferArrayAdapter offersAdapter = null;
+                if (cart != null) {
+                    offersAdapter = new DailyOfferArrayAdapter(MakeReservationActivity.this, R.layout.daily_offer_listview_item,
+                            cart.getOffersQuantityMap(), 0);
+                }
+                ListView myList = (ListView) findViewById(R.id.reservation_offers_list);
+                if (myList != null) {
+                    myList.setAdapter(offersAdapter);
+                }
 
-                ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
-                if (mylist != null) {
-                    mylist.setAdapter(adapter);
+
+                DishArrayAdapter dishesAdapter = null;
+                if (cart != null) {
+                    dishesAdapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item,
+                            cart.getDishesQuantityMap(), 0);
+                }
+                myList = (ListView) findViewById(R.id.reservation_dish_list);
+                if (myList != null) {
+                    myList.setAdapter(dishesAdapter);
                 }
             }
 
