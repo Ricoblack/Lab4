@@ -394,6 +394,10 @@ public class RestaurateurJsonManager
         cal.setTime(new Date()); // sets calendar time/date
         cal.add(Calendar.MINUTE, 1); //add one minute
 
+        Calendar calThreeDays=Calendar.getInstance();
+        calThreeDays.setTime(new Date());
+        calThreeDays.add(Calendar.DAY_OF_MONTH,2); //add three days
+
         RestaurantInfo profile=getRestaurant(restaurantId).getInfo();
         Date openingHour,closingHour;
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -405,7 +409,7 @@ public class RestaurateurJsonManager
             return false;
         }
 
-        if(reservationDate.after(cal) && timeIsAfter(reservationDate.getTime(),openingHour)&&
+        if(reservationDate.after(cal) && reservationDate.before(calThreeDays) && timeIsAfter(reservationDate.getTime(),openingHour)&&
                 timeIsBefore(reservationDate.getTime(),closingHour) ) return true;
         return false;
 
