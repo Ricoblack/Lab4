@@ -202,16 +202,18 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                 this.selectionLayout.setVisibility(popupsVisibility[position]); //layout del popup
                 this.separator.setVisibility(popupsVisibility[position]); //layout della linea separatrice
             }
-            if(cart.getDishesQuantityMap().get(current) != null){
-                this.selectedQuantity.setText(String.valueOf(cart.getDishesQuantityMap().get(current)));
-                df = new DecimalFormat("0.00");
-                this.selectedPrice.setText(MessageFormat.format("{0}€",
-                        String.valueOf(df.format(cart.getDishesQuantityMap().get(current) * current.getPrice()))));
-            }
-            else{
-                this.selectedQuantity.setText(String.valueOf(0));
-                this.selectedPrice.setText(MessageFormat.format("{0}€",
-                        String.valueOf(df.format(0))));
+            
+            if (cart != null) {
+                if (cart.getDishesQuantityMap().get(current) != null) {
+                    this.selectedQuantity.setText(String.valueOf(cart.getDishesQuantityMap().get(current)));
+                    df = new DecimalFormat("0.00");
+                    this.selectedPrice.setText(MessageFormat.format("{0}€",
+                            String.valueOf(df.format(cart.getDishesQuantityMap().get(current) * current.getPrice()))));
+                } else {
+                    this.selectedQuantity.setText(String.valueOf(0));
+                    this.selectedPrice.setText(MessageFormat.format("{0}€",
+                            String.valueOf(df.format(0))));
+                }
             }
 
             if(currentActivity == 0)

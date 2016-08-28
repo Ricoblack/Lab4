@@ -306,4 +306,6 @@
     <string name="impossible_delete_booking">Impossible to delete reservation</string>
     <string name="num_review">Review Number</string>
     <string name="book_daily_offer">PRENOTA</string>
+    <string name="offer_available_quantity">Available Quantity</string>
+    <string name="offer_not_available">Offer not available</string>
 </resources>

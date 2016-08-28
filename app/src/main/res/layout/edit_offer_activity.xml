@@ -129,23 +129,50 @@
                     android:layout_height="wrap_content"
                     android:text="@string/description_daily_offer"
                     android:textSize="14sp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_mode_edit_black_24dp"/>
-
-                <EditText
-                    android:id="@+id/daily_offer_description_text"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:inputType="text"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_mode_edit_black_24dp"/>
+
+                    <EditText
+                        android:id="@+id/daily_offer_description_text"
+                        android:layout_width="match_parent"
+                        android:inputType="text"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/offer_available_quantity"
+                    android:textSize="14sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_mode_edit_black_24dp"/>
+
+                    <EditText
+                        android:id="@+id/edit_daily_offer_available_quantity"
+                        android:layout_width="match_parent"
+                        android:inputType="text"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
@@ -155,7 +182,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/offer_checkable_listview"
-            android:layout_below="@id/daily_offer_description_text"
             android:layout_margin="10dp"/>
 
     </LinearLayout>

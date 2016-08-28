@@ -18,15 +18,17 @@ public class DailyOffer implements Serializable
     private Map<String, Integer> dishesIdMap = new HashMap<>(); // <dishID, quantity>
     private double price;
     private double discount;
+    private int availableQuantity;
 
     public DailyOffer(){}
 
-    public DailyOffer(String id, String name, String description, double price)
+    public DailyOffer(String id, String name, String description, double price, int availableQuantity)
     {
 //        ID = id;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.availableQuantity = availableQuantity;
     }
 
     public String getDescription() {
@@ -76,5 +78,13 @@ public class DailyOffer implements Serializable
 
     public void setDiscount(double discount) {
         this.discount = discount;
+    }
+
+    public int getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(int availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 }

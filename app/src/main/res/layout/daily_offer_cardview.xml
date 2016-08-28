@@ -93,6 +93,19 @@
                     android:layout_below="@id/line2"
                     android:padding="@dimen/margin_between_cardView"/>
 
+                <TextView
+                    android:id="@+id/daily_offer_availability"
+                    android:layout_width="wrap_content"
+                    android:text="@string/offer_not_available"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_below="@id/daily_offer_description"
+                    android:layout_alignEnd="@id/daily_offer_description"
+                    android:layout_alignRight="@id/daily_offer_description"
+                    android:visibility="gone"
+                    />
 
                 <ImageView
                     android:id="@+id/expand_arrow"

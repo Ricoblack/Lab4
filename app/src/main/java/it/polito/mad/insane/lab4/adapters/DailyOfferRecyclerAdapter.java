@@ -102,6 +102,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
         private Button plusButton;
         private TextView selectedQuantity;
         private TextView selectedPrice;
+        private TextView dishAvailability;
 
         public DailyOfferHolder(View itemView) {
             super(itemView);
@@ -118,6 +119,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
             this.plusButton = (Button) itemView.findViewById(R.id.daily_offer_plus_button);
             this.selectedQuantity = (TextView) itemView.findViewById(R.id.daily_offer_selected_quantity);
             this.selectedPrice = (TextView) itemView.findViewById(R.id.daily_offer_selected_price);
+            this.dishAvailability = (TextView) itemView.findViewById(R.id.daily_offer_availability);
 
             if(currentActivity == 1) // DailyMenu
             {
@@ -135,6 +137,12 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
             this.dailyOfferID.setText(current.getID());
             this.dailyOfferName.setText(current.getName());
             this.dailyOfferDescription.setText(current.getDescription());
+
+            if(current.getAvailableQuantity() == 0) {
+                this.dishAvailability.setVisibility(View.VISIBLE);
+                this.expandArrow.setVisibility(View.GONE);
+                popupsVisibility[position] = View.GONE;             // mostrare solo quando non e' disponibile
+            }
 
 
             DecimalFormat df = new DecimalFormat("0.00");
@@ -180,7 +188,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                 this.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (popupsVisibility[position] == View.GONE) { // al click se il popup è invisibile
+                        if (popupsVisibility[position] == View.GONE && current.getAvailableQuantity() != 0) { // al click se il popup è invisibile
                             // e il prodotto e' disponibile lo faccio apparire...
                             popupLayout.setVisibility(View.VISIBLE);
                             expandArrow.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_arrow_up_black_24dp));
@@ -255,7 +263,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                     } else
                         cart.getOffersQuantityMap().put(current, 0);
 
-//                    if (quantity < current.getAvailabilityQty()) { // FIXME se una dailyOffer contiene piatti con disponibilita' esaurita
+                    if (quantity < current.getAvailableQuantity()) { // FIXME se una dailyOffer contiene piatti con disponibilita' esaurita
                                                                      // FIXME non deve essere prenotabile
 //                        selectedQuantities[pos]++;
                         quantity++;
@@ -281,7 +289,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                             else
                                 tv.setText(R.string.empty_cart);
                         }
-//                    }
+                    }
                 }
             });
         }

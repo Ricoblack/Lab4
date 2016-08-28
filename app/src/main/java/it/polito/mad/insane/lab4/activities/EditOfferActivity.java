@@ -45,6 +45,7 @@ public class EditOfferActivity extends AppCompatActivity
     private EditText price;
     private EditText description;
     private EditText name;
+    private EditText availableQuantity;
     private DailyOffer currentOffer = null;
 
     /** Standard methods **/
@@ -67,6 +68,7 @@ public class EditOfferActivity extends AppCompatActivity
         price = (EditText) findViewById(R.id.daily_offer_price);
         description = (EditText) findViewById(R.id.daily_offer_description_text);
         name = (EditText)  findViewById(R.id.daily_offer_name);
+        availableQuantity = (EditText) findViewById(R.id.edit_daily_offer_available_quantity);
 
         // get offer name and ID, if present
         currentOffer = (DailyOffer) getIntent().getSerializableExtra("offer");
@@ -76,6 +78,7 @@ public class EditOfferActivity extends AppCompatActivity
             name.setText(currentOffer.getName());
             price.setText(String.valueOf(currentOffer.getPrice()));
             description.setText(currentOffer.getDescription());
+            availableQuantity.setText(String.valueOf(currentOffer.getAvailableQuantity()));
         }
 
 
@@ -91,16 +94,17 @@ public class EditOfferActivity extends AppCompatActivity
                     if(dishesArrayAdapter != null)
                          quantitiesMap = dishesArrayAdapter.getQuantitiesMap();
                     else
-                        quantitiesMap = new HashMap<Dish, Integer>();
+                        quantitiesMap = new HashMap<>();
 
 
                     // adding a new offer
                     DailyOffer newOffer = new DailyOffer();
                     // check if the field are empty
-                    if (!isEmpty(description) && !isEmpty(price) && !isEmpty(name)) {
+                    if (!isEmpty(description) && !isEmpty(price) && !isEmpty(name) && !isEmpty(availableQuantity)) {
                         newOffer.setDescription(description.getText().toString());
                         newOffer.setPrice(Double.parseDouble(price.getText().toString()));
                         newOffer.setName(name.getText().toString());
+                        newOffer.setAvailableQuantity(Integer.parseInt(availableQuantity.getText().toString()));
                     } else
                         allFilled = -1;
 

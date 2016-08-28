@@ -27,14 +27,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
@@ -85,20 +82,24 @@ public class MakeReservationActivity extends AppCompatActivity {
 
         if(cart != null){
 
-            if (cart.getOffersQuantityMap() != null){
-                totalDishesQty = cart.getOffersQuantityMap().size();
-                List<DailyOffer> offersToDisplay = new ArrayList<>(cart.getOffersQuantityMap().keySet());
-                totalPrice = 0;
-                for (DailyOffer d : offersToDisplay)
-                    totalPrice += d.getPrice() * cart.getOffersQuantityMap().get(d);
-            }
+            totalPrice = 0;
 
-            if (cart.getDishesQuantityMap() != null) {
-                totalDishesQty = cart.getDishesQuantityMap().size();
-                List<Dish> dishesToDisplay = new ArrayList<>(cart.getDishesQuantityMap().keySet());
-                totalPrice = 0;
-                for (Dish d : dishesToDisplay)
-                    totalPrice += d.getPrice() * cart.getDishesQuantityMap().get(d);
+            if (cart.getOffersQuantityMap() != null){
+
+                totalDishesQty = cart.getReservationQty();
+                totalPrice = cart.getReservationPrice();
+
+//                totalDishesQty += cart.getOffersQuantityMap().size();
+//                List<DailyOffer> offersToDisplay = new ArrayList<>(cart.getOffersQuantityMap().keySet());
+//                for (DailyOffer d : offersToDisplay)
+//                    totalPrice += d.getPrice() * cart.getOffersQuantityMap().get(d);
+//            }
+//
+//            if (cart.getDishesQuantityMap() != null) {
+//                totalDishesQty += cart.getDishesQuantityMap().size();
+//                List<Dish> dishesToDisplay = new ArrayList<>(cart.getDishesQuantityMap().keySet());
+//                for (Dish d : dishesToDisplay)
+//                    totalPrice += d.getPrice() * cart.getDishesQuantityMap().get(d);
             }
         }
 
@@ -250,8 +251,8 @@ public class MakeReservationActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Button hour= (Button) findViewById(R.id.reservation_hour);
-                    Button date=(Button) findViewById(R.id.reservation_date);
+                    Button hour = (Button) findViewById(R.id.reservation_hour);
+                    Button date =(Button) findViewById(R.id.reservation_date);
 
                     if(hour.getText().toString().toLowerCase().equals("select") || date.getText().toString().toLowerCase().equals("select")){
                         Toast.makeText(MakeReservationActivity.this, getString(R.string.specify_date_time), Toast.LENGTH_SHORT).show();
@@ -270,7 +271,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                     builder.setTitle(MakeReservationActivity.this.getResources().getString(R.string.alert_title_booking))
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    saveReservation(cart.getDishesQuantityMap());
+                                    saveReservation(cart);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -320,20 +321,23 @@ public class MakeReservationActivity extends AppCompatActivity {
         MakeReservationActivity.reservationDate = null;
         MakeReservationActivity.additionalNotes = "";
         MakeReservationActivity.totalPrice = 0;
+
     }
 
-    public void saveReservation(final HashMap<Dish, Integer> selectedQuantities) {
+    public void saveReservation(final Cart cart) {
         final Booking b = new Booking();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         b.setDateTime(sdf.format(reservationDate.getTime()));
 
-        HashMap<String, Integer> map = new HashMap<>();
-        for(Dish d: selectedQuantities.keySet()) {
-            map.put(d.getID(), selectedQuantities.get(d));
-            b.setTotalPrice(b.getTotalPrice() + d.getPrice() * selectedQuantities.get(d));
-            b.setTotalDishesQty(b.getTotalDishesQty() + selectedQuantities.get(d));
-        }
-        b.setDishesIdMap(map);
+        HashMap<String, Integer> dishesMap = new HashMap<>();
+        for(Dish d: cart.getDishesQuantityMap().keySet())
+            dishesMap.put(d.getID(), cart.getDishesQuantityMap().get(d));
+        b.setDishesIdMap(dishesMap);
+
+        HashMap<String, Integer> offersMap = new HashMap<>();
+        for(DailyOffer d: cart.getOffersQuantityMap().keySet())
+            offersMap.put(d.getID(), cart.getOffersQuantityMap().get(d));
+        b.setDishesIdMap(offersMap);
 
         EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
         if(et != null){
@@ -369,22 +373,35 @@ public class MakeReservationActivity extends AppCompatActivity {
                 DatabaseReference userRef = addBookingRef.child("users").child(b.getUserId()).child(key);
                 userRef.setValue(b);
 
-                HashMap<String, Dish> updateMap = (HashMap<String, Dish>) restaurant.getDishMap();
-                for (Map.Entry<Dish, Integer> selectedDishEntry : selectedQuantities.entrySet()) {
-                    for (Map.Entry<String, Dish> menuDishEntry : updateMap.entrySet()) {
+                //aggiorno le quantita' disponibili dei piatti
+                HashMap<String, Dish> dishesUpdateMap = (HashMap<String, Dish>) restaurant.getDishMap();
+                for (Map.Entry<Dish, Integer> selectedDishEntry : cart.getDishesQuantityMap().entrySet()) {
+                    for (Map.Entry<String, Dish> menuDishEntry : dishesUpdateMap.entrySet()) {
                         if (selectedDishEntry.getKey().getID().equals(menuDishEntry.getKey())){
                             int updateQuantity = menuDishEntry.getValue().getAvailabilityQty() - selectedDishEntry.getValue();
                             menuDishEntry.getValue().setAvailabilityQty(updateQuantity);
-                            updateMap.put(menuDishEntry.getKey(), menuDishEntry.getValue());
+                            dishesUpdateMap.put(menuDishEntry.getKey(), menuDishEntry.getValue());
                         }
                     }
                 }
-
                 DatabaseReference dishMapRef = database.getReference("/restaurants/" + restaurantId + "/dishMap");
-                dishMapRef.setValue(updateMap);
+                dishMapRef.setValue(dishesUpdateMap);
 
-                Toast.makeText(getApplicationContext(), "Reservation done successfully",
-                        Toast.LENGTH_SHORT).show();
+                //aggiorno le quantita' disponibili delle dailyOffer
+                HashMap<String, DailyOffer> offersUpdateMap = (HashMap<String, DailyOffer>) restaurant.getDailyOfferMap();
+                for (Map.Entry<DailyOffer, Integer> selectedOfferEntry : cart.getOffersQuantityMap().entrySet()) {
+                    for (Map.Entry<String, DailyOffer> menuOfferEntry : offersUpdateMap.entrySet()) {
+                        if (selectedOfferEntry.getKey().getID().equals(menuOfferEntry.getKey())){
+                            int updateQuantity = menuOfferEntry.getValue().getAvailableQuantity() - selectedOfferEntry.getValue();
+                            menuOfferEntry.getValue().setAvailableQuantity(updateQuantity);
+                            offersUpdateMap.put(menuOfferEntry.getKey(), menuOfferEntry.getValue());
+                        }
+                    }
+                }
+                DatabaseReference offerMapRef = database.getReference("/restaurants/" + restaurantId + "/dailyOfferMap");
+                offerMapRef.setValue(offersUpdateMap);
+
+                Toast.makeText(getApplicationContext(), "Reservation done successfully", Toast.LENGTH_SHORT).show();
                 clearStaticVariables();
                 finish(); // finish() the current activity
                 Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);
