@@ -337,7 +337,7 @@ public class MakeReservationActivity extends AppCompatActivity {
         HashMap<String, Integer> offersMap = new HashMap<>();
         for(DailyOffer d: cart.getOffersQuantityMap().keySet())
             offersMap.put(d.getID(), cart.getOffersQuantityMap().get(d));
-        b.setDishesIdMap(offersMap);
+        b.setDailyOffersIdMap(offersMap);
 
         EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
         if(et != null){

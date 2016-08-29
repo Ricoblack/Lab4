@@ -20,12 +20,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,7 +38,6 @@ import java.util.concurrent.ExecutionException;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
-import it.polito.mad.insane.lab4.activities.MyReservationsUserActivity;
 import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
@@ -172,7 +168,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                                     //final DatabaseReference myRefadapter = database.getReference("/bookings/");
-                                    DatabaseReference myRefadapter = database.getReference("/bookings/users/"+currentBooking.getUserId()+"/"+currentBooking.getID());
+                                    DatabaseReference myRefadapter = database.getReference("/bookings/users/" +
+                                            currentBooking.getUserId() + "/" + currentBooking.getID());
 
                                     myRefadapter.setValue(null, new DatabaseReference.CompletionListener() {
                                         @Override
@@ -182,7 +179,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
                                     FirebaseDatabase database2 = FirebaseDatabase.getInstance();
                                     //final DatabaseReference myRefadapter = database.getReference("/bookings/");
-                                    DatabaseReference myRefadapter2 = database.getReference("/bookings/restaurants/"+currentBooking.getRestaurantId()+"/"+currentBooking.getID());
+                                    DatabaseReference myRefadapter2 = database.getReference("/bookings/restaurants/" +
+                                            currentBooking.getRestaurantId()+ "/" + currentBooking.getID());
 
                                     myRefadapter2.setValue(null, new DatabaseReference.CompletionListener() {
                                         @Override
@@ -200,6 +198,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 //                                            Toast.makeText(context,"eliminato",Toast.LENGTH_LONG).show();
 //                                        }
 //                                    });
+
                                     /*********************************************************/
 //                                    myRefadapter.runTransaction(new Transaction.Handler() {
 //

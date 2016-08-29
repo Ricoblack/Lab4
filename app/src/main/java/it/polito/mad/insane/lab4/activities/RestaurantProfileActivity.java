@@ -239,11 +239,13 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                 {
                     case 0: // DAILY OFFER fragment
                         menuFab.setVisibility(View.VISIBLE);
-                        editShowButton(cart.getReservationQty(), cart.getReservationPrice());
+                        if (cart != null)
+                            editShowButton(cart.getReservationQty(), cart.getReservationPrice());
                         break;
                     case 1: // MENU fragment
                         menuFab.setVisibility(View.VISIBLE);
-                        editShowButton(cart.getReservationQty(), cart.getReservationPrice());
+                        if (cart != null)
+                            editShowButton(cart.getReservationQty(), cart.getReservationPrice());
                         break;
                     case 3: //REVIEWS fragment
                         reviewsFab.setVisibility(View.VISIBLE);
