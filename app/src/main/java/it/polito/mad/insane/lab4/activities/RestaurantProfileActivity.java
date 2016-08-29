@@ -574,8 +574,10 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     rootView.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
                     // set up recycler view
-                    if(r != null)
+                    if(r != null) {
+
                         setupDailyOfferRecyclerView(rootView, new ArrayList<>(r.values()));
+                    }
                     else
                     {
 

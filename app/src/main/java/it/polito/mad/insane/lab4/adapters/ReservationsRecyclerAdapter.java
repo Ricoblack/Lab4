@@ -134,8 +134,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 @Override
                 public void onClick(View v)
                 {
-                    //check if user can delete current booking --> lo user può eliminarla entro 2 ore, sennò può solo eliminarla
-                    //il ristoratore 25/08/2016 12:39
+                    //check if user can delete current booking --> lo user può eliminarla entro 2 ore, sennò può solo eliminarla dopo
+                    //il ristoratore
                     Date bookingDate;
                     Calendar bookingCal;
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -149,10 +149,13 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                         return;
                     }
                     Calendar cal = Calendar.getInstance(); // creates calendar of now
-                    cal.setTime(new Date()); // sets calendar time/date
-                    cal.add(Calendar.HOUR, -2); //add two hours
+                    cal.setTime(bookingDate); // sets calendar time/date
+                    cal.add(Calendar.HOUR, -2); //minus two hours
 
-                    if( cal.after(bookingCal)) {
+                    Calendar calNow=Calendar.getInstance();
+                    calNow.setTime(new Date());
+
+                    if( calNow.before(cal) || calNow.after(bookingCal) ) {
                         //Can delete reservation, continue
                     }
                     else {
