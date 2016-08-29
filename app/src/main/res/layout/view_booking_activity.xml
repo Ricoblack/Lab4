@@ -174,8 +174,27 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/offers"
+            android:textStyle="bold"/>
+
         <ListView
-            android:id="@+id/view_booking_list_view"
+            android:id="@+id/view_booking_offers_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DISHES"
+            android:textStyle="bold"/>
+
+        <ListView
+            android:id="@+id/view_booking_dishes_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

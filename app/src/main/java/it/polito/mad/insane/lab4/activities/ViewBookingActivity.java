@@ -26,9 +26,12 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.adapters.DailyOfferArrayAdapter;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.data.Restaurant;
 
 public class ViewBookingActivity extends AppCompatActivity {
 
@@ -86,39 +89,49 @@ public class ViewBookingActivity extends AppCompatActivity {
         }
 
 
-        final ListView lv = (ListView) findViewById(R.id.view_booking_list_view);
-        if (lv != null){
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference dishesRef = database.getReference("/restaurants/" + currentBooking.getRestaurantId() + "/dishMap" );
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference dishesRef = database.getReference("/restaurants/" + currentBooking.getRestaurantId());
 
-            dishesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    HashMap<String, Dish> dishesMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
-                        @Override
-                        protected Object clone() throws CloneNotSupportedException {
-                            return super.clone();
-                        }
-                    });
-                    if(dishesMap != null){
-                        HashMap<Dish, Integer> filteredDishesMap = new HashMap<Dish, Integer>();
-                        for(Dish d : dishesMap.values()){
-                            if(currentBooking.getDishesIdMap().containsKey(d.getID()))
+        dishesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                if (restaurant != null) {
+
+                    HashMap<DailyOffer, Integer> filteredOffersMap = new HashMap<>();
+                    for (DailyOffer d : restaurant.getDailyOfferMap().values())
+                        if (currentBooking.getDailyOffersIdMap() != null)
+                            if (currentBooking.getDailyOffersIdMap().containsKey(d.getID()))
+                                filteredOffersMap.put(d, currentBooking.getDailyOffersIdMap().get(d.getID()));
+
+                    DailyOfferArrayAdapter offersAdapter = new DailyOfferArrayAdapter(ViewBookingActivity.this,
+                            R.layout.daily_offer_listview_item, filteredOffersMap, 4);
+                    ListView myList = (ListView) findViewById(R.id.view_booking_offers_list_view);
+                    if (myList != null) {
+                        myList.setAdapter(offersAdapter);
+                    }
+
+                    HashMap<Dish, Integer> filteredDishesMap = new HashMap<Dish, Integer>();
+                    for (Dish d : restaurant.getDishMap().values())
+                        if (currentBooking.getDishesIdMap() != null)
+                            if (currentBooking.getDishesIdMap().containsKey(d.getID()))
                                 filteredDishesMap.put(d, currentBooking.getDishesIdMap().get(d.getID()));
-                        }
 
-                        DishArrayAdapter adapter = new DishArrayAdapter(ViewBookingActivity.this, R.layout.dish_listview_item,
-                                filteredDishesMap, 4, true);
-                        lv.setAdapter(adapter);
+                    DishArrayAdapter dishesAdapter = new DishArrayAdapter(ViewBookingActivity.this, R.layout.dish_listview_item,
+                            filteredDishesMap, 4, true);
+                    myList = (ListView) findViewById(R.id.view_booking_dishes_list_view);
+                    if (myList != null) {
+                        myList.setAdapter(dishesAdapter);
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         // Fix Portrait Mode
         if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||

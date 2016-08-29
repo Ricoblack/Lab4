@@ -112,7 +112,7 @@ public class DisplayReservationActivity extends AppCompatActivity {
                 Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
                 if(restaurant != null){
 
-                    HashMap<DailyOffer, Integer> filteredOffersMap = new HashMap<DailyOffer, Integer>();
+                    HashMap<DailyOffer, Integer> filteredOffersMap = new HashMap<>();
                     for (DailyOffer d : restaurant.getDailyOfferMap().values())
                         if (currentBooking.getDailyOffersIdMap() != null)
                             if(currentBooking.getDailyOffersIdMap().containsKey(d.getID()))
