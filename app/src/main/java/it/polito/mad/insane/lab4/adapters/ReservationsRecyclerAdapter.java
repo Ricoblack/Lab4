@@ -20,9 +20,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -33,12 +35,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.activities.DisplayReservationActivity;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 
 
@@ -166,28 +171,57 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                             .setPositiveButton(v.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
 
+                                    //elimino l'oggetto booking dalle mappe users e restaurants
+
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                                     //final DatabaseReference myRefadapter = database.getReference("/bookings/");
                                     DatabaseReference myRefadapter = database.getReference("/bookings/users/" +
                                             currentBooking.getUserId() + "/" + currentBooking.getID());
-
                                     myRefadapter.setValue(null, new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                         }
                                     });
 
-                                    FirebaseDatabase database2 = FirebaseDatabase.getInstance();
-                                    //final DatabaseReference myRefadapter = database.getReference("/bookings/");
                                     DatabaseReference myRefadapter2 = database.getReference("/bookings/restaurants/" +
                                             currentBooking.getRestaurantId()+ "/" + currentBooking.getID());
-
                                     myRefadapter2.setValue(null, new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                         }
                                     });
 
+
+                                    //aggiorno le quantita' disponibili di piatti e dailyOffer della prenotazione
+
+                                    final DatabaseReference restaurantRef = database.getReference("/restaurants/" +
+                                            currentBooking.getRestaurantId());
+                                    restaurantRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                                            if(restaurant != null){
+                                                for(String bookingDishId : currentBooking.getDishesIdMap().keySet()){
+                                                    int qty = restaurant.getDishMap().get(bookingDishId).getAvailabilityQty();
+                                                    qty += currentBooking.getDishesIdMap().get(bookingDishId);
+                                                    restaurant.getDishMap().get(bookingDishId).setAvailabilityQty(qty);
+                                                }
+
+                                                for(String bookingOfferId : currentBooking.getDailyOffersIdMap().keySet()){
+                                                    int qty = restaurant.getDailyOfferMap().get(bookingOfferId).getAvailableQuantity();
+                                                    qty += currentBooking.getDailyOffersIdMap().get(bookingOfferId);
+                                                    restaurant.getDailyOfferMap().get(bookingOfferId).setAvailableQuantity(qty);
+                                                }
+
+                                                restaurantRef.setValue(restaurant);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
 
 //                                    myRef.setValue(null, new DatabaseReference.CompletionListener() {
 //                                        @Override
