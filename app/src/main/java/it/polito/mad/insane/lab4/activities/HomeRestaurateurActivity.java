@@ -653,7 +653,11 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            hours[cal.get(Calendar.HOUR_OF_DAY)] += b.getDishesIdMap().size();
+            if (b.getDishesIdMap() != null)
+                hours[cal.get(Calendar.HOUR_OF_DAY)] += b.getDishesIdMap().size();
+            if(b.getDailyOffersIdMap() != null)
+                hours[cal.get(Calendar.HOUR_OF_DAY)] += b.getDailyOffersIdMap().size();
+
         }
 
         //creo un vettore di DataPoint per riempire il grafico. quest'oggetto contiene un item per ogni ora del giorno

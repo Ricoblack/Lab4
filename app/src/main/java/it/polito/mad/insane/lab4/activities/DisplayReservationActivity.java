@@ -32,8 +32,10 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import it.polito.mad.insane.lab4.R;
+import it.polito.mad.insane.lab4.adapters.DailyOfferArrayAdapter;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
 import it.polito.mad.insane.lab4.data.Booking;
+import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
@@ -102,29 +104,37 @@ public class DisplayReservationActivity extends AppCompatActivity {
 
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference dishesRef = database.getReference("/restaurants/" + currentBooking.getRestaurantId() + "/dishMap" );
+        final DatabaseReference dishesRef = database.getReference("/restaurants/" + currentBooking.getRestaurantId());
 
         dishesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, Dish> dishesMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Dish>>() {
-                    @Override
-                    protected Object clone() throws CloneNotSupportedException {
-                        return super.clone();
+                Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                if(restaurant != null){
+
+                    HashMap<DailyOffer, Integer> filteredOffersMap = new HashMap<DailyOffer, Integer>();
+                    for (DailyOffer d : restaurant.getDailyOfferMap().values())
+                        if (currentBooking.getDailyOffersIdMap() != null)
+                            if(currentBooking.getDailyOffersIdMap().containsKey(d.getID()))
+                                filteredOffersMap.put(d, currentBooking.getDailyOffersIdMap().get(d.getID()));
+
+                    DailyOfferArrayAdapter offersAdapter = new DailyOfferArrayAdapter(context, R.layout.daily_offer_listview_item,
+                            filteredOffersMap, 2);
+                    ListView myList = (ListView) findViewById(R.id.display_reservation_offers_list);
+                    if (myList != null) {
+                        myList.setAdapter(offersAdapter);
                     }
-                });
-                if(dishesMap != null){
+
                     HashMap<Dish, Integer> filteredDishesMap = new HashMap<Dish, Integer>();
-                    for(Dish d : dishesMap.values()){
-                        if(currentBooking.getDishesIdMap().containsKey(d.getID()))
-                            filteredDishesMap.put(d, currentBooking.getDishesIdMap().get(d.getID()));
-                    }
+                    for(Dish d : restaurant.getDishMap().values())
+                        if (currentBooking.getDishesIdMap() != null)
+                            if(currentBooking.getDishesIdMap().containsKey(d.getID()))
+                                filteredDishesMap.put(d, currentBooking.getDishesIdMap().get(d.getID()));
 
-                    DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 2);
-
-                    ListView mylist = (ListView) findViewById(R.id.reservation_dish_list);
-                    if (mylist != null) {
-                        mylist.setAdapter(adapter);
+                    DishArrayAdapter dishesAdapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 2, true);
+                    myList = (ListView) findViewById(R.id.display_reservation_dishes_list);
+                    if (myList != null) {
+                        myList.setAdapter(dishesAdapter);
                     }
                 }
             }

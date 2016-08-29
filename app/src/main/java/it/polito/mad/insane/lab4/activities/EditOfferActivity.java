@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -26,14 +27,17 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DishArrayAdapter;
+import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.DailyOfferSimple;
 import it.polito.mad.insane.lab4.data.Dish;
+import it.polito.mad.insane.lab4.data.Restaurant;
 
 public class EditOfferActivity extends AppCompatActivity
 {
@@ -46,6 +50,7 @@ public class EditOfferActivity extends AppCompatActivity
     private EditText description;
     private EditText name;
     private EditText availableQuantity;
+    private TextView noEdit;
     private DailyOffer currentOffer = null;
 
     /** Standard methods **/
@@ -69,6 +74,7 @@ public class EditOfferActivity extends AppCompatActivity
         description = (EditText) findViewById(R.id.daily_offer_description_text);
         name = (EditText)  findViewById(R.id.daily_offer_name);
         availableQuantity = (EditText) findViewById(R.id.edit_daily_offer_available_quantity);
+        noEdit = (TextView) findViewById(R.id.edit_offer_no_edit);
 
         // get offer name and ID, if present
         currentOffer = (DailyOffer) getIntent().getSerializableExtra("offer");
@@ -79,6 +85,8 @@ public class EditOfferActivity extends AppCompatActivity
             price.setText(String.valueOf(currentOffer.getPrice()));
             description.setText(currentOffer.getDescription());
             availableQuantity.setText(String.valueOf(currentOffer.getAvailableQuantity()));
+
+            checkOfferInBookings(currentOffer);
         }
 
 
@@ -161,11 +169,10 @@ public class EditOfferActivity extends AppCompatActivity
         }
 
         // get dish list from firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dishMap");
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
@@ -178,7 +185,7 @@ public class EditOfferActivity extends AppCompatActivity
                 });
                 if (dishesMap!=null)
                 {
-                    HashMap<Dish, Integer> adapterDishesMap = new HashMap<Dish, Integer>();
+                    final HashMap<Dish, Integer> adapterDishesMap = new HashMap<Dish, Integer>();
 
                     // create a new map with all quantities = 0
                     for (Dish d : dishesMap.values())
@@ -197,10 +204,55 @@ public class EditOfferActivity extends AppCompatActivity
                         }
                     }
 
+                    DatabaseReference bookingsRef = database.getReference("/bookings/restaurants/" + rid);
+                    bookingsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap<String, Booking> bookingsMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {
+                                @Override
+                                protected Object clone() throws CloneNotSupportedException {
+                                    return super.clone();
+                                }
+                            });
+                            if (bookingsMap != null) {
+                                ArrayList<Booking> bookings = new ArrayList<>(bookingsMap.values());
+
+                                for (Booking b : bookings) {
+                                    //controllo se la dailyOffer e' presente in una prenotazione attiva
+                                    if (b.getDailyOffersIdMap() != null && b.getDailyOffersIdMap().containsKey(currentOffer.getID())) {
+                                        noEdit.setVisibility(View.VISIBLE);
+                                        price.setInputType(0x00000000); // <inputType="none">
+                                        description.setInputType(0x00000000); // <inputType="none">
+                                        name.setInputType(0x00000000); // <inputType="none">
+                                        dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this,
+                                                R.layout.dish_checkable_listview_item, adapterDishesMap, 3, false);
+                                        ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
+                                        if (dishesListView != null) {
+                                            dishesListView.setAdapter(dishesArrayAdapter);
+                                        }
+                                        // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+                                        return;
+                                    }
+                                }
+
+                                // se sono arrivato fin qui vuol dire che la dailyOffer non e' presente in nessuna prenotazione
+                                dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this,
+                                        R.layout.dish_checkable_listview_item, adapterDishesMap, 3, true);
+                                ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
+                                if (dishesListView != null) {
+                                    dishesListView.setAdapter(dishesArrayAdapter);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
                     // set the adapter with this map
-                    dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this, R.layout.dish_checkable_listview_item, adapterDishesMap, 3);
-                    ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
-                    dishesListView.setAdapter(dishesArrayAdapter);
+
                 }
             }
             @Override
@@ -208,6 +260,10 @@ public class EditOfferActivity extends AppCompatActivity
 
             }
         });
+
+    }
+
+    private void checkOfferInBookings(DailyOffer currentOffer) {
 
     }
 

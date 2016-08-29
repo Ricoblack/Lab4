@@ -200,17 +200,21 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
-                                            if(restaurant != null){
-                                                for(String bookingDishId : currentBooking.getDishesIdMap().keySet()){
-                                                    int qty = restaurant.getDishMap().get(bookingDishId).getAvailabilityQty();
-                                                    qty += currentBooking.getDishesIdMap().get(bookingDishId);
-                                                    restaurant.getDishMap().get(bookingDishId).setAvailabilityQty(qty);
+                                            if(restaurant != null) {
+                                                if (currentBooking.getDishesIdMap() != null) {
+                                                    for (String bookingDishId : currentBooking.getDishesIdMap().keySet()) {
+                                                        int qty = restaurant.getDishMap().get(bookingDishId).getAvailabilityQty();
+                                                        qty += currentBooking.getDishesIdMap().get(bookingDishId);
+                                                        restaurant.getDishMap().get(bookingDishId).setAvailabilityQty(qty);
+                                                    }
                                                 }
 
-                                                for(String bookingOfferId : currentBooking.getDailyOffersIdMap().keySet()){
-                                                    int qty = restaurant.getDailyOfferMap().get(bookingOfferId).getAvailableQuantity();
-                                                    qty += currentBooking.getDailyOffersIdMap().get(bookingOfferId);
-                                                    restaurant.getDailyOfferMap().get(bookingOfferId).setAvailableQuantity(qty);
+                                                if (currentBooking.getDailyOffersIdMap() != null) {
+                                                    for (String bookingOfferId : currentBooking.getDailyOffersIdMap().keySet()) {
+                                                        int qty = restaurant.getDailyOfferMap().get(bookingOfferId).getAvailableQuantity();
+                                                        qty += currentBooking.getDailyOffersIdMap().get(bookingOfferId);
+                                                        restaurant.getDailyOfferMap().get(bookingOfferId).setAvailableQuantity(qty);
+                                                    }
                                                 }
 
                                                 restaurantRef.setValue(restaurant);

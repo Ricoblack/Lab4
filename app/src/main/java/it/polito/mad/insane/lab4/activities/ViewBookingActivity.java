@@ -107,7 +107,8 @@ public class ViewBookingActivity extends AppCompatActivity {
                                 filteredDishesMap.put(d, currentBooking.getDishesIdMap().get(d.getID()));
                         }
 
-                        DishArrayAdapter adapter = new DishArrayAdapter(ViewBookingActivity.this, R.layout.dish_listview_item, filteredDishesMap, 4);
+                        DishArrayAdapter adapter = new DishArrayAdapter(ViewBookingActivity.this, R.layout.dish_listview_item,
+                                filteredDishesMap, 4, true);
                         lv.setAdapter(adapter);
                     }
                 }

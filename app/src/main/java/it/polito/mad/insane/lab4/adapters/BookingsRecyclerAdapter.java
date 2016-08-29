@@ -185,7 +185,12 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
             String splitted[] = current.getDateTime().split(" ");
             this.bookingTime.setText(splitted[1]);
-            this.bookingDishNum.setText(Integer.toString(current.getDishesIdMap().size()));
+            int qty = 0;
+            if (current.getDishesIdMap() != null)
+                qty += current.getDishesIdMap().size();
+            if (current.getDailyOffersIdMap() != null)
+                qty += current.getDailyOffersIdMap().size();
+            this.bookingDishNum.setText(String.valueOf(qty));
 
             this.position = position;
             this.currentBooking = current;

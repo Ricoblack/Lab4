@@ -232,7 +232,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                 DishArrayAdapter dishesAdapter = null;
                 if (cart != null) {
                     dishesAdapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item,
-                            cart.getDishesQuantityMap(), 0);
+                            cart.getDishesQuantityMap(), 0, true);
                 }
                 myList = (ListView) findViewById(R.id.reservation_dish_list);
                 if (myList != null) {

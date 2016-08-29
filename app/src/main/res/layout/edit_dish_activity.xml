@@ -90,6 +90,16 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_dish_no_edit"
+                android:text="@string/no_edit_dish"
+                android:layout_margin="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -184,30 +194,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:text="@string/edit_dish_availab_qty"
-                            android:textSize="18sp"/>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/ic_mode_edit_black_24dp"/>
-
-                            <EditText
-                                android:id="@+id/edit_dish_availab_qty"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="number"/>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
                             android:text="@string/edit_dish_price"
                             android:textSize="18sp"/>
 
@@ -226,6 +212,30 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="numberDecimal"/>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/edit_dish_availab_qty"
+                            android:textSize="18sp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:src="@drawable/ic_mode_edit_black_24dp"/>
+
+                            <EditText
+                                android:id="@+id/edit_dish_availab_qty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"/>
 
                         </LinearLayout>
 

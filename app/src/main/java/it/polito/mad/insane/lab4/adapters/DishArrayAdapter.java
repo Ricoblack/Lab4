@@ -28,20 +28,21 @@ import it.polito.mad.insane.lab4.data.Dish;
  * Created by Renato on 03/06/2016.
  */
 public class DishArrayAdapter extends ArrayAdapter<Dish>{
+    private final boolean editable;
     private int currentActivity;
     private Context context;
     private int layoutResourceId;
     private List<Dish> dishes;
     private HashMap<Dish, Integer> quantitiesMap;
 
-    public DishArrayAdapter(Context context, int resource, HashMap<Dish, Integer> quantitiesMap,
-                            int currentActivity) {
+    public DishArrayAdapter(Context context, int resource, HashMap<Dish, Integer> quantitiesMap, int currentActivity, boolean editable) {
         super(context, resource, new ArrayList<>(quantitiesMap.keySet()));
         this.dishes = new ArrayList<>(quantitiesMap.keySet());
         this.context = context;
         this.layoutResourceId = resource;
         this.quantitiesMap = quantitiesMap;
         this.currentActivity = currentActivity;
+        this.editable = editable;
     }
 
     @Override
@@ -76,36 +77,35 @@ public class DishArrayAdapter extends ArrayAdapter<Dish>{
             holder.totalPrice = (TextView) row.findViewById(R.id.summary_dish_total_price);
             if(currentActivity == 3)
             {
-                holder.minusButton = (ImageView) row.findViewById(R.id.dish_minus_button);
-                holder.minusButton.setOnClickListener(new View.OnClickListener() {
-                                                          @Override
-                                                          public void onClick(View v)
-                                                          {
-                                                              int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
-                                                              if(dishQuantity > 0)
-                                                              {
-                                                                  dishQuantity --;
-                                                                  holder.quantity.setText(String.valueOf(dishQuantity));
-                                                                  quantitiesMap.put(holder.currentDish, dishQuantity);
-                                                                  DecimalFormat df = new DecimalFormat("0.00");
-                                                                  holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
-                                                              }
+                if (editable) {
+                    holder.minusButton = (ImageView) row.findViewById(R.id.dish_minus_button);
+                    holder.minusButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
+                            if (dishQuantity > 0) {
+                                dishQuantity--;
+                                holder.quantity.setText(String.valueOf(dishQuantity));
+                                quantitiesMap.put(holder.currentDish, dishQuantity);
+                                DecimalFormat df = new DecimalFormat("0.00");
+                                holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
+                            }
 
-                                                          }
-                                                      });
-                holder.plusButton = (ImageView) row.findViewById(R.id.dish_plus_button);
-                holder.plusButton.setOnClickListener(new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v)
-                                                    {
-                                                        int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
-                                                        dishQuantity ++;
-                                                        holder.quantity.setText(String.valueOf(dishQuantity));
-                                                        quantitiesMap.put(holder.currentDish, dishQuantity);
-                                                        DecimalFormat df = new DecimalFormat("0.00");
-                                                        holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
-                                                    }
-                                                });
+                        }
+                    });
+                    holder.plusButton = (ImageView) row.findViewById(R.id.dish_plus_button);
+                    holder.plusButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int dishQuantity = Integer.parseInt(holder.quantity.getText().toString());
+                            dishQuantity++;
+                            holder.quantity.setText(String.valueOf(dishQuantity));
+                            quantitiesMap.put(holder.currentDish, dishQuantity);
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            holder.totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(holder.currentDish.getPrice() * quantitiesMap.get(holder.currentDish)))));
+                        }
+                    });
+                }
             }
 
             row.setTag(holder);

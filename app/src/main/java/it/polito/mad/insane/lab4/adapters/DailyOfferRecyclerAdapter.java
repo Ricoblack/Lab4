@@ -170,7 +170,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                                 filteredDishesMap.put(d, current.getDishesIdMap().get(d.getID()));
                         }
 
-                        DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 1);
+                        DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 1, true);
                         dishListView.setAdapter(adapter);
 
                         // TODO se la disponibilita' del piatto e' terminata la dailyOffer non deve essere prenotabile

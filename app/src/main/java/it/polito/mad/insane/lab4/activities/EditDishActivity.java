@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -63,6 +64,7 @@ import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.ArrayAdapterWithIcon;
+import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.Dish;
 
@@ -81,6 +83,7 @@ public class EditDishActivity extends AppCompatActivity
     private EditText dishDesc;
     private EditText dishQty;
     private EditText dishPrice;
+    private TextView noEdit;
     private ImageView dishPhoto;
     private static String rid;
     private String mCurrentPhotoPath;
@@ -117,16 +120,19 @@ public class EditDishActivity extends AppCompatActivity
         this.dishQty = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_availab_qty);
         this.dishPrice = (EditText) EditDishActivity.this.findViewById(R.id.edit_dish_price);
         this.dishPhoto = (ImageView) EditDishActivity.this.findViewById(R.id.dishPhoto);
+        this.noEdit = (TextView) findViewById(R.id.edit_dish_no_edit);
+
         if (dishPhoto != null) {
             dishPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    dispatchTakePictureIntent();
+
 //                    displayChooseDialog();
 //                    if(supportDynamicPermissions() == true)
 //                        checkAndRequestPermissions(PERMS_REQUEST_CODE_CAMERA);
 //                    else
-
-                    dispatchTakePictureIntent();
                 }
             });
         }
@@ -135,6 +141,7 @@ public class EditDishActivity extends AppCompatActivity
 //        rL.setVisibility(View.GONE);
 
         this.currentDish = (Dish) getIntent().getSerializableExtra("dish");
+
         if (this.currentDish != null) {
             // Edit existing dish
             this.dishID.setText(this.currentDish.getID());
@@ -143,6 +150,8 @@ public class EditDishActivity extends AppCompatActivity
             this.dishDesc.setText(this.currentDish.getDescription());
             this.dishQty.setText(Integer.toString(this.currentDish.getAvailabilityQty()));
             this.dishPrice.setText(Double.toString(this.currentDish.getPrice()));
+
+            checkDishInBookings(currentDish);
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReferenceFromUrl("gs://lab4-insane.appspot.com/restaurants/" + rid +
@@ -190,9 +199,6 @@ public class EditDishActivity extends AppCompatActivity
                         currentDish.setName(dishName.getText().toString());
                         currentDish.setAvailabilityQty(Integer.parseInt(dishQty.getText().toString()));
                         currentDish.setDescription(dishDesc.getText().toString());
-//
-
-
                         currentDish.setPrice(Double.parseDouble(dishPrice.getText().toString()));
 //                        currentDish.setID(dishID.getText().toString()); // not needed; id already set
                         addDishInFirebase(currentDish);
@@ -216,6 +222,92 @@ public class EditDishActivity extends AppCompatActivity
                 (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+    }
+
+    private void checkDishInBookings(final Dish currentDish) {
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        //controllo prima se il piatto e' presente in una dailyOffer
+        DatabaseReference dailyOffersRef = database.getReference("/restaurants/" + rid + "/dailyOfferMap/");
+        dailyOffersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<DailyOffer> offersContainingDish = null;
+                HashMap<String, DailyOffer> dailyOffersMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, DailyOffer>>() {
+                    @Override
+                    protected Object clone() throws CloneNotSupportedException {
+                        return super.clone();
+                    }
+                });
+
+                if (dailyOffersMap != null)
+                {
+                    // search the dish in daily offers
+                    ArrayList<DailyOffer> dailyOffersList = new ArrayList<DailyOffer>(dailyOffersMap.values());
+                    for (DailyOffer d : dailyOffersList) {
+                        if (d.getDishesIdMap().containsKey(currentDish.getID())) {
+                            // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+                            if (offersContainingDish == null)
+                                offersContainingDish = new ArrayList<DailyOffer>();
+                            offersContainingDish.add(d);
+                        }
+                    }
+                }
+
+                DatabaseReference bookingsRef = database.getReference("/bookings/restaurants/" + rid);
+                final ArrayList<DailyOffer> finalOffersContainingDish = offersContainingDish;
+                bookingsRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        HashMap<String, Booking> bookingsMap = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Booking>>() {});
+                        if (bookingsMap != null){
+                            ArrayList<Booking> bookings = new ArrayList<>(bookingsMap.values());
+
+                            for (Booking b : bookings) {
+
+                                //controllo se il piatto e' presente tra i piatti di una prenotazione attiva
+                                if (b.getDishesIdMap() != null && b.getDishesIdMap().containsKey(currentDish.getID())) {
+                                    noEdit.setVisibility(View.VISIBLE);
+                                    dishName.setInputType(0x00000000); // <inputType="none">
+                                    dishDesc.setInputType(0x00000000); // <inputType="none">
+                                    dishPrice.setInputType(0x00000000); // <inputType="none">
+                                    // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+                                    return;
+                                }
+
+                                //controllo se il piatto e' presente tra i piatti di una daily Offer inserita in una prenotazione attiva
+                                if(finalOffersContainingDish != null && b.getDailyOffersIdMap() != null) {
+                                    for (DailyOffer d : finalOffersContainingDish) {
+                                        if (b.getDailyOffersIdMap().containsKey(d.getID())) {
+                                            noEdit.setVisibility(View.VISIBLE);
+                                            dishName.setInputType(0x00000000); // <inputType="none">
+                                            dishDesc.setInputType(0x00000000); // <inputType="none">
+                                            dishPrice.setInputType(0x00000000); // <inputType="none">
+                                            // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+                                            return;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     private void dispatchTakePictureIntent() {
@@ -736,8 +828,6 @@ public class EditDishActivity extends AppCompatActivity
                                     deleteDish(database, dish);
                                 else
                                     Toast.makeText(EditDishActivity.this, R.string.dependecies_dish_error, Toast.LENGTH_LONG).show();
-
-
                             }
 
                             @Override
