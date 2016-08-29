@@ -32,6 +32,7 @@ public class Booking implements Serializable, Comparable<Booking>
     private String restaurantId;
     private String restaurantName;
     private String ID;
+    private Boolean evaso;
 
 //    private Map<String, String> dishesIdList;
 
@@ -192,5 +193,13 @@ public class Booking implements Serializable, Comparable<Booking>
 
     public void setDailyOffersIdMap(HashMap<String, Integer> dailyOffersIdMap) {
         this.dailyOffersIdMap = dailyOffersIdMap;
+    }
+
+    public Boolean getEvaso() {
+        return evaso;
+    }
+
+    public void setEvaso(Boolean evaso) {
+        this.evaso = evaso;
     }
 }

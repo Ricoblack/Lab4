@@ -94,38 +94,44 @@ public class NotificationDailyOfferService extends Service {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
+
+
+                final Booking booking=dataSnapshot.getValue(Booking.class);
+
+                if(booking.getEvaso()==true) {
+                    //ristoratore ha evaso la prenotazione, preparo la notifica
+
+                    //verifico se lo user ha già recensito il ristorante
+                    userReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap<String, Review> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Review>>() {
+                                @Override
+                                protected Object clone() throws CloneNotSupportedException {
+                                    return super.clone();
+                                }
+                            });
+                            ArrayList<Review> listaReview = new ArrayList<Review>(r.values());
+                            for (int i = 0; i < listaReview.size(); i++) {
+                                if (listaReview.get(i).getRestaurantId().equals(booking.getRestaurantId())) {
+                                    return;
+                                }
+
+                            }
+                            launchTimer(MINUTES_SLEEP, booking);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                final Booking booking=dataSnapshot.getValue(Booking.class);
-
-                //verifico se lo user ha già recensito il ristorante
-                userReviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        HashMap<String,Review> r = dataSnapshot.getValue(new GenericTypeIndicator<HashMap<String, Review>>() {
-                            @Override
-                            protected Object clone() throws CloneNotSupportedException {
-                                return super.clone();
-                            }
-                        });
-                        ArrayList<Review> listaReview=new ArrayList<Review>(r.values());
-                        for(int i=0;i<listaReview.size();i++){
-                            if(listaReview.get(i).getRestaurantId().equals(booking.getRestaurantId())){
-                                return;
-                            }
-
-                        }
-                        launchTimer(MINUTES_SLEEP,booking);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
 
 
             }

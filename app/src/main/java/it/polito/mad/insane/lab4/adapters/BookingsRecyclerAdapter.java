@@ -107,7 +107,10 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
                         //final DatabaseReference myRefadapter = database.getReference("/bookings/");
                         DatabaseReference myRefadapter = database.getReference("/bookings/users/"+currentBooking.getUserId()+"/"+currentBooking.getID());
 
-                        myRefadapter.setValue(null, new DatabaseReference.CompletionListener() {
+                        //setto il valor "evaso" della booking a true e la memorizzo nel db, non eliminandola
+                        currentBooking.setEvaso(true);
+
+                        myRefadapter.setValue(currentBooking, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             }
@@ -117,7 +120,7 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
                         //final DatabaseReference myRefadapter = database.getReference("/bookings/");
                         DatabaseReference myRefadapter2 = database.getReference("/bookings/restaurants/"+currentBooking.getRestaurantId()+"/"+currentBooking.getID());
 
-                        myRefadapter2.setValue(null, new DatabaseReference.CompletionListener() {
+                        myRefadapter2.setValue(currentBooking, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             }
