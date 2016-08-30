@@ -339,6 +339,9 @@ public class MakeReservationActivity extends AppCompatActivity {
             offersMap.put(d.getID(), cart.getOffersQuantityMap().get(d));
         b.setDailyOffersIdMap(offersMap);
 
+        //set evaso a false
+        b.setEvaso(false);
+
         EditText et = (EditText) findViewById(R.id.reservation_additional_notes);
         if(et != null){
             additionalNotes = et.getText().toString();

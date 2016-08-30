@@ -88,6 +88,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
     public class BookingsViewHolder extends RecyclerView.ViewHolder {
 
+        private TextView evaso;
         private ImageView restaurantPhoto; //T-ODO implementare selezione immagini
         private TextView restaurantName;
         private TextView ID;
@@ -128,6 +129,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             this.view = itemView;
             this.cardView = itemView;
             this.restaurantPhoto=(ImageView) itemView.findViewById(R.id.image_restaurant);
+            this.evaso=(TextView) itemView.findViewById(R.id.reservation_cardview_evaso);
 
 
             this.cardView.setOnClickListener(cardViewListener);
@@ -156,7 +158,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     Calendar calNow=Calendar.getInstance();
                     calNow.setTime(new Date());
 
-                    if( calNow.before(cal) || calNow.after(bookingCal) ) {
+                    if( calNow.before(cal) ) { // if( calNow.before(cal) || calNow.after(bookingCal) ) {
                         //Can delete reservation, continue
                     }
                     else {
@@ -336,6 +338,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     pad(calendar.get(Calendar.MONTH) + 1), pad(calendar.get(Calendar.YEAR))));
 
             currentBooking = current;
+
+            evaso.setText("Evaso: "+current.getEvaso()); //TODO: sistemare a livello grafico questa listview e la stringa hardcoded
 
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance();
