@@ -87,6 +87,7 @@ public class EditDishActivity extends AppCompatActivity
     private ImageView dishPhoto;
     private static String rid;
     private String mCurrentPhotoPath;
+    private Toolbar toolbar;
 
     /**
      * Standard Methods
@@ -102,7 +103,7 @@ public class EditDishActivity extends AppCompatActivity
         setContentView(R.layout.edit_dish_activity);
 
         // set toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // show back arrow
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -247,7 +248,12 @@ public class EditDishActivity extends AppCompatActivity
                     ArrayList<DailyOffer> dailyOffersList = new ArrayList<DailyOffer>(dailyOffersMap.values());
                     for (DailyOffer d : dailyOffersList) {
                         if (d.getDishesIdMap().containsKey(currentDish.getID())) {
-                            // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+
+                            //hide delete item
+                            final Menu menu=toolbar.getMenu();
+                            final MenuItem deleteItem=menu.getItem(0);
+                            deleteItem.setVisible(false);
+
                             if (offersContainingDish == null)
                                 offersContainingDish = new ArrayList<DailyOffer>();
                             offersContainingDish.add(d);
@@ -272,7 +278,12 @@ public class EditDishActivity extends AppCompatActivity
                                     dishName.setInputType(0x00000000); // <inputType="none">
                                     dishDesc.setInputType(0x00000000); // <inputType="none">
                                     dishPrice.setInputType(0x00000000); // <inputType="none">
-                                    // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+
+                                    //hide delete item
+                                    final Menu menu=toolbar.getMenu();
+                                    final MenuItem deleteItem=menu.getItem(0);
+                                    deleteItem.setVisible(false);
+
                                     return;
                                 }
 
@@ -284,7 +295,12 @@ public class EditDishActivity extends AppCompatActivity
                                             dishName.setInputType(0x00000000); // <inputType="none">
                                             dishDesc.setInputType(0x00000000); // <inputType="none">
                                             dishPrice.setInputType(0x00000000); // <inputType="none">
-                                            // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+
+                                            //hide delete item
+                                            final Menu menu=toolbar.getMenu();
+                                            final MenuItem deleteItem=menu.getItem(0);
+                                            deleteItem.setVisible(false);
+
                                             return;
                                         }
                                     }

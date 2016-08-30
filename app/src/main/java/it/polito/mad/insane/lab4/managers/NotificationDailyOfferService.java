@@ -50,7 +50,7 @@ public class NotificationDailyOfferService extends Service {
     private SharedPreferences mPrefs = null;
     private SharedPreferences mPrefsDelete=null;
     private final int MINUTES_SLEEP = 1; //minuti successivi al quale allo user arriva la notifica di recensione
-    //TODO: modificare il timer nell'app finale
+    //TODO: modificare il timer nell'app finale, ora è un minuto
 
     public Context myContext=this;
     private ChildEventListener addedListener;

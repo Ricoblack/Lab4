@@ -76,6 +76,9 @@ public class EditOfferActivity extends AppCompatActivity
         availableQuantity = (EditText) findViewById(R.id.edit_daily_offer_available_quantity);
         noEdit = (TextView) findViewById(R.id.edit_offer_no_edit);
 
+
+
+
         // get offer name and ID, if present
         currentOffer = (DailyOffer) getIntent().getSerializableExtra("offer");
         if(currentOffer != null)
@@ -230,7 +233,12 @@ public class EditOfferActivity extends AppCompatActivity
                                         if (dishesListView != null) {
                                             dishesListView.setAdapter(dishesArrayAdapter);
                                         }
-                                        // TODO: CHARLES TI PREGO QUESTO FALLO TU nascondere il bottone del cestino per l'eliminazione
+
+                                        //hide delete item
+                                        final Menu menu=toolbar.getMenu();
+                                        final MenuItem deleteItem=menu.getItem(0);
+                                        deleteItem.setVisible(false);
+
                                         return;
                                     }
                                 }

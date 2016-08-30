@@ -5,7 +5,7 @@
     tools:context=".activities.EditOfferActivity">
 
     <item
-        android:id="@+id/delete_dish"
+        android:id="@+id/delete_offer"
         android:orderInCategory="100"
         android:icon="@drawable/ic_delete_white_24dp"
         android:title="@string/delete_dish"
