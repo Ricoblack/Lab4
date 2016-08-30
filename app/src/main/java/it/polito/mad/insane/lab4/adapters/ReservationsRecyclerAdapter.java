@@ -158,6 +158,7 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     Calendar calNow=Calendar.getInstance();
                     calNow.setTime(new Date());
 
+                    //todo: decidere se lo user può eliminare una prenotazione passata o rimane lì finche non la evade il ristoratore, magari mettiamo che può eliminarla tipo dopo una settimana o simile? così se il ristoratore si dimentica lo fa lui
                     if( calNow.before(cal) ) { // if( calNow.before(cal) || calNow.after(bookingCal) ) {
                         //Can delete reservation, continue
                     }
