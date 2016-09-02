@@ -5,12 +5,17 @@
     android:padding="2dp"
     >
 
+
+
     <TextView
         android:id="@+id/text_spinner_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        />
+
+
 
 </RelativeLayout>

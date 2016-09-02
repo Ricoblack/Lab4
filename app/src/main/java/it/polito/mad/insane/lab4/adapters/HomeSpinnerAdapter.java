@@ -2,6 +2,7 @@ package it.polito.mad.insane.lab4.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +75,7 @@ public class HomeSpinnerAdapter extends ArrayAdapter<String> {
         if(position == 0) {
 
             LayoutInflater inflater = LayoutInflater.from(this.contextSpinner);
-            View mySpinner = inflater.inflate(R.layout.home_order_spinner, parent,
+            View mySpinner = inflater.inflate(R.layout.home_order_spinner_2, parent,
                     false);
 
             TextView main_text = (TextView) mySpinner
@@ -82,12 +83,12 @@ public class HomeSpinnerAdapter extends ArrayAdapter<String> {
             main_text.setText(choices.get(position));
             main_text.setTextColor(resSpinnerAdapter.getColor(R.color.colorPrimary));
             main_text.setPadding(x,x,x,x);
-
+            main_text.setGravity(Gravity.CENTER);
 
             return mySpinner;
         }else{
             LayoutInflater inflater = LayoutInflater.from(this.contextSpinner);
-            View mySpinner = inflater.inflate(R.layout.home_order_spinner, parent,
+            View mySpinner = inflater.inflate(R.layout.home_order_spinner_2, parent,
                     false);
 
             TextView main_text = (TextView) mySpinner.findViewById(R.id.text_spinner_home);
