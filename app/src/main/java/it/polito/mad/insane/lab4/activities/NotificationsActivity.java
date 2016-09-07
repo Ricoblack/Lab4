@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class NotificationsActivity extends AppCompatActivity {
             }
         }
 
-        Button readAll=(Button) findViewById(R.id.buttonRead);
+        ImageView readAll=(ImageView) findViewById(R.id.buttonRead);
         readAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

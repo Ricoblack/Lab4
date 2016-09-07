@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -77,6 +78,8 @@ public class HomeSpinnerAdapter extends ArrayAdapter<String> {
             LayoutInflater inflater = LayoutInflater.from(this.contextSpinner);
             View mySpinner = inflater.inflate(R.layout.home_order_spinner_2, parent,
                     false);
+            ImageView point = (ImageView) mySpinner.findViewById(R.id.point);
+            point.setVisibility(View.INVISIBLE);
 
             TextView main_text = (TextView) mySpinner
                     .findViewById(R.id.text_spinner_home);
@@ -84,6 +87,7 @@ public class HomeSpinnerAdapter extends ArrayAdapter<String> {
             main_text.setTextColor(resSpinnerAdapter.getColor(R.color.colorPrimary));
             main_text.setPadding(x,x,x,x);
             main_text.setGravity(Gravity.CENTER);
+            main_text.setTextSize(16);
 
             return mySpinner;
         }else{
