@@ -3,8 +3,10 @@ package it.polito.mad.insane.lab4.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -19,7 +21,13 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
+        setContentView(R.layout.splash_screen_activity);
+
+        // set color of status bar (only for API >= 21)
+        if (Build.VERSION.SDK_INT >= 23)
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        else if (Build.VERSION.SDK_INT >= 21 && Build.VERSION.SDK_INT <23)
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
 
 
         //Richiesta di permessi, inserire nel vettore di stringhe tutti i permessi necessari all'avvio dell'app.
