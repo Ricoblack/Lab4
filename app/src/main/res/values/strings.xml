@@ -4,6 +4,7 @@
         <item>DISTANCE</item>
         <item>SCORE</item>
         <item>REVIEW NUMBER</item>
+        <item>DEFAULT</item>
     </string-array>
 
     <string name="distance">DISTANCE</string>

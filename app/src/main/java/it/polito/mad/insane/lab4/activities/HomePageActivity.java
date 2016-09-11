@@ -199,7 +199,11 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     Spinner dSpinner = (Spinner) findViewById(R.id.orderSpinner);
                     if (dSpinner.getSelectedItemPosition() == 0) {
                         Toast.makeText(v.getContext(), myContext.getResources().getText(R.string.selectOrdering), Toast.LENGTH_SHORT).show();
-                    } else {
+                    }
+                    else if(dSpinner.getSelectedItemPosition()==4){
+                            setUpRestaurantsRecycler(listaFiltrata,false);
+                        }
+                     else {
                         setUpRestaurantsRecycler(manager.getOrderedRestaurants(dSpinner.getSelectedItem().toString(), listaFiltrata),true);
                     }
                 }
