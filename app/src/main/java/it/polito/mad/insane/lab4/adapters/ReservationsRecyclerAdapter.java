@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -102,6 +106,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
         private int position;
         private Booking currentBooking;
         private View cardView;
+        private TextView evadedText;
+        private LinearLayout cardviewLayout;
 
         private View.OnClickListener cardViewListener = new View.OnClickListener()
         {
@@ -130,6 +136,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
             this.cardView = itemView;
             this.restaurantPhoto=(ImageView) itemView.findViewById(R.id.image_restaurant);
             this.evaso=(TextView) itemView.findViewById(R.id.reservation_cardview_evaso);
+            this.evadedText = (TextView) itemView.findViewById(R.id.evaded_text);
+            this.cardviewLayout = (LinearLayout) itemView.findViewById(R.id.reservation_cardview_layout);
 
 
             this.cardView.setOnClickListener(cardViewListener);
@@ -158,12 +166,12 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     Calendar calNow=Calendar.getInstance();
                     calNow.setTime(new Date());
 
-                    //todo: decidere se lo user può eliminare una prenotazione passata o rimane lì finche non la evade il ristoratore, magari mettiamo che può eliminarla tipo dopo una settimana o simile? così se il ristoratore si dimentica lo fa lui
+                    //TODO: decidere se lo user può eliminare una prenotazione passata o rimane lì finche non la evade il ristoratore, magari mettiamo che può eliminarla tipo dopo una settimana o simile? così se il ristoratore si dimentica lo fa lui
                     if( calNow.before(cal) ) { // if( calNow.before(cal) || calNow.after(bookingCal) ) {
                         //Can delete reservation, continue
                     }
                     else {
-                        Toast.makeText(manager.myContext,context.getResources().getText(R.string.impossible_delete_booking),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(manager.myContext,context.getResources().getText(R.string.impossible_delete_booking),Toast.LENGTH_LONG).show();
                         return;
 
                     }
@@ -340,7 +348,13 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
             currentBooking = current;
 
-            evaso.setText("Evaso: "+current.getEvaso()); //TODO: sistemare a livello grafico questa listview e la stringa hardcoded
+            if(current.getEvaso())
+            {
+                trash.setVisibility(View.GONE);
+                evadedText.setVisibility(View.VISIBLE);
+                cardviewLayout.setBackgroundColor(Color.parseColor("#DDDDDD"));
+                //evaso.setText("Evaso: " + current.getEvaso()); //TODO: sistemare a livello grafico questa listview e la stringa hardcoded
+            }
 
             // Create a storage reference from our app
             FirebaseStorage storage = FirebaseStorage.getInstance();

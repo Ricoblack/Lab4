@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.NotifyArrayAdapter;
@@ -52,7 +53,8 @@ public class NotificationsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 manager.setAllDailyOffersRead();
                // ((BaseAdapter) lv.getAdapter()).notifyDataSetChanged();
-                //TODO: notificare il refresh della listview così da notare se segno tutto come letto
+               // TODO: notificare il refresh della listview così da notare se segno tutto come letto
+                Toast.makeText(NotificationsActivity.this,NotificationsActivity.this.getResources().getText(R.string.norifications_read), Toast.LENGTH_SHORT).show();
             }
         });
     }

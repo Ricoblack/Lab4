@@ -559,7 +559,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-        //dSpinner.setSelection(2);
+        // Initialize spinner to the "DEFAULT" value
+        dSpinner.setSelection(4);
 
     }
 

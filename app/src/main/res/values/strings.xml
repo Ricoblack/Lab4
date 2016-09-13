@@ -31,6 +31,7 @@
         <item>ETHNIC</item>
         <item>PIZZA</item>
         <item>PASTA</item>
+        <item>SANDWICHES</item>
     </string-array>
 
     <string-array name="time_array">
@@ -299,12 +300,12 @@
     <string name="title_activity_notifications">NotificationsActivity</string>
     <string name="no_notifications_to_read">No notifications to read</string>
     <string name="general_info_offer">General info offer</string>
-    <string name="notifications">Notifications</string>
+    <string name="notifications">Daily Offer Notifications</string>
     <string name="cover_photo_update_success">Cover photo updated succesfully</string>
     <string name="search_restaurant">Search restaurant</string>
     <string name="do_review">Leave a review for your last booking!</string>
     <string name="alert_title">Select image</string>
-    <string name="impossible_delete_booking">Impossible to delete reservation</string>
+    <string name="impossible_delete_booking">Impossible to delete reservation. A reservation can be deleted till 2 hours before it</string>
     <string name="num_review">Review Number</string>
     <string name="book_daily_offer">PRENOTA</string>
     <string name="offer_available_quantity">Available Quantity</string>
@@ -314,4 +315,6 @@
     <string name="no_edit_offer">ATTENTION: You can not edit the offer because it is present in one or more active reservations.
         You can only modify the available quantity.</string>
     <string name="offers">OFFERS</string>
+    <string name="norifications_read">Notications marked as read</string>
+    <string name="evaded_text">Evaded</string>
 </resources>

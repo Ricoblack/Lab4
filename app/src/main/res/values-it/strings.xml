@@ -4,7 +4,7 @@
         <item>DISTANZA</item>
         <item>PUNTEGGIO</item>
         <item>NUMERO RECENSIONI</item>
-        <item>DEFAULT</item>
+        <item>PREDEFINITO</item>
     </string-array>
 
 
@@ -30,6 +30,7 @@
         <item>ETHNIC</item>
         <item>PIZZA</item>
         <item>PASTA</item>
+        <item>SANDWICHES</item>
     </string-array>
 
     <string-array name="time_array">
@@ -159,7 +160,8 @@
     <string name="dishes">piatti</string>
     <string name="distance">DISTANZA</string>
     <string name="score">PUNTEGGIO</string>
-    <string name="notifications">Notifiche</string>    <string name="action_daily_menu">Menu</string>
+    <string name="notifications">Notifiche sulle Offerte Giornaliere</string>
+    <string name="action_daily_menu">Menu</string>
     <string name="action_edit_profile">Modifica Profilo</string>
     <string name="action_myReviews_restaurant">Le mie recensioni</string>
     <string name="action_sign_in">Accedi o Registrati</string>
@@ -293,7 +295,10 @@
     <string name="selectOrdering">Scegliere un criterio per l\'ordinamento</string>
     <string name="search_restaurant">Cerca ristorante</string>
     <string name="do_review">Lascia una review per la tua ultima prenotazione!</string>
-    <string name="impossible_delete_booking">Impossibile eliminare la prenotazione</string>
+    <string name="impossible_delete_booking">Impossibile eliminare la prenotazione. La prenotazione può essere eliminata fino a 2 ore prima</string>
     <string name="num_review">Numero Recensioni</string>
+    <string name="alert_title"></string>
+    <string name="norifications_read">Notifiche segnate come lette</string>
+    <string name="evaded_text">Evasa</string>
 
 </resources>
