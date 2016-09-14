@@ -1,5 +1,7 @@
 package it.polito.mad.insane.lab4.activities;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -57,6 +59,13 @@ public class NotificationsActivity extends AppCompatActivity {
                 Toast.makeText(NotificationsActivity.this,NotificationsActivity.this.getResources().getText(R.string.norifications_read), Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Fix Portrait Mode
+        if( (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+        {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
 }
