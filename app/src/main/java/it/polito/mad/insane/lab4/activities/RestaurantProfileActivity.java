@@ -177,7 +177,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
                             getResources().getString(R.string.logged_in_booking_alert), Toast.LENGTH_LONG).show();
                 }
-                else if(cart.getReservationQty() == 0) {
+                else if(cart == null || cart.getReservationQty() == 0) {
                     Toast.makeText(it.polito.mad.insane.lab4.activities.RestaurantProfileActivity.this,
                             getResources().getString(R.string.cart_empty_alert), Toast.LENGTH_SHORT).show();
                 }
