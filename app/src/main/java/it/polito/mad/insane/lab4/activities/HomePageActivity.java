@@ -172,7 +172,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     //if just white spaces
-                    if(newText.equals("")) setUpRestaurantsRecycler(manager.listaFiltrata,true);
+                    if(newText.equals("")) setUpRestaurantsRecycler(manager.listaFiltrata,false);
                     return true;
                 }
             });
