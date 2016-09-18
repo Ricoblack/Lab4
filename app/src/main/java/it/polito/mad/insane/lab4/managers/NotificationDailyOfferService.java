@@ -172,24 +172,6 @@ public class NotificationDailyOfferService extends Service {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-               // DailyOfferSimple offer=dataSnapshot.getValue(DailyOfferSimple.class);
-
-                //gli eventi di cambiamento vengono correttamente lanciati solo al cambio dallo stato attuale, quindi
-                //lascio la notifica ogni volta
-
-                /*
-                //check se ho già mostrato l'ultimo change
-                mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-
-                String lastChangedId=mPrefs.getString("lastChangedId","");
-                if(lastChangedId.equals(offer.getID())==false) {
-                    //nuova offerta modificata
-                    mPrefs.edit().putString("lastChangedId",offer.getID()).commit();
-
-                }
-                */
-                //showNotification(offer, CHILD_MODIFIED);
-
 
             }
 
@@ -213,20 +195,6 @@ public class NotificationDailyOfferService extends Service {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                /*
-                DailyOfferSimple offer=dataSnapshot.getValue(DailyOfferSimple.class);
-
-                //check se ho già mostrato l'ultima aggiunta (se il service è ripartito) ed evito di rimostrarla
-                //firebase al primo lancio mi notifica tutto
-                mPrefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-
-                String lastAddedId=mPrefs.getString("lastAddedId","");
-                if(lastAddedId.equals(offer.getID())==false) {
-                    //nuova offerta aggiunta
-                    mPrefs.edit().putString("lastAddedId",offer.getID()).commit();
-                    showNotification(offer, CHILD_ADDED);
-                }
-                */
             }
 
             @Override
