@@ -244,15 +244,17 @@ public class EditDishActivity extends AppCompatActivity
 
                 if (dailyOffersMap != null)
                 {
+
                     // search the dish in daily offers
                     ArrayList<DailyOffer> dailyOffersList = new ArrayList<DailyOffer>(dailyOffersMap.values());
                     for (DailyOffer d : dailyOffersList) {
                         if (d.getDishesIdMap().containsKey(currentDish.getID())) {
 
                             //hide delete item
-                            final Menu menu=toolbar.getMenu();
-                            final MenuItem deleteItem=menu.getItem(0);  //TODO Michele java.lang.IndexOutOfBoundsException: Invalid index 0, size is 0
-                            deleteItem.setVisible(false);
+                            final Menu menu = toolbar.getMenu();
+                            final MenuItem deleteItem = menu.getItem(0);
+                            if(deleteItem != null)
+                                deleteItem.setVisible(false);
 
                             if (offersContainingDish == null)
                                 offersContainingDish = new ArrayList<DailyOffer>();
@@ -282,7 +284,8 @@ public class EditDishActivity extends AppCompatActivity
                                     //hide delete item
                                     final Menu menu=toolbar.getMenu();
                                     final MenuItem deleteItem=menu.getItem(0);
-                                    deleteItem.setVisible(false);
+                                    if(deleteItem != null)
+                                        deleteItem.setVisible(false);
 
                                     return;
                                 }
@@ -299,7 +302,8 @@ public class EditDishActivity extends AppCompatActivity
                                             //hide delete item
                                             final Menu menu=toolbar.getMenu();
                                             final MenuItem deleteItem=menu.getItem(0);
-                                            deleteItem.setVisible(false);
+                                            if(deleteItem != null)
+                                                deleteItem.setVisible(false);
 
                                             return;
                                         }

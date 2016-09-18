@@ -310,7 +310,7 @@
     <string name="book_daily_offer">PRENOTA</string>
     <string name="offer_available_quantity">Available Quantity</string>
     <string name="offer_not_available">Offer not available</string>
-    <string name="no_edit_dish">ATTENTION: You can not edit the dish because it is present in one or more active reservations.
+    <string name="no_edit_dish">ATTENTION: You can not edit the dish because it is present in one or more daily offers and/or active reservations.
         You can only modify the available quantity.</string>
     <string name="no_edit_offer">ATTENTION: You can not edit the offer because it is present in one or more active reservations.
         You can only modify the available quantity.</string>
