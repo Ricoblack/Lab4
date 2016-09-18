@@ -89,7 +89,7 @@ public class EditOfferActivity extends AppCompatActivity
             description.setText(currentOffer.getDescription());
             availableQuantity.setText(String.valueOf(currentOffer.getAvailableQuantity()));
 
-            checkOfferInBookings(currentOffer);
+//            checkOfferInBookings(currentOffer);
         }
 
 
@@ -217,30 +217,35 @@ public class EditOfferActivity extends AppCompatActivity
                                     return super.clone();
                                 }
                             });
+
                             if (bookingsMap != null) {
                                 ArrayList<Booking> bookings = new ArrayList<>(bookingsMap.values());
 
                                 for (Booking b : bookings) {
                                     //controllo se la dailyOffer e' presente in una prenotazione attiva
-                                    if (b.getDailyOffersIdMap() != null && b.getDailyOffersIdMap().containsKey(currentOffer.getID())) {
-                                        noEdit.setVisibility(View.VISIBLE);
-                                        price.setInputType(0x00000000); // <inputType="none">
-                                        description.setInputType(0x00000000); // <inputType="none">
-                                        name.setInputType(0x00000000); // <inputType="none">
-                                        dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this,
-                                                R.layout.dish_checkable_listview_item, adapterDishesMap, 3, false);
-                                        ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
-                                        if (dishesListView != null) {
-                                            dishesListView.setAdapter(dishesArrayAdapter);
+                                    if(currentOffer != null) {
+                                        if (b.getDailyOffersIdMap() != null && b.getDailyOffersIdMap().containsKey(currentOffer.getID())) {
+                                            noEdit.setVisibility(View.VISIBLE);
+                                            price.setInputType(0x00000000); // <inputType="none">
+                                            description.setInputType(0x00000000); // <inputType="none">
+                                            name.setInputType(0x00000000); // <inputType="none">
+
+                                            //hide delete item
+                                            final Menu menu=toolbar.getMenu();
+                                            final MenuItem deleteItem=menu.getItem(0);
+                                            if(deleteItem != null)
+                                                deleteItem.setVisible(false);
                                         }
-
-                                        //hide delete item
-                                        final Menu menu=toolbar.getMenu();
-                                        final MenuItem deleteItem=menu.getItem(0);
-                                        deleteItem.setVisible(false);
-
-                                        return;
                                     }
+
+                                    dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this,
+                                            R.layout.dish_checkable_listview_item, adapterDishesMap, 3, false);
+                                    ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
+                                    if (dishesListView != null) {
+                                        dishesListView.setAdapter(dishesArrayAdapter);
+                                    }
+
+                                    return;
                                 }
 
                                 // se sono arrivato fin qui vuol dire che la dailyOffer non e' presente in nessuna prenotazione
@@ -271,9 +276,9 @@ public class EditOfferActivity extends AppCompatActivity
 
     }
 
-    private void checkOfferInBookings(DailyOffer currentOffer) {
-
-    }
+//    private void checkOfferInBookings(DailyOffer currentOffer) {
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

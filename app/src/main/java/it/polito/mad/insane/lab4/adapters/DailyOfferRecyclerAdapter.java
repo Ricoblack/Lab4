@@ -246,7 +246,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                         if (tv != null) {
                             if (cart.getReservationQty() != 0)
                                 tv.setText(String.format(MessageFormat.format("%d {0} - %s€", v.getResources().getString(R.string.itemsFormat)), cart.getReservationQty(),
-                                        cart.getReservationPrice()));
+                                        df.format(cart.getReservationPrice())));
                             else
                                 tv.setText(R.string.empty_cart);
                         }
@@ -285,7 +285,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                         TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.daily_offer_cart);
                         if (tv != null) {
                             if (cart.getReservationQty() != 0)
-                                tv.setText(String.format("%d " + v.getResources().getString(R.string.itemsFormat) + " - %s€", reservationQty, reservationPrice));
+                                tv.setText(String.format("%d " + v.getResources().getString(R.string.itemsFormat) + " - %s€", reservationQty, df.format(reservationPrice)));
                             else
                                 tv.setText(R.string.empty_cart);
                         }

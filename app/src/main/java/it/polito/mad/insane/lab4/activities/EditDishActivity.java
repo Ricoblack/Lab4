@@ -244,7 +244,6 @@ public class EditDishActivity extends AppCompatActivity
 
                 if (dailyOffersMap != null)
                 {
-
                     // search the dish in daily offers
                     ArrayList<DailyOffer> dailyOffersList = new ArrayList<DailyOffer>(dailyOffersMap.values());
                     for (DailyOffer d : dailyOffersList) {
