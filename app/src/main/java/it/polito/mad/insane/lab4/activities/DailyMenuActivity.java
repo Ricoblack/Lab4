@@ -657,6 +657,10 @@ public class DailyMenuActivity extends AppCompatActivity implements NavigationVi
             final View rootView = inflater.inflate(R.layout.restaurant_daily_offer_fragment, container, false);
             noOffersTextView = (TextView) rootView.findViewById(R.id.offer_fragment_no_offers);
 
+            TextView tv = (TextView) rootView.findViewById(R.id.daily_offer_cart);
+            if(tv != null)
+                tv.setVisibility(View.GONE);
+
             // take data from Firebase
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("/restaurants/" + rid + "/dailyOfferMap");//

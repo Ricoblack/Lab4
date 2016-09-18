@@ -251,7 +251,7 @@ public class EditDishActivity extends AppCompatActivity
 
                             //hide delete item
                             final Menu menu=toolbar.getMenu();
-                            final MenuItem deleteItem=menu.getItem(0);
+                            final MenuItem deleteItem=menu.getItem(0);  //TODO Michele java.lang.IndexOutOfBoundsException: Invalid index 0, size is 0
                             deleteItem.setVisible(false);
 
                             if (offersContainingDish == null)
