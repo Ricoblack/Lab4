@@ -134,7 +134,6 @@ public class DailyOfferArrayAdapter extends ArrayAdapter<DailyOffer>{
     {
         private TextView quantity;
         private TextView name;
-        private ListView dailyOfferDishes; // TODO riempire questa lista
         private TextView price;
         private DailyOffer currentOffer;
     }

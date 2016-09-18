@@ -137,9 +137,6 @@ public class EditDishActivity extends AppCompatActivity
                 }
             });
         }
-        //TODO: da commentare se si implementa gestione immagini (Michele)
-//        TextView rL = (TextView) findViewById(R.id.editDish);
-//        rL.setVisibility(View.GONE);
 
         this.currentDish = (Dish) getIntent().getSerializableExtra("dish");
 
@@ -173,8 +170,6 @@ public class EditDishActivity extends AppCompatActivity
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
-                    //TODO gestire errore
-//                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -781,15 +776,7 @@ public class EditDishActivity extends AppCompatActivity
             // Create a reference with an initial file path and name
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            // TODO elaborare un algoritmo di compressione in base alla dimensione dell'immagine, questo fa abbastanza schifo
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//                int size = tempCoverPhoto.getAllocationByteCount();
-//                int ratio = size/(1024*1024);
-//                int scaleFactor = 100/ratio;
-//                tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, scaleFactor, baos);
-//            }
-//            else
-                tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            tempCoverPhoto.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
             byte[] data = baos.toByteArray();
 
@@ -804,7 +791,6 @@ public class EditDishActivity extends AppCompatActivity
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri imageDownloadUrl = taskSnapshot.getDownloadUrl(); //TODO può essere utile usare questo parametro?
                     tempCoverPhoto = null;
                     Toast.makeText(getApplicationContext(), R.string.cover_photo_update_success, Toast.LENGTH_SHORT).show();
                 }
@@ -900,7 +886,7 @@ public class EditDishActivity extends AppCompatActivity
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                //TODO gestire errore
+                // handle errors
             }
         });
 

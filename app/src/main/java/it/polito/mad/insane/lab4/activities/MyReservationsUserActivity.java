@@ -98,7 +98,6 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
 //                            return super.clone();
 //                        }
 //                    });
-                    //TODO: ordinare le booking tra evase e non evase , prima di popolare il recyclerview (Michele)
                     if(bookings != null) {
                         findViewById(R.id.loadingPanel1).setVisibility(View.GONE);
                         setUpView(new ArrayList<Booking>(sortList(bookings.values())), rv);

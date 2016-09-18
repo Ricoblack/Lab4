@@ -55,7 +55,6 @@ public class NotificationsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 manager.setAllDailyOffersRead();
                // ((BaseAdapter) lv.getAdapter()).notifyDataSetChanged();
-               // TODO: notificare il refresh della listview così da notare se segno tutto come letto
                 Toast.makeText(NotificationsActivity.this,NotificationsActivity.this.getResources().getText(R.string.norifications_read), Toast.LENGTH_SHORT).show();
                 finish();
                 startActivity(getIntent());
