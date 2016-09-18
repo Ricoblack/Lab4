@@ -250,6 +250,11 @@ public class EditDishActivity extends AppCompatActivity
                     for (DailyOffer d : dailyOffersList) {
                         if (d.getDishesIdMap().containsKey(currentDish.getID())) {
 
+                            noEdit.setVisibility(View.VISIBLE);
+                            dishName.setInputType(0x00000000); // <inputType="none">
+                            dishDesc.setInputType(0x00000000); // <inputType="none">
+                            dishPrice.setInputType(0x00000000); // <inputType="none">
+
                             //hide delete item
                             final Menu menu = toolbar.getMenu();
                             final MenuItem deleteItem = menu.getItem(0);

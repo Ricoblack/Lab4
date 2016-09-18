@@ -289,7 +289,7 @@ public class EditOfferActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id)
         {
-            case R.id.delete_dish:
+            case R.id.delete_offer:
                 deleteOffer(currentOffer);
                 break;
             default:
