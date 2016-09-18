@@ -22,7 +22,6 @@ import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 public class NotificationsActivity extends AppCompatActivity {
 
     RestaurateurJsonManager manager=RestaurateurJsonManager.getInstance(this);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +49,16 @@ public class NotificationsActivity extends AppCompatActivity {
         }
 
         ImageView readAll=(ImageView) findViewById(R.id.buttonRead);
-        readAll.setOnClickListener(new View.OnClickListener() {
+        if(readAll != null)
+            readAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 manager.setAllDailyOffersRead();
                // ((BaseAdapter) lv.getAdapter()).notifyDataSetChanged();
                // TODO: notificare il refresh della listview così da notare se segno tutto come letto
                 Toast.makeText(NotificationsActivity.this,NotificationsActivity.this.getResources().getText(R.string.norifications_read), Toast.LENGTH_SHORT).show();
+                finish();
+                startActivity(getIntent());
             }
         });
 

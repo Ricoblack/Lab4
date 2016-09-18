@@ -217,10 +217,12 @@ public class EditOfferActivity extends AppCompatActivity
                                 }
                             });
 
-                            if (bookingsMap != null) {
+                            if (bookingsMap != null)
+                            {
                                 ArrayList<Booking> bookings = new ArrayList<>(bookingsMap.values());
 
-                                for (Booking b : bookings) {
+                                for (Booking b : bookings)
+                                {
                                     //controllo se la dailyOffer e' presente in una prenotazione attiva
                                     if(currentOffer != null) {
                                         if (b.getDailyOffersIdMap() != null &&

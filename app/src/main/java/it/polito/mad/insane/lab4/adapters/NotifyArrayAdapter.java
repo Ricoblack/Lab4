@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -51,16 +52,18 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         holder = new NotifyHolder();
         holder.restaurantName = (TextView) row.findViewById(R.id.notify_item_restaurant_name);
         holder.description = (TextView) row.findViewById(R.id.notify_item_description);
+        holder.icon = (ImageView) row.findViewById(R.id.error_icon);
         holder.notificationID = (TextView) row.findViewById(R.id.notify_item_notify_id);
         holder.cardview = (CardView) row.findViewById(R.id.notify_card_view);
 
         holder.restaurantName.setText(((DailyOfferSimple) data.get(numNotifications-position)).getRestaurantName());
         holder.description.setText(((DailyOfferSimple) data.get(numNotifications-position)).getDescription());
 
-        //setta in grassetto corsivo quelle ancora non lette
+        //setta in grassetto corsivo quelle ancora non lette e aggiungi punto esclamativo alle notifiche non lette
         if(((DailyOfferSimple) data.get(numNotifications-position)).isRead()==false){
             holder.restaurantName.setTypeface(holder.restaurantName.getTypeface(), Typeface.BOLD_ITALIC);
             holder.description.setTypeface(holder.description.getTypeface(),Typeface.BOLD_ITALIC);
+            holder.icon.setVisibility(View.VISIBLE);
         }
 
         holder.notificationID.setText(((DailyOfferSimple) data.get(numNotifications-position)).getID());
@@ -81,15 +84,11 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
                   //manager.removeDailyOffer(((DailyOfferSimple) data.get(position)).getID());
                   manager.setDailyOfferRead(((DailyOfferSimple) data.get(numNotifications-position)).getID());
                   //data.remove(position);
-                  //notifyDataSetChanged();
-
-
-
-
+                  notifyDataSetChanged();
 
                 getContext().startActivity(resultIntent);
 
-                ((NotificationsActivity) context).finish();
+//                ((NotificationsActivity) context).finish();
 
             }
         });
@@ -109,6 +108,7 @@ public class NotifyArrayAdapter extends ArrayAdapter<Dish> {
         private TextView notificationID;
         private TextView description;
         private CardView cardview;
+        private ImageView icon;
     }
 
 }
