@@ -37,7 +37,6 @@ import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.DailyOffer;
 import it.polito.mad.insane.lab4.data.DailyOfferSimple;
 import it.polito.mad.insane.lab4.data.Dish;
-import it.polito.mad.insane.lab4.data.Restaurant;
 
 public class EditOfferActivity extends AppCompatActivity
 {
@@ -224,28 +223,29 @@ public class EditOfferActivity extends AppCompatActivity
                                 for (Booking b : bookings) {
                                     //controllo se la dailyOffer e' presente in una prenotazione attiva
                                     if(currentOffer != null) {
-                                        if (b.getDailyOffersIdMap() != null && b.getDailyOffersIdMap().containsKey(currentOffer.getID())) {
+                                        if (b.getDailyOffersIdMap() != null &&
+                                                b.getDailyOffersIdMap().containsKey(currentOffer.getID())) {
                                             noEdit.setVisibility(View.VISIBLE);
                                             price.setInputType(0x00000000); // <inputType="none">
                                             description.setInputType(0x00000000); // <inputType="none">
                                             name.setInputType(0x00000000); // <inputType="none">
+
+                                            dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this,
+                                                    R.layout.dish_checkable_listview_item, adapterDishesMap, 3, false);
+                                            ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
+                                            if (dishesListView != null) {
+                                                dishesListView.setAdapter(dishesArrayAdapter);
+                                            }
 
                                             //hide delete item
                                             final Menu menu=toolbar.getMenu();
                                             final MenuItem deleteItem=menu.getItem(0);
                                             if(deleteItem != null)
                                                 deleteItem.setVisible(false);
+
+                                            return;
                                         }
                                     }
-
-                                    dishesArrayAdapter = new DishArrayAdapter(EditOfferActivity.this,
-                                            R.layout.dish_checkable_listview_item, adapterDishesMap, 3, false);
-                                    ListView dishesListView = (ListView) findViewById(R.id.offer_checkable_listview);
-                                    if (dishesListView != null) {
-                                        dishesListView.setAdapter(dishesArrayAdapter);
-                                    }
-
-                                    return;
                                 }
 
                                 // se sono arrivato fin qui vuol dire che la dailyOffer non e' presente in nessuna prenotazione
@@ -354,7 +354,7 @@ public class EditOfferActivity extends AppCompatActivity
                 @Override
                 public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot)
                 {
-                    if(!committed)
+                    if(committed)
                         Toast.makeText(EditOfferActivity.this, R.string.confirm_add_offer, Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(EditOfferActivity.this, R.string.error_add_offer, Toast.LENGTH_SHORT).show();
@@ -386,7 +386,7 @@ public class EditOfferActivity extends AppCompatActivity
                 @Override
                 public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot)
                 {
-                    if(!committed)
+                    if(committed)
                         Toast.makeText(EditOfferActivity.this, R.string.confirm_edit_offer, Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(EditOfferActivity.this, R.string.error_edit_offer, Toast.LENGTH_SHORT).show();
