@@ -303,5 +303,6 @@
     <string name="no_edit_dish">ATTENZIONE: Non è possibile modificare il piatto perché è  contenuto in una o più offerte e/o prenotazioni attive</string>
     <string name="no_edit_offer">ATTENZIONE: Non è possibile modificare l\'offerta perché è  contenuta in una o più prenotazioni attive</string>
     <string name="error_date">Errore nell\'ordinamento della lista per data</string>
+    <string name="offer_not_available">Offerta non disponibile</string>
 
 </resources>
