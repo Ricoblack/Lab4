@@ -68,6 +68,9 @@ public class MakeReservationActivity extends AppCompatActivity {
     private static double totalDiscount;
     private static int totalDishesQty;
 
+    //TODO Federico lo scrivo qui perche' non so dove scriverlo. Nella visualizzazione delle review lato utente il bottone + si sovrappone
+    //TODO all'ultima recensione. Inoltre quando cerco di scrivere una recensione, se il testo è molto lungo viene coperto dalla tastiera
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,6 +212,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                 DailyOfferArrayAdapter offersAdapter = null;
                 DishArrayAdapter dishesAdapter = null;
                 if (cart != null) {
+
                     offersAdapter = new DailyOfferArrayAdapter(MakeReservationActivity.this, R.layout.daily_offer_listview_item,
                             cart.getOffersQuantityMap(), 0);
                     if(offersAdapter.getCount() == 0) {

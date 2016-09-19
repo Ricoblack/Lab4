@@ -83,6 +83,8 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
     private ValueEventListener listener;
     private NavigationView navigationView;
 
+    //TODO MIchele sistemare tutti i titoli delle activity
+    //TODO testare l'app in italiano per controllare la traduzione
 
     public static Activity HomePageActivity = null; // attribute used to finish() the current activity from another activity
 

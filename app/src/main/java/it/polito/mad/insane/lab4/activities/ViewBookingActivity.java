@@ -43,6 +43,8 @@ public class ViewBookingActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //TODO Federico sistemare la grafica di questa activity, e' abbastanza rozza
+
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        if (fab != null) {
 //            fab.setOnClickListener(new View.OnClickListener() {
