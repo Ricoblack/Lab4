@@ -85,27 +85,15 @@ public class MakeReservationActivity extends AppCompatActivity {
             totalPrice = 0;
 
             if (cart.getOffersQuantityMap() != null){
-
                 totalDishesQty = cart.getReservationQty();
                 totalPrice = cart.getReservationPrice();
-
-//                totalDishesQty += cart.getOffersQuantityMap().size();
-//                List<DailyOffer> offersToDisplay = new ArrayList<>(cart.getOffersQuantityMap().keySet());
-//                for (DailyOffer d : offersToDisplay)
-//                    totalPrice += d.getPrice() * cart.getOffersQuantityMap().get(d);
-//            }
-//
-//            if (cart.getDishesQuantityMap() != null) {
-//                totalDishesQty += cart.getDishesQuantityMap().size();
-//                List<Dish> dishesToDisplay = new ArrayList<>(cart.getDishesQuantityMap().keySet());
-//                for (Dish d : dishesToDisplay)
-//                    totalPrice += d.getPrice() * cart.getDishesQuantityMap().get(d);
             }
         }
 
 
 
         // get Daily offers from firebase
+        //TODO Michele controllare se questa cosa funziona insieme con il nuovo meccanismo delle dailyOffer
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference offersRefs = database.getReference("/restaurants/"+restaurantId+"/dailyOfferMap");
         offersRefs.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -219,25 +207,38 @@ public class MakeReservationActivity extends AppCompatActivity {
                 }
 
                 DailyOfferArrayAdapter offersAdapter = null;
+                DishArrayAdapter dishesAdapter = null;
                 if (cart != null) {
                     offersAdapter = new DailyOfferArrayAdapter(MakeReservationActivity.this, R.layout.daily_offer_listview_item,
                             cart.getOffersQuantityMap(), 0);
-                }
-                ListView myList = (ListView) findViewById(R.id.reservation_offers_list);
-                if (myList != null) {
-                    myList.setAdapter(offersAdapter);
-                }
+                    if(offersAdapter.getCount() == 0) {
+                        tv = (TextView) findViewById(R.id.make_reservation_offers_label);
+                        if(tv != null)
+                            tv.setVisibility(View.GONE);
+                    }
+                    else {
+                        ListView myList = (ListView) findViewById(R.id.reservation_offers_list);
+                        if (myList != null) {
+                            myList.setAdapter(offersAdapter);
+                        }
+                    }
 
-
-                DishArrayAdapter dishesAdapter = null;
-                if (cart != null) {
                     dishesAdapter = new DishArrayAdapter(MakeReservationActivity.this, R.layout.dish_listview_item,
                             cart.getDishesQuantityMap(), 0, true);
+                    if(dishesAdapter.getCount() == 0){
+                        tv = (TextView) findViewById(R.id.make_reservation_dishes_label);
+                        if(tv != null)
+                            tv.setVisibility(View.GONE);
+                    }
+                    else{
+                        ListView myList = (ListView) findViewById(R.id.reservation_dish_list);
+                        if (myList != null) {
+                            myList.setAdapter(dishesAdapter);
+                        }
+                    }
+
                 }
-                myList = (ListView) findViewById(R.id.reservation_dish_list);
-                if (myList != null) {
-                    myList.setAdapter(dishesAdapter);
-                }
+
             }
 
             @Override

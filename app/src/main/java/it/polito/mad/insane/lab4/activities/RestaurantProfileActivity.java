@@ -952,8 +952,11 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             // set Adapter
             RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.MenuRecyclerView);
             if (recyclerView != null) {
-                if(dishesAdapter == null)
+                if(dishesAdapter == null) {
+                    if (cart == null)
+                        cart = new Cart();
                     dishesAdapter = new DishesRecyclerAdapter(getActivity(), dishes, restaurantId, 0, cart);
+                }
                 recyclerView.setAdapter(dishesAdapter);
             }
 

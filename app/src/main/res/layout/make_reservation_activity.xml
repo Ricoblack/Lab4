@@ -194,6 +194,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/make_reservation_offers_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OFFERS"
@@ -206,6 +207,7 @@
                 />
 
             <TextView
+                android:id="@+id/make_reservation_dishes_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DISHES"

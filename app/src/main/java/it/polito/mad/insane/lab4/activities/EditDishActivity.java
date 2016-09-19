@@ -308,7 +308,6 @@ public class EditDishActivity extends AppCompatActivity
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
