@@ -302,5 +302,7 @@
     <string name="evaded_text">Evasa</string>
     <string name="no_edit_dish">ATTENZIONE: Non è possibile modificare il piatto perché è  contenuto in una o più offerte e/o prenotazioni attive</string>
     <string name="no_edit_offer">ATTENZIONE: Non è possibile modificare l\'offerta perché è  contenuta in una o più prenotazioni attive</string>
+    <string name="no_additional_notes_in_this_booking">Nessuna nota per questa prenotazione</string>
+    <string name="evadi">EVADI</string>
 
 </resources>

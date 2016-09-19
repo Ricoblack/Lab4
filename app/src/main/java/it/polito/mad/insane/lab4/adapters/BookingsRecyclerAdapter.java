@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -75,7 +77,7 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
         //private TextView bookingNote;
         private int position;
         private Booking currentBooking;
-        private ImageView imageView;
+        private TextView imageView;
 
         private android.view.View.OnClickListener cardViewListener = new View.OnClickListener()
         {
@@ -164,7 +166,7 @@ public class BookingsRecyclerAdapter extends RecyclerView.Adapter<BookingsRecycl
             super(itemView);
             this.myContext=myContext;
             this.cardView = itemView;
-            this.imageView = (ImageView) itemView.findViewById(R.id.delete_booking_button);
+            this.imageView = (TextView) itemView.findViewById(R.id.delete_booking_button);
             //data of the booking class
             this.bookingID = (TextView) itemView.findViewById(R.id.home_restaurateur_username_cardview);
             this.bookingTime = (TextView) itemView.findViewById(R.id.home_restaurateur_hour_cardview);

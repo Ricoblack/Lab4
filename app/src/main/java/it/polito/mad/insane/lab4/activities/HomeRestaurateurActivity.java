@@ -80,6 +80,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
     private DatabaseReference myRefHour = null;
     private DatabaseReference myRefDay = null;
 
+    //TODO x Federico deve scorrere tutta la pagina, non solo la listView. Sia qui e sia nella EditDailyOffer
 
     /** Standard methods **/
 
