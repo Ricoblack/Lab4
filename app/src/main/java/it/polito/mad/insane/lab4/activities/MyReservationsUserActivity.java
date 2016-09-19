@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,10 +30,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,6 +74,7 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
         super.onCreate(savedInstanceState);
         MyReservationsUserActivity = this;
 
+        setTitle(R.string.title_activity_my_reservation);
         // finish the RestaurantProfile activity if is not finished
         if(RestaurantProfileActivity.RestaurantProfileActivity != null)
             RestaurantProfileActivity.RestaurantProfileActivity.finish();
@@ -294,13 +300,36 @@ public class MyReservationsUserActivity extends AppCompatActivity implements Nav
     }
 
     /**
-     * Method that sort the input list by the "evaso" boolean and return the sorted list
+     * Method that sort the input list by the "evaso" boolean ad by date. Return the sorted list
      * @param collection
      * @return sorted list
      */
     private List<Booking> sortList(Collection<Booking> collection )
     {
         List<Booking> list = new ArrayList<>(collection);
+
+        // sort by date
+        Collections.sort(list, new Comparator<Booking>()
+        {
+                @Override
+                public int compare(Booking lhs, Booking rhs)
+                {
+                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                    try {
+                        Date lhsDate = df.parse(lhs.getDateTime());
+                        Date rhsDate = df.parse(rhs.getDateTime());
+                        return rhsDate.compareTo(lhsDate);
+                    }catch(ParseException pe)
+                    {
+                       pe.printStackTrace();
+                        Toast.makeText(MyReservationsUserActivity.this,R.string.error_date,Toast.LENGTH_SHORT ).show();
+                    }
+                    return rhs.getDateTime().compareTo(lhs.getDateTime());
+                }
+        });
+
+
+        // sort by "evaso" boolean
         Collections.sort(list, new Comparator<Booking>()
         {
             @Override

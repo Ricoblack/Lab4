@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
     private LayoutInflater mInflater;
     private RestaurateurJsonManager manager;
     private Context context;
+    private DisplayMetrics metrics;
 
     //costruttore
     public RestaurantsRecyclerAdapter(Context context, List<Restaurant> data) {
@@ -46,6 +48,8 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
         this.mInflater = LayoutInflater.from(context);
         this.manager=RestaurateurJsonManager.getInstance(context);
         this.context = context;
+        this.metrics = this.context.getResources().getDisplayMetrics();
+
     }
 
     /**
@@ -212,7 +216,8 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
                         with(context).
                         load(params[0].toString()).
                         asBitmap().
-                        into(1920,1080). //FIXME x Michele settare dimensioni schermo invece che dimensioni fisse
+                        //into(1920,1080).
+                        into(metrics.heightPixels,metrics.widthPixels).
                         get();
             } catch (final ExecutionException e) {
                 return null;

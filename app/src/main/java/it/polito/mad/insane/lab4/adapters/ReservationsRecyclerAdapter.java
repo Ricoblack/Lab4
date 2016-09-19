@@ -6,11 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +59,7 @@ import it.polito.mad.insane.lab4.managers.RestaurateurJsonManager;
 public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<ReservationsRecyclerAdapter.BookingsViewHolder>{
 
     private final Context context;
+    private DisplayMetrics metrics;
     private List<Booking> mData; //actual data to be displayed
     private LayoutInflater mInflater;
     private DatabaseReference myRef;
@@ -65,10 +68,12 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
 
     public ReservationsRecyclerAdapter(Context context, List<Booking> data, ValueEventListener listener, DatabaseReference myRef){
         this.context = context;
+        this.metrics = this.context.getResources().getDisplayMetrics();
         this.mData = data;
         this.mInflater = LayoutInflater.from(context);
         this.myRef = myRef;
         this.listener = listener;
+
     }
 
     @Override
@@ -352,6 +357,11 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 trash.setVisibility(View.GONE);
                 evadedText.setVisibility(View.VISIBLE);
                 cardviewLayout.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            }else
+            {
+                trash.setVisibility(View.VISIBLE);
+                evadedText.setVisibility(View.GONE);
+                cardviewLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             }
 
             // Create a storage reference from our app
@@ -404,7 +414,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
     public class DownloadImageTask extends AsyncTask<Object, Void, Bitmap> {
 
         private ImageView photo;
-
         @Override
         protected Bitmap doInBackground(Object... params) {
 
@@ -415,7 +424,8 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                         with(context).
                         load(params[0].toString()).
                         asBitmap().
-                        into(1920,1080). //FIXME x Michele settare dimensioni schermo invece che dimensioni fisse
+                        //into(1920,1080).
+                        into(metrics.heightPixels,metrics.widthPixels).
                         get();
             } catch (final ExecutionException e) {
                 return null;

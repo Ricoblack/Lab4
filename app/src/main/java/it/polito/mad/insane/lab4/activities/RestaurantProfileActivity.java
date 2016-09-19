@@ -49,6 +49,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -376,7 +380,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     RecyclerView rv = (RecyclerView) findViewById(R.id.reviews_recycler_view);
                     if (rv != null) {
                         ReviewsRecyclerAdapter adapter = new ReviewsRecyclerAdapter(RestaurantProfileActivity.this,
-                                new ArrayList<>(reviewsMap.values()));
+                                sortList(new ArrayList<>(reviewsMap.values())));
                         rv.setAdapter(adapter);
                     }
                     TextView tv = (TextView) findViewById(R.id.reviews_number);
@@ -880,7 +884,7 @@ public class RestaurantProfileActivity extends AppCompatActivity {
                     {
                         reviewsMap.putAll(data);
 //                        ArrayList<Review> reviewsList = new ArrayList<Review>(data.values());
-                        setupReviewsRecyclerView(rootView, new ArrayList<>(reviewsMap.values()));
+                        setupReviewsRecyclerView(rootView, sortList(new ArrayList<>(reviewsMap.values())));
                         TextView tv = (TextView) rootView.findViewById(R.id.reviews_number);
                         tv.setText(String.format(getResources().getString(R.string.reviewsFormat), data.size()));
                         reviewsNumber = data.size();
@@ -1035,5 +1039,32 @@ public class RestaurantProfileActivity extends AppCompatActivity {
             else
                 return "0" + String.valueOf(c);
         }
+    }
+
+    static private List<Review> sortList(Collection<Review> collection )
+    {
+        List<Review> list = new ArrayList<>(collection);
+
+        // sort by date
+        Collections.sort(list, new Comparator<Review>()
+        {
+            @Override
+            public int compare(Review lhs, Review rhs)
+            {
+                java.text.DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                try {
+                    Date lhsDate = df.parse(lhs.getDateTime());
+                    Date rhsDate = df.parse(rhs.getDateTime());
+                    return rhsDate.compareTo(lhsDate);
+                }catch(ParseException pe)
+                {
+                    pe.printStackTrace();
+                    Toast.makeText(RestaurantProfileActivity,R.string.error_date,Toast.LENGTH_SHORT ).show();
+                }
+                return rhs.getDateTime().compareTo(lhs.getDateTime());
+            }
+        });
+
+        return list;
     }
 }

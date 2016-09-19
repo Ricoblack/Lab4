@@ -53,7 +53,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -439,8 +441,9 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
                 dayBookings.add(booking);
             }
         }
-        Collections.sort(dayBookings);
-        return dayBookings;
+        //Collections.sort(dayBookings);
+        //return dayBookings;
+        return sortList(dayBookings);
     }
 
 
@@ -461,7 +464,7 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             if (cal.get(Calendar.HOUR_OF_DAY) == hour)
                 hourBookings.add(b);
         }
-        return hourBookings;
+        return sortList(hourBookings);
     }
 
     private void updateBookingsHour(final int hour){
@@ -792,5 +795,32 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
             myRefDay.removeEventListener(listenerDay);
         }
         super.onPause();
+    }
+
+    private List<Booking> sortList(Collection<Booking> collection )
+    {
+        List<Booking> list = new ArrayList<>(collection);
+
+        // sort by date
+        Collections.sort(list, new Comparator<Booking>()
+        {
+            @Override
+            public int compare(Booking lhs, Booking rhs)
+            {
+                java.text.DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                try {
+                    Date lhsDate = df.parse(lhs.getDateTime());
+                    Date rhsDate = df.parse(rhs.getDateTime());
+                    return lhsDate.compareTo(rhsDate);
+                }catch(ParseException pe)
+                {
+                    pe.printStackTrace();
+                    Toast.makeText(HomeRestaurateurActivity.this,R.string.error_date,Toast.LENGTH_SHORT ).show();
+                }
+                return rhs.getDateTime().compareTo(lhs.getDateTime());
+            }
+        });
+
+        return list;
     }
 }

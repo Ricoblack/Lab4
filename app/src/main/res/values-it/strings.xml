@@ -254,7 +254,7 @@
     <string name="title_add_review">Titolo</string>
     <string name="title_activity_prova"></string>
     <string name="title_activity_my_reviews_restaurant">LeMieRecensioniRistorante</string>
-    <string name="title_activity_my_reservation">LeMiePrenotazioniAttività</string>
+    <string name="title_activity_my_reservation">Le Mie Prenotazioni</string>
     <string name="title_activity_login">Accedi</string>
     <string name="title_activity_location">LocalizzazioneAttività</string>
     <string name="title_activity_home_restaurateur">Home Ristoratore</string>
@@ -304,5 +304,7 @@
     <string name="no_edit_offer">ATTENZIONE: Non è possibile modificare l\'offerta perché è  contenuta in una o più prenotazioni attive</string>
     <string name="no_additional_notes_in_this_booking">Nessuna nota per questa prenotazione</string>
     <string name="evadi">EVADI</string>
+    <string name="error_date">Errore nell\'ordinamento della lista per data</string>
+    <string name="offer_not_available">Offerta non disponibile</string>
 
 </resources>
