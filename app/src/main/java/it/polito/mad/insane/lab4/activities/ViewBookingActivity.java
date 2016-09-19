@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.DailyOfferArrayAdapter;
@@ -87,7 +88,8 @@ public class ViewBookingActivity extends AppCompatActivity {
         tv = (TextView) findViewById(R.id.view_booking_price);
         if(tv != null){
             DecimalFormat df = new DecimalFormat("0.00");
-            tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()))));
+            tv.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()
+                    - currentBooking.getTotalDiscount()))));
         }
 
 
@@ -108,10 +110,18 @@ public class ViewBookingActivity extends AppCompatActivity {
 
                     DailyOfferArrayAdapter offersAdapter = new DailyOfferArrayAdapter(ViewBookingActivity.this,
                             R.layout.daily_offer_listview_item, filteredOffersMap, 4);
-                    ListView myList = (ListView) findViewById(R.id.view_booking_offers_list_view);
-                    if (myList != null) {
-                        myList.setAdapter(offersAdapter);
+                    if(offersAdapter.getCount() == 0){
+                        TextView textView = (TextView) findViewById(R.id.view_booking_offers_label);
+                        if (textView != null)
+                            textView.setVisibility(View.GONE);
                     }
+                    else {
+                        ListView myList = (ListView) findViewById(R.id.view_booking_offers_list_view);
+                        if (myList != null) {
+                            myList.setAdapter(offersAdapter);
+                        }
+                    }
+
 
                     HashMap<Dish, Integer> filteredDishesMap = new HashMap<Dish, Integer>();
                     for (Dish d : restaurant.getDishMap().values())
@@ -121,10 +131,18 @@ public class ViewBookingActivity extends AppCompatActivity {
 
                     DishArrayAdapter dishesAdapter = new DishArrayAdapter(ViewBookingActivity.this, R.layout.dish_listview_item,
                             filteredDishesMap, 4, true);
-                    myList = (ListView) findViewById(R.id.view_booking_dishes_list_view);
-                    if (myList != null) {
-                        myList.setAdapter(dishesAdapter);
+                    if(dishesAdapter.getCount() == 0){
+                        TextView textView = (TextView) findViewById(R.id.view_booking_dishes_label);
+                        if (textView != null)
+                            textView.setVisibility(View.GONE);
                     }
+                    else {
+                        ListView myList = (ListView) findViewById(R.id.view_booking_dishes_list_view);
+                        if (myList != null) {
+                            myList.setAdapter(dishesAdapter);
+                        }
+                    }
+
                 }
             }
 

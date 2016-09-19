@@ -120,9 +120,16 @@ public class DisplayReservationActivity extends AppCompatActivity {
 
                     DailyOfferArrayAdapter offersAdapter = new DailyOfferArrayAdapter(context, R.layout.daily_offer_listview_item,
                             filteredOffersMap, 2);
-                    ListView myList = (ListView) findViewById(R.id.display_reservation_offers_list);
-                    if (myList != null) {
-                        myList.setAdapter(offersAdapter);
+                    if(offersAdapter.getCount() == 0){
+                        TextView tv = (TextView) findViewById(R.id.display_reservation_offers_label);
+                        if (tv != null)
+                            tv.setVisibility(View.GONE);
+                    }
+                    else {
+                        ListView myList = (ListView) findViewById(R.id.display_reservation_offers_list);
+                        if (myList != null) {
+                            myList.setAdapter(offersAdapter);
+                        }
                     }
 
                     HashMap<Dish, Integer> filteredDishesMap = new HashMap<Dish, Integer>();
@@ -132,9 +139,16 @@ public class DisplayReservationActivity extends AppCompatActivity {
                                 filteredDishesMap.put(d, currentBooking.getDishesIdMap().get(d.getID()));
 
                     DishArrayAdapter dishesAdapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 2, true);
-                    myList = (ListView) findViewById(R.id.display_reservation_dishes_list);
-                    if (myList != null) {
-                        myList.setAdapter(dishesAdapter);
+                    if(dishesAdapter.getCount() == 0){
+                        TextView tv = (TextView) findViewById(R.id.display_reservation_dishes_label);
+                        if (tv != null)
+                            tv.setVisibility(View.GONE);
+                    }
+                    else {
+                        ListView myList = (ListView) findViewById(R.id.display_reservation_dishes_list);
+                        if (myList != null) {
+                            myList.setAdapter(dishesAdapter);
+                        }
                     }
                 }
             }
@@ -146,7 +160,8 @@ public class DisplayReservationActivity extends AppCompatActivity {
         });
 
         DecimalFormat df = new DecimalFormat("0.00");
-        totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()))));
+        totalPrice.setText(MessageFormat.format("{0}€", String.valueOf(df.format(currentBooking.getTotalPrice()
+                - currentBooking.getTotalDiscount()))));
 
         if(currentBooking.getNotes() != null){
             note.setText(currentBooking.getNotes());

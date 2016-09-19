@@ -172,8 +172,6 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
 
                         DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 1, true);
                         dishListView.setAdapter(adapter);
-
-                        // TODO se la disponibilita' del piatto e' terminata la dailyOffer non deve essere prenotabile
                     }
                 }
 
@@ -263,8 +261,7 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                     } else
                         cart.getOffersQuantityMap().put(current, 0);
 
-                    if (quantity < current.getAvailableQuantity()) { // FIXME se una dailyOffer contiene piatti con disponibilita' esaurita
-                                                                     // FIXME non deve essere prenotabile
+                    if (quantity < current.getAvailableQuantity()) {
 //                        selectedQuantities[pos]++;
                         quantity++;
                         cart.getOffersQuantityMap().put(current, quantity);

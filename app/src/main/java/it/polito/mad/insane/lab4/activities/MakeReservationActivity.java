@@ -96,7 +96,6 @@ public class MakeReservationActivity extends AppCompatActivity {
 
 
         // get Daily offers from firebase
-        //TODO Michele controllare se questa cosa funziona insieme con il nuovo meccanismo delle dailyOffer
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference offersRefs = database.getReference("/restaurants/"+restaurantId+"/dailyOfferMap");
         offersRefs.addListenerForSingleValueEvent(new ValueEventListener() {

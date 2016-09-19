@@ -172,8 +172,6 @@ public class RestaurantsRecyclerAdapter extends RecyclerView.Adapter<Restaurants
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
-                    //TODO gestire errore
-//                    Toast.makeText(manager.myContext,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
                 }
             });
 

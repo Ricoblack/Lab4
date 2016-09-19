@@ -179,7 +179,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/offers"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:padding="16dp"/>
 
         <ListView
             android:id="@+id/view_booking_offers_list_view"
@@ -192,7 +193,8 @@
             android:id="@+id/view_booking_dishes_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DISHES"
+            android:text="@string/view_booking_dishes"
+            android:padding="16dp"
             android:textStyle="bold"/>
 
         <ListView

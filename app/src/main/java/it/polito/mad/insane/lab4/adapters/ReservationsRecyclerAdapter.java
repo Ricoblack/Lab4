@@ -166,7 +166,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                     Calendar calNow=Calendar.getInstance();
                     calNow.setTime(new Date());
 
-                    //TODO: decidere se lo user può eliminare una prenotazione passata o rimane lì finche non la evade il ristoratore, magari mettiamo che può eliminarla tipo dopo una settimana o simile? così se il ristoratore si dimentica lo fa lui
                     if( calNow.before(cal) ) { // if( calNow.before(cal) || calNow.after(bookingCal) ) {
                         //Can delete reservation, continue
                     }
@@ -353,7 +352,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 trash.setVisibility(View.GONE);
                 evadedText.setVisibility(View.VISIBLE);
                 cardviewLayout.setBackgroundColor(Color.parseColor("#DDDDDD"));
-                //evaso.setText("Evaso: " + current.getEvaso()); //TODO: sistemare a livello grafico questa listview e la stringa hardcoded
             }
 
             // Create a storage reference from our app
@@ -381,8 +379,6 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
-                    //TODO gesire errore
-                    Toast.makeText(context,"Glide: " + exception.toString(),Toast.LENGTH_SHORT).show();
                 }
             });
         }
