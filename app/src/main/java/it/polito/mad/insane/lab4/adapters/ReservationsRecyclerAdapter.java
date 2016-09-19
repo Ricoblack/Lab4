@@ -352,6 +352,11 @@ public class ReservationsRecyclerAdapter extends RecyclerView.Adapter<Reservatio
                 trash.setVisibility(View.GONE);
                 evadedText.setVisibility(View.VISIBLE);
                 cardviewLayout.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            }else
+            {
+                trash.setVisibility(View.VISIBLE);
+                evadedText.setVisibility(View.GONE);
+                cardviewLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             }
 
             // Create a storage reference from our app

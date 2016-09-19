@@ -34,12 +34,19 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import it.polito.mad.insane.lab4.R;
 import it.polito.mad.insane.lab4.adapters.ReviewsRecyclerAdapter;
+import it.polito.mad.insane.lab4.data.Booking;
 import it.polito.mad.insane.lab4.data.Restaurant;
 import it.polito.mad.insane.lab4.data.Review;
 import it.polito.mad.insane.lab4.managers.NotificationDailyOfferService;
@@ -152,7 +159,7 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
 //                            new ArrayList<>(data.values()));
 //                    rv.setAdapter(adapter);
 //                    rv.setItemAnimator(new DefaultItemAnimator());
-                    setupReviewsRecyclerView(new ArrayList<>(data.values()));
+                    setupReviewsRecyclerView(sortList(new ArrayList<>(data.values())));
                 }
             }
 
@@ -367,4 +374,31 @@ public class MyReviewsRestaurantActivity extends AppCompatActivity implements Na
         return true;
     }
     /*************************************************/
+
+    private List<Review> sortList(Collection<Review> collection )
+    {
+        List<Review> list = new ArrayList<>(collection);
+
+        // sort by date
+        Collections.sort(list, new Comparator<Review>()
+        {
+            @Override
+            public int compare(Review lhs, Review rhs)
+            {
+                java.text.DateFormat df = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+                try {
+                    Date lhsDate = df.parse(lhs.getDateTime());
+                    Date rhsDate = df.parse(rhs.getDateTime());
+                    return rhsDate.compareTo(lhsDate);
+                }catch(ParseException pe)
+                {
+                    pe.printStackTrace();
+                    Toast.makeText(MyReviewsRestaurantActivity.this,R.string.error_date,Toast.LENGTH_SHORT ).show();
+                }
+                return rhs.getDateTime().compareTo(lhs.getDateTime());
+            }
+        });
+
+        return list;
+    }
 }

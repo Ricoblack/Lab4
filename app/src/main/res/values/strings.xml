@@ -125,7 +125,7 @@
     <string name="dish_not_available">Not available</string>
     <string name="price">Price</string>
     <string name="dishes">dishes</string>
-    <string name="title_activity_my_reservation">MyReservationActivity</string>
+    <string name="title_activity_my_reservation">My Reservations</string>
     <string name="title_activity_prova" translatable="false">ProvaActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -317,5 +317,6 @@
     <string name="offers">OFFERS</string>
     <string name="norifications_read">Notications marked as read</string>
     <string name="evaded_text">Evaded</string>
+    <string name="error_date">Error while ordering list by date</string>
     <string name="view_booking_dishes">DISHES</string>
 </resources>
