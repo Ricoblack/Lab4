@@ -164,6 +164,7 @@ public class AddReviewActivity extends AppCompatActivity {
                                     }
                                     saveReview(restaurantId, restaurantFinalScore, reviewsNumber, restaurantScoresMap);
                                     finish();
+                                    RestaurantProfileActivity.RestaurantProfileActivity.finish();
                                     clearStaticVariables();
                                     Toast.makeText(getApplicationContext(), getString(R.string.add_review_success), Toast.LENGTH_SHORT).show();
                                 }

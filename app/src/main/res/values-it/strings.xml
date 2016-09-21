@@ -34,7 +34,7 @@
     </string-array>
 
     <string-array name="time_array">
-        <item> <i>ORARIO</i> </item>
+        <item> <i>ORARIO APERTURA</i> </item>
         <item>10.00-15.00</item>
         <item>15.00-19.00</item>
         <item>19.00-23.00</item>
@@ -306,5 +306,7 @@
     <string name="evadi">EVADI</string>
     <string name="error_date">Errore nell\'ordinamento della lista per data</string>
     <string name="offer_not_available">Offerta non disponibile</string>
+    <string name="reservation_done">Prenotazione effettuata con successo</string>
+    <string name="cover_photo_update_success">Cover foto aggiornata con successo</string>
 
 </resources>

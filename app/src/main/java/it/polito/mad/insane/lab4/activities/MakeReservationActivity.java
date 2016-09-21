@@ -408,7 +408,7 @@ public class MakeReservationActivity extends AppCompatActivity {
                 DatabaseReference offerMapRef = database.getReference("/restaurants/" + restaurantId + "/dailyOfferMap");
                 offerMapRef.setValue(offersUpdateMap);
 
-                Toast.makeText(getApplicationContext(), "Reservation done successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.reservation_done, Toast.LENGTH_SHORT).show();
                 clearStaticVariables();
                 finish(); // finish() the current activity
                 Intent intent = new Intent(MakeReservationActivity.this, MyReservationsUserActivity.class);

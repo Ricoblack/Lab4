@@ -169,9 +169,16 @@ public class DailyOfferRecyclerAdapter extends RecyclerView.Adapter<DailyOfferRe
                             if(current.getDishesIdMap().containsKey(d.getID()))
                                 filteredDishesMap.put(d, current.getDishesIdMap().get(d.getID()));
                         }
+                        if(currentActivity == 0) {
+                            DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item_2, filteredDishesMap, 1, true);
+                            dishListView.setAdapter(adapter);
+                        }else {
+                            DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 1, true);
+                            dishListView.setAdapter(adapter);
+                        }
 
-                        DishArrayAdapter adapter = new DishArrayAdapter(context, R.layout.dish_listview_item, filteredDishesMap, 1, true);
-                        dishListView.setAdapter(adapter);
+
+
                     }
                 }
 

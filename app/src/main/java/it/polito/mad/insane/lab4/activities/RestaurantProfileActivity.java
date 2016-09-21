@@ -411,8 +411,10 @@ public class RestaurantProfileActivity extends AppCompatActivity {
 
         tv = (TextView) findViewById(R.id.show_reservation_button);
         if (tv != null) {
-            if (quantity != 0)
-                tv.setText(String.format("%d "+getResources().getString(R.string.itemsFormat)+" - %s€", quantity, price));
+            if (quantity != 0) {
+                DecimalFormat df = new DecimalFormat("0.00");
+                tv.setText(String.format("%d " + getResources().getString(R.string.itemsFormat) + " - %s€", quantity, df.format(price)));
+            }
             else
                 tv.setText(R.string.empty_cart);
         }

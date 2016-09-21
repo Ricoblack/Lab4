@@ -35,7 +35,7 @@
     </string-array>
 
     <string-array name="time_array">
-        <item> <i>TIME</i> </item>
+        <item> <i>OPENING TIME</i> </item>
         <item>10.00-15.00</item>
         <item>15.00-19.00</item>
         <item>19.00-23.00</item>
@@ -321,4 +321,5 @@
     <string name="view_booking_dishes">DISHES</string>
     <string name="no_additional_notes_in_this_booking">No additional notes in this booking</string>
     <string name="evadi">EVADE</string>
+    <string name="reservation_done">Reservation done successfully</string>
 </resources>

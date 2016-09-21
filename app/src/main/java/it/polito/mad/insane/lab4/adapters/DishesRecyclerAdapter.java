@@ -266,8 +266,10 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                             TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
                             if (tv != null) {
                                 if (cart.getReservationQty() != 0)
-                                    tv.setText(String.format(MessageFormat.format("%d {0} - %s€", v.getResources().getString(R.string.itemsFormat)), reservationQty, reservationPrice));
-                                else
+                                {
+                                    df = new DecimalFormat("0.00");
+                                    tv.setText(String.format(MessageFormat.format("%d {0} - %s€", v.getResources().getString(R.string.itemsFormat)), reservationQty, df.format(reservationPrice)));
+                                }else
                                     tv.setText(R.string.empty_cart);
                             }
                         }
@@ -305,7 +307,10 @@ public class DishesRecyclerAdapter extends RecyclerView.Adapter<DishesRecyclerAd
                             TextView tv = (TextView) ((RestaurantProfileActivity) context).findViewById(R.id.show_reservation_button);
                             if (tv != null) {
                                 if (cart.getReservationQty() != 0)
-                                    tv.setText(String.format("%d " + v.getResources().getString(R.string.itemsFormat) + " - %s€", reservationQty, reservationPrice));
+                                {
+                                    df = new DecimalFormat("0.00");
+                                    tv.setText(String.format("%d " + v.getResources().getString(R.string.itemsFormat) + " - %s€", reservationQty, df.format(reservationPrice)));
+                                }
                                 else
                                     tv.setText(R.string.empty_cart);
                             }

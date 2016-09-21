@@ -799,7 +799,11 @@ public class HomeRestaurateurActivity extends AppCompatActivity implements Navig
 
     private List<Booking> sortList(Collection<Booking> collection )
     {
-        List<Booking> list = new ArrayList<>(collection);
+        List<Booking> fullList = new ArrayList<>(collection);
+        List<Booking> list = new ArrayList<>();
+        for(Booking b:fullList)
+                if(!b.getEvaso())
+                    list.add(b);
 
         // sort by date
         Collections.sort(list, new Comparator<Booking>()

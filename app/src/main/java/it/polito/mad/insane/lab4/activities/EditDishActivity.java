@@ -210,6 +210,7 @@ public class EditDishActivity extends AppCompatActivity
                         addDishInFirebase(newDish);
                     }
                     finish();
+                    DailyMenuActivity.DailyMenuActivity.finish();
                 }
             });
 
@@ -251,9 +252,11 @@ public class EditDishActivity extends AppCompatActivity
 
                             //hide delete item
                             final Menu menu = toolbar.getMenu();
-                            final MenuItem deleteItem = menu.getItem(0);
-                            if(deleteItem != null)
-                                deleteItem.setVisible(false);
+                            if(menu.size()!=0) {
+                                final MenuItem deleteItem = menu.getItem(0);
+                                if (deleteItem != null)
+                                    deleteItem.setVisible(false);
+                            }
 
                             if (offersContainingDish == null)
                                 offersContainingDish = new ArrayList<DailyOffer>();
@@ -282,9 +285,11 @@ public class EditDishActivity extends AppCompatActivity
 
                                     //hide delete item
                                     final Menu menu=toolbar.getMenu();
-                                    final MenuItem deleteItem=menu.getItem(0);
-                                    if(deleteItem != null)
-                                        deleteItem.setVisible(false);
+                                    if(menu.size()!=0) {
+                                        final MenuItem deleteItem = menu.getItem(0);
+                                        if (deleteItem != null)
+                                            deleteItem.setVisible(false);
+                                    }
 
                                     return;
                                 }
@@ -300,9 +305,11 @@ public class EditDishActivity extends AppCompatActivity
 
                                             //hide delete item
                                             final Menu menu=toolbar.getMenu();
-                                            final MenuItem deleteItem=menu.getItem(0);
-                                            if(deleteItem != null)
-                                                deleteItem.setVisible(false);
+                                            if(menu.size()!=0) {
+                                                final MenuItem deleteItem = menu.getItem(0);
+                                                if (deleteItem != null)
+                                                    deleteItem.setVisible(false);
+                                            }
 
                                             return;
                                         }
@@ -891,5 +898,6 @@ public class EditDishActivity extends AppCompatActivity
 
 
         finish();
+        DailyMenuActivity.DailyMenuActivity.finish();
     }
 }
